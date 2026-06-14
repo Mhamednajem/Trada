@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trada Pro Platform</title>
+    <!-- Tailwind CSS لأجل التصميم الاحترافي والسريع -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- مكتبة Ethers.js لربط محافظ Web3 وقراءة العقود -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body {
+            background-color: #0b0e11;
+            color: #eaecef;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .crypto-border { border-color: #2b3139; }
+        .bg-dark-card { background-color: #181a20; }
+        .text-up { color: #0ecb81; }
+        .text-down { color: #f6465d; }
+        .bg-up { background-color: #0ecb81; }
+        .bg-down { background-color: #f6465d; }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط العلوي (Navbar) -->
+    <header class="flex justify-between items-center px-6 py-4 bg-dark-card border-b crypto-border">
+        <div class="flex items-center gap-6">
+            <span class="text-2xl font-bold text-yellow-500 tracking-wider">TRADA PRO</span>
+            <div class="flex gap-4 text-sm font-medium">
+                <span id="nav-trade" class="cursor-pointer text-yellow-500">تداول</span>
+                <span id="nav-invest" class="cursor-pointer hover:text-yellow-500 transition">استثمار</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- تبديل اللغة -->
+            <select id="lang-select" class="bg-transparent border crypto-border rounded px-2 py-1 text-sm focus:outline-none cursor-pointer">
+                <option value="ar" class="bg-gray-900">العربية</option>
+                <option value="en" class="bg-gray-900">English</option>
+            </select>
+            <!-- زر ربط المحفظة -->
+            <button id="connect-wallet" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-4 py-2 rounded-lg text-sm transition dynamic-shadow">
+                ربط المحفظة (Web3)
+            </button>
+        </div>
+    </header>
+
+    <!-- محتوى منصة التداول الرئيسي -->
+    <main class="grid grid-cols-1 lg:grid-cols-4 gap-3 p-3 h-[calc(100vh-80px)]">
+        
+        <!-- العمود الأيسر: كتاب الطلبات الحي (Order Book) -->
+        <section class="bg-dark-card rounded-lg p-4 border crypto-border flex flex-col justify-between h-full order-3 lg:order-1">
+            <div>
+                <h3 id="title-orderbook" class="text-sm font-bold mb-3 border-b crypto-border pb-2">سجل صفقات السوق الحي</h3>
+                <!-- المبيعات (أحمر) -->
+                <div class="space-y-1 text-xs mb-3">
+                    <div class="flex justify-between text-gray-500 mb-1">
+                        <span id="lbl-price">السعر</span>
+                        <span id="lbl-amount">الكمية</span>
+                        <span id="lbl-time">الوقت</span>
+                    </div>
+                    <div id="asks-list"></div>
+                </div>
+                <!-- السعر الحالي المباشر -->
+                <div class="py-2 border-y crypto-border my-2 flex items-center justify-between">
+                    <span id="live-price" class="text-xl font-bold text-up">--.--</span>
+                    <span class="text-xs text-gray-400">USD</span>
+                </div>
+                <!-- المشتريات (أخضر) -->
+                <div id="bids-list" class="space-y-1 text-xs"></div>
+            </div>
+            
+            <!-- أرصدة العقود الرسمية المستدعاة من الشبكة -->
+            <div class="mt-4 pt-4 border-t crypto-border text-xs space-y-2 text-gray-400">
+                <div class="font-bold text-gray-300 mb-1" id="lbl-contracts">عناوين العقود الرسمية (BNB Chain):</div>
+                <div>USDT: <span class="text-yellow-600 block break-all font-mono">0x55d398326f99059fF775485246999027B3197955</span></div>
+                <div>USDC: <span class="text-blue-500 block break-all font-mono">0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d</span></div>
+            </div>
+        </section>
+
+        <!-- العمود الأوسط: الشارت والتحكم (TradingView & Controls) -->
+        <section class="lg:col-span-2 flex flex-col gap-3 h-full order-1 lg:order-2">
+            <!-- شارت تريدنج فيو الحقيقي -->
+            <div class="bg-dark-card rounded-lg p-2 border crypto-border flex-grow min-h-[400px]">
+                <div id="tradingview_widget" class="w-full h-full"></div>
+            </div>
+
+            <!-- لوحة تحكم الصفقات (دولار، وقت، تنفيذ) -->
+            <div class="bg-dark-card rounded-lg p-4 border crypto-border grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label id="lbl-amount-input" class="block text-xs text-gray-400 mb-1">مبلغ التداول ($)</label>
+                    <input id="trade-amount" type="number" value="10" min="1" class="w-full bg-gray-900 border crypto-border rounded p-2 text-sm focus:outline-none focus:border-yellow-500 text-white">
+                </div>
+                <div>
+                    <label id="lbl-duration" class="block text-xs text-gray-400 mb-1">مدة الصفقة</label>
+                    <select id="trade-time" class="w-full bg-gray-900 border crypto-border rounded p-2 text-sm focus:outline-none focus:border-yellow-500 text-white">
+                        <option value="1s">1 ثانية</option>
+                        <option value="30s">30 ثانية</option>
+                        <option value="1m">1 دقيقة</option>
+                        <option value="5m">5 دقائق</option>
+                        <option value="1h">1 ساعة</option>
+                        <option value="4h">4 ساعات</option>
+                        <option value="1d">1 يوم</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 flex gap-3 mt-2">
+                    <button id="btn-buy" onclick="executeTrade('BUY')" class="flex-1 bg-up hover:opacity-90 text-white font-bold py-3 rounded-lg transition">شراء / صعود</button>
+                    <button id="btn-sell" onclick="executeTrade('SELL')" class="flex-1 bg-down hover:opacity-90 text-white font-bold py-3 rounded-lg transition">بيع / هبوط</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- العمود الأيمن: سجل صفقات المستخدم الخاص (My Trades) -->
+        <section class="bg-dark-card rounded-lg p-4 border crypto-border flex flex-col h-full order-4 lg:order-3">
+            <h3 id="title-mytrades" class="text-sm font-bold mb-3 border-b crypto-border pb-2">سجلي الخاص بالصفقات</h3>
+            <div class="overflow-y-auto flex-grow space-y-2 pr-1 text-xs" id="my-trades-log">
+                <!-- الصفقات تظهر هنا ديناميكياً -->
+                <div id="no-trades" class="text-gray-500 text-center py-4">لا توجد صفقات مفتوحة حالياً</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- تضمين مكتبة التخطيط البياني من TradingView -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    
+    <script>
+        // قاموس الترجمة الفورية للغات للكل
+        const translations = {
+            ar: {
+                nav_trade: "تداول", nav_invest: "استثمار", connect_wallet: "ربط المحفظة (Web3)",
+                title_orderbook: "سجل صفقات السوق الحي", lbl_price: "السعر", lbl_amount: "الكمية",
+                lbl_time: "الوقت", lbl_contracts: "عناوين العقود الرسمية (BNB Chain):",
+                lbl_amount_input: "مبلغ التداول ($)", lbl_duration: "مدة الصفقة",
+                btn_buy: "شراء / صعود", btn_sell: "بيع / هبوط", title_mytrades: "سجلي الخاص بالصفقات",
+                no_trades: "لا توجد صفقات مفتوحة حالياً", connected: "متصل: ", alert_web3: "الرجاء تثبيت محفظة Web3 مثل MetaMask",
+                sec: "ثانية", min: "دقيقة", hour: "ساعة", day: "يوم"
+            },
+            en: {
+                nav_trade: "Trade", nav_invest: "Investment", connect_wallet: "Connect Wallet (Web3)",
+                title_orderbook: "Live Market Order Book", lbl_price: "Price", lbl_amount: "Amount",
+                lbl_time: "Time", lbl_contracts: "Official Contract Addresses (BNB Chain):",
+                lbl_amount_input: "Trade Amount ($)", lbl_duration: "Duration",
+                btn_buy: "Buy / Long", btn_sell: "Sell / Short", title_mytrades: "My Personal Trades",
+                no_trades: "No active trades at the moment", connected: "Connected: ", alert_web3: "Please install a Web3 wallet like MetaMask",
+                sec: "s", min: "m", hour: "h", day: "d"
+            }
+        };
+
+        let currentLang = 'ar';
+        let provider, signer, userAddress = null;
+        let basePrice = 1.0000; // سعر محاكاة لـ USDT/USDC المستقر يدور حول الـ 1 دولار
+
+        // إعداد شارت TradingView الاحترافي لعرض زوج عملات مستقر على منصة بينانس كمؤشر حقيقي
+        function loadTradingView() {
+            new TradingView.widget({
+                "width": "100%",
+                "height": "100%",
+                "symbol": "BINANCE:USDCUSDT",
+                "interval": "1",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": currentLang === 'ar' ? 'ar_AE' : 'en',
+                "toolbar_bg": "#181a20",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_widget"
+            });
+        }
+
+        // تغيير اللغة الفوري للواجهة بالكامل للكل
+        document.getElementById('lang-select').addEventListener('change', function(e) {
+            currentLang = e.target.value;
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            
+            // تحديث النصوص بناءً على القاموس
+            document.getElementById('nav-trade').innerText = translations[currentLang].nav_trade;
+            document.getElementById('nav-invest').innerText = translations[currentLang].nav_invest;
+            if(!userAddress) document.getElementById('connect-wallet').innerText = translations[currentLang].connect_wallet;
+            document.getElementById('title-orderbook').innerText = translations[currentLang].title_orderbook;
+            document.getElementById('lbl-price').innerText = translations[currentLang].lbl_price;
+            document.getElementById('lbl-amount').innerText = translations[currentLang].lbl_amount;
+            document.getElementById('lbl-time').innerText = translations[currentLang].lbl_time;
+            document.getElementById('lbl-contracts').innerText = translations[currentLang].lbl_contracts;
+            document.getElementById('lbl-amount-input').innerText = translations[currentLang].lbl_amount_input;
+            document.getElementById('lbl-duration').innerText = translations[currentLang].lbl_duration;
+            document.getElementById('btn-buy').innerText = translations[currentLang].btn_buy;
+            document.getElementById('btn-sell').innerText = translations[currentLang].btn_sell;
+            document.getElementById('title-mytrades').innerText = translations[currentLang].title_mytrades;
+            if(document.getElementById('no-trades')) document.getElementById('no-trades').innerText = translations[currentLang].no_trades;
+
+            // تحديث خيارات الوقت بناءً على اللغة المحددة
+            updateDurationOptions();
+            // إعادة تحميل الشارت ليتوافق مع لغة الواجهة
+            loadTradingView();
+        });
+
+        function updateDurationOptions() {
+            const timeSelect = document.getElementById('trade-time');
+            const currentVal = timeSelect.value;
+            const t = translations[currentLang];
+            timeSelect.innerHTML = `
+                <option value="1s">1 ${t.sec}</option>
+                <option value="30s">30 ${t.sec}</option>
+                <option value="1m">1 ${t.min}</option>
+                <option value="5m">5 ${t.min}</option>
+                <option value="1h">1 ${t.hour}</option>
+                <option value="4h">4 ${t.hour}</option>
+                <option value="1d">1 ${t.day}</option>
+            `;
+            timeSelect.value = currentVal;
+        }
+
+        // ربط محفظة ويب 3 الحقيقي (MetaMask / TrustWallet) وقراءة بياناتها
+        document.getElementById('connect-wallet').addEventListener('click', async () => {
+            if (window.ethereum) {
+                try {
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = provider.getSigner();
+                    userAddress = await signer.getAddress();
+                    
+                    // عرض عنوان المحفظة بشكل مقتضب واحترافي بعد الاتصال الناجح
+                    document.getElementById('connect-wallet').innerText = `${translations[currentLang].connected}${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+                    document.getElementById('connect-wallet').classList.replace('bg-yellow-500', 'bg-green-600');
+                    document.getElementById('connect-wallet').classList.add('text-white');
+                } catch (error) {
+                    console.error("User rejected connection", error);
+                }
+            } else {
+                alert(translations[currentLang].alert_web3);
+            }
+        });
+
+        // محاكاة حية واحترافية لسجل صفقات السوق العام (مشتريات ومبيعات حية بالثواني)
+        function generateLiveOrderBook() {
+            const asksList = document.getElementById('asks-list');
+            const bidsList = document.getElementById('bids-list');
+            
+            // توليد أسعار قريبة جداً من 1 دولار لتعكس حركة USDT/USDC الحقيقية على الشبكة
+            basePrice = 1.0000 + (Math.random() - 0.5) * 0.0015;
+            document.getElementById('live-price').innerText = basePrice.toFixed(4);
+            document.getElementById('live-price').className = Math.random() > 0.5 ? 'text-xl font-bold text-up' : 'text-xl font-bold text-down';
+
+            let asksHTML = '';
+            let bidsHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                const askPrice = (basePrice + (i + 1) * 0.0002).toFixed(4);
+                const askAmount = (Math.random() * 5000 + 10).toFixed(2);
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                asksHTML += `<div class="flex justify-between text-down"><span>${askPrice}</span><span>${askAmount}</span><span class="text-gray-500">${timeStr}</span></div>`;
+
+                const bidPrice = (basePrice - (i + 1) * 0.0002).toFixed(4);
+                const bidAmount = (Math.random() * 5000 + 10).toFixed(2);
+                bidsHTML += `<div class="flex justify-between text-up"><span>${bidPrice}</span><span>${bidAmount}</span><span class="text-gray-500">${timeStr}</span></div>`;
+            }
+
+            asksList.innerHTML = asksHTML;
+            bidsList.innerHTML = bidsHTML;
+        }
+
+        // تنفيذ الصفقات الحية وإضافتها مباشرة إلى سجل المستخدم الخاص بك بشكل فوري وتلقائي
+        function executeTrade(type) {
+            const amount = document.getElementById('trade-amount').value;
+            const duration = document.getElementById('trade-time').options[document.getElementById('trade-time').selectedIndex].text;
+            const executionPrice = basePrice.toFixed(4);
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            const noTradesEl = document.getElementById('no-trades');
+            if (noTradesEl) noTradesEl.remove();
+
+            const myTradesLog = document.getElementById('my-trades-log');
+            
+            const badgeColor = type === 'BUY' ? 'bg-up' : 'bg-down';
+            const textColor = type === 'BUY' ? 'text-up' : 'text-down';
+
+            const tradeItem = document.createElement('div');
+            tradeItem.className = 'p-3 bg-gray-900 rounded border crypto-border flex flex-col gap-1 relative overflow-hidden';
+            tradeItem.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="${badgeColor} text-black font-bold px-2 py-0.5 rounded text-[10px]">${type}</span>
+                    <span class="text-gray-500 text-[10px]">${timeStr}</span>
+                </div>
+                <div class="flex justify-between mt-1">
+                    <span class="text-gray-400">المبلغ: <strong class="text-white">$${amount}</strong></span>
+                    <span class="text-gray-400">المدة: <strong class="text-white">${duration}</strong></span>
+                </div>
+                <div class="flex justify-between text-[11px] mt-1 pt-1 border-t border-gray-800">
+                    <span class="text-gray-500">سعر الدخول</span>
+                    <span class="${textColor} font-mono">${executionPrice}</span>
+                </div>
+            `;
+
+            myTradesLog.insertBefore(tradeItem, myTradesLog.firstChild);
+        }
+
+        // تشغيل المنصة فور تحميل الصفحة بالكامل لضمان مزامنة البيانات والـ Widgets بدون أي تعليق
+        window.onload = function() {
+            loadTradingView();
+            generateLiveOrderBook();
+            setInterval(generateLiveOrderBook, 2000); // تحديث سجل صفقات السوق الحي تلقائياً كل ثانيتين
+        };
+    </script>
+</body>
+</html>
