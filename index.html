@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trada | Decentralized Web3 Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0b0e14;
+            --bg-card: #131a26;
+            --bg-nav: #162030;
+            --accent-green: #00bfa6;
+            --accent-blue: #2979ff;
+            --accent-red: #ff5252;
+            --text-primary: #ffffff;
+            --text-secondary: #8492a6;
+            --border-color: #202e43;
+            --font-global: 'Lexend', 'Noto Kufi Arabic', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-global);
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* Top Luxury Navbar */
+        header {
+            background: var(--bg-nav);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-network, .btn-lang, .btn-connect {
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, #00bfa6, #009688);
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-connect:hover {
+            box-shadow: 0 0 15px rgba(0, 191, 166, 0.4);
+        }
+
+        /* Language Dropdown Selector Wrapper */
+        .lang-wrapper {
+            position: relative;
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: 45px;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 180px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            z-index: 101;
+        }
+
+        .lang-item {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lang-item:hover {
+            background: var(--border-color);
+        }
+
+        /* Navigation TABS */
+        .main-tabs {
+            display: flex;
+            background: var(--bg-nav);
+            border-bottom: 1px solid var(--border-color);
+            justify-content: space-around;
+        }
+
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
+            background: rgba(0, 191, 166, 0.05);
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 15px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Web3 Card Style */
+        .w-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Asset Selector Grid */
+        .asset-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .asset-box {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .asset-box.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 191, 166, 0.03);
+        }
+
+        .asset-box i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .asset-box.usdt i { color: #26a17b; }
+        .asset-box.usdc i { color: #2775ca; }
+
+        /* General Forms */
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .input-field-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field-wrapper input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-field-wrapper .input-suffix {
+            position: absolute;
+            left: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Plan Selection Selector Grid */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .plan-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .plan-box.active {
+            border-color: var(--accent-blue);
+            background: rgba(41, 121, 255, 0.05);
+        }
+
+        .plan-box .p-time { font-size: 14px; font-weight: 600; color: #fff;}
+        .plan-box .p-roi { font-size: 12px; color: var(--accent-green); margin-top: 4px;}
+
+        /* Returns Output */
+        .roi-output-box {
+            background: var(--bg-main);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-action-main {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-blue), #1a237e);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-action-main:active {
+            transform: scale(0.98);
+        }
+
+        /* Active Investments List */
+        .investment-item {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-withdraw-small {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-withdraw-small:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* TradingView Widget Container */
+        .tv-chart-box {
+            width: 100%;
+            height: 350px;
+            background: var(--bg-main);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Trading System Styles */
+        .trade-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-buy {
+            background: #26a69a;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-sell {
+            background: #ef5350;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .history-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .hist-tab {
+            padding: 8px 15px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .hist-tab.active {
+            color: #fff;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .order-book-list {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        /* Referral Generation Panel */
+        .referral-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .manifesto-box {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            text-align: justify;
+            border-right: 3px solid var(--accent-green);
+            padding-right: 10px;
+            margin-top: 15px;
+        }
+
+        .community-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .com-btn {
+            flex: 1;
+            text-align: center;
+            background: #2481cc;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .com-btn.group {
+            background: #28a745;
+        }
+
+        /* Live Changer Node Control Panel */
+        .modifier-panel {
+            background: #1c1326;
+            border: 1px dashed #9c27b0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        /* Web3 Overlay Dialog */
+        .web3-dialog-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .web3-dialog-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-main);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .wallet-option:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .wallet-option img {
+            width: 32px; height: 32px;
+        }
+
+        /* Live Global Counters */
+        .live-counter-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #ffb300;
+            margin-bottom: 10px;
+            background: rgba(255,179,0,0.05);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,179,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <span class="logo-title" id="txt-logo-title">Trada</span>
+        </div>
+        <div class="nav-controls">
+            <button class="btn-network" onclick="toggleNetwork()" id="network-selector">
+                <i class="fa-solid fa-circle-nodes"></i> <span id="lbl-network">BNB Chain</span>
+            </button>
+            <div class="lang-wrapper">
+                <button class="btn-lang" onclick="toggleLangMenu()">
+                    <i class="fa-solid fa-globe"></i> <span id="lbl-lang">العربية</span>
+                </button>
+                <div class="lang-dropdown" id="langContainer"></div>
+            </div>
+            <button class="btn-connect" onclick="openWalletModal()" id="btn-wallet-connect">
+                <i class="fa-solid fa-wallet"></i> <span id="txt-connect-status">ربط المحفظة</span>
+            </button>
+        </div>
+    </header>
+
+    <nav class="main-tabs">
+        <div class="tab-btn active" onclick="switchTab('invest')" id="tab-invest-lbl"><i class="fa-solid fa-chart-pie"></i> الاستثمار</div>
+        <div class="tab-btn" onclick="switchTab('trade')" id="tab-trade-lbl"><i class="fa-solid fa-chart-line"></i> التداول</div>
+        <div class="tab-btn" onclick="switchTab('team')" id="tab-team-lbl"><i class="fa-solid fa-users"></i> الأجيال</div>
+    </nav>
+
+    <div class="container">
+
+        <div id="section-invest" class="page-section active">
+            <div class="w-card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-vault" style="color:var(--accent-green)"></i> <span id="h-invest-title">فتح أمر تدفق مالي</span></span>
+                    <span style="font-size:12px; color:var(--text-secondary);" id="lbl-user-balance">الرصيد الحقيقي: --</span>
+                </div>
+
+                <div class="asset-grid">
+                    <div class="asset-box usdt active" id="asset-usdt" onclick="selectAsset('USDT')">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <div>USDT</div>
+                        <div style="font-size:11px; color:var(--text-secondary);" id="val-usdt-bal">0.00</div>
+                    </div>
+                    <div class="asset-box usdc" id="asset-usdc" onclick="selectAsset('USDC')">
+                        <i class="fa-solid fa-coins"></i>
+                        <div>USDC</div>
+                        <div style="font-size:11px; color:var(--text-secondary);" id="val-usdc-bal">0.00</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label id="lbl-amount-entry">أدخل مبلغ الإيداع (الحد الأدنى 1$):</label>
+                    <div class="input-field-wrapper">
+                        <input type="number" id="invest-amount" value="10" min="1" oninput="calculateStakingYield()">
+                        <span class="input-suffix" id="invest-currency-suffix">USDT</span>
+                    </div>
+                </div>
+
+                <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;" id="lbl-strategy-choose">اختر خطة التدفق:</label>
+                <div class="plan-grid">
+                    <div class="plan-box active" id="plan-0" onclick="selectPlan(0, 1, 1)">
+                        <div class="p-time">يومي</div>
+                        <div class="p-roi">1%</div>
+                    </div>
+                    <div class="plan-box" id="plan-1" onclick="selectPlan(1, 7, 7)">
+                        <div class="p-time">أسبوعي</div>
+                        <div class="p-roi">7%</div>
+                    </div>
+                    <div class="plan-box" id="plan-2" onclick="selectPlan(2, 20, 20)">
+                        <div class="p-time">20 يوم</div>
+                        <div class="p-roi">20%</div>
+                    </div>
+                    <div class="plan-box" id="plan-3" onclick="selectPlan(3, 30, 30)">
+                        <div class="p-time">30 يوم</div>
+                        <div class="p-roi">30%</div>
+                    </div>
+                </div>
+
+                <div class="roi-output-box">
+                    <span id="lbl-expected-payout">صافي الأرباح المتوقعة:</span>
+                    <span style="color:var(--accent-green); font-weight:700;" id="calc-yield-value">0.10 USDT</span>
+                </div>
+
+                <button class="btn-action-main" onclick="executeStakingTransaction()" id="btn-stake-action">تداول وبدء استثمار</button>
+            </div>
+
+            <div class="w-card">
+                <div class="card-header">
+                    <span class="card-title" id="lbl-active-pos"><i class="fa-solid fa-clock-rotate-left"></i> عقودك النشطة حالياً</span>
+                    <button class="btn-network" style="padding:4px 8px;" onclick="syncBlockchainState()" id="btn-sync-chain"><i class="fa-solid fa-rotate"></i> تحديث من البلوكشين</button>
+                </div>
+                <div id="active-investments-container"></div>
+            </div>
+
+            <div class="w-card">
+                <div class="manifesto-box" id="txt-manifesto">
+                    مشروع لا مركزي وكلشي شفاف وقابل للتتبع ولا يوجد بروكسي او سيرفر او بوت خارجي كلشي بين العقد والمستخدم الواجهة فقط للاوامر يمكن اي شخص تعامل مباشر مع العقد. الأرباح تتم عبر تداول كل صفقة تربح 1.95% او خسارة واحنه بوتنا مميزاته يتداول فوري ومبرمج مخاطر قليلة والمستفيد اله ربح صافي ماكو شي ثابت بس مثبتين نسبة 30% شهرياً وكم صفقة تصير يومياً وربح وخسارة يتوزع على الفريق الأجيال.
+                </div>
+                <div class="community-links">
+                    <a href="https://t.me/Trada2035" target="_blank" class="com-btn channel"><i class="fa-brands fa-telegram"></i> قناة التليجرام</a>
+                    <a href="https://t.me/Trada2036" target="_blank" class="com-btn group"><i class="fa-brands fa-telegram"></i> الكروب الرسمي</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-trade" class="page-section">
+            <div class="w-card" style="padding:10px;">
+                <div class="tv-chart-box" id="tradingview_chart_frame"></div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px;">
+                    <span id="lbl-trade-asset-bal-usdt" style="color: var(--text-secondary)">رصيد دخول USDT: <b style="color:#fff" id="val-trade-usdt">0.00</b></span>
+                    <span id="lbl-trade-asset-bal-usdc" style="color: var(--text-secondary)">رصيد دخول USDC: <b style="color:#fff" id="val-trade-usdc">0.00</b></span>
+                </div>
+
+                <div class="input-group">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <label id="lbl-trade-vol-input">مبلغ دخول الصفقة مقابل البيتكوين:</label>
+                        <span id="lbl-min-trade-alert" style="font-size:11px; color:var(--accent-red)">أقل مبلغ يجب 10$</span>
+                    </div>
+                    <div class="input-field-wrapper">
+                        <input type="number" id="trade-amount" value="10" min="10">
+                        <span class="input-suffix">USD</span>
+                    </div>
+                </div>
+
+                <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;" id="lbl-expiry-time">أوقات الصفقات:</label>
+                <div class="plan-grid" style="grid-template-columns: repeat(6, 1fr); margin-bottom:15px;">
+                    <div class="plan-box active" onclick="selectTimeframe(this, '1m')"><div style="font-size:11px;">1 دقيقة</div></div>
+                    <div class="plan-box" onclick="selectTimeframe(this, '5m')"><div style="font-size:11px;">5 دقائق</div></div>
+                    <div class="plan-box" onclick="selectTimeframe(this, '40m')"><div style="font-size:11px;">40 دقيقة</div></div>
+                    <div class="plan-box" onclick="selectTimeframe(this, '1h')"><div style="font-size:11px;">1 ساعة</div></div>
+                    <div class="plan-box" onclick="selectTimeframe(this, '5h')"><div style="font-size:11px;">5 ساعات</div></div>
+                    <div class="plan-box" onclick="selectTimeframe(this, '1d')"><div style="font-size:11px;">1 يوم</div></div>
+                </div>
+
+                <div class="trade-actions">
+                    <button class="btn-buy" onclick="executeBinaryTrade('BUY')" id="btn-trade-buy"><i class="fa-solid fa-arrow-trend-up"></i> شراء</button>
+                    <button class="btn-sell" onclick="executeBinaryTrade('SELL')" id="btn-trade-sell"><i class="fa-solid fa-arrow-trend-down"></i> بيع</button>
+                </div>
+            </div>
+
+            <div class="w-card">
+                <div class="history-tabs">
+                    <div class="hist-tab active" id="tab-global-orders" onclick="switchTradeHistory('global')">القسم العام (Live)</div>
+                    <div class="hist-tab" id="tab-private-orders" onclick="switchTradeHistory('private')">السجل الخاص</div>
+                </div>
+
+                <div id="area-global-orders" class="order-book-list"></div>
+
+                <div id="area-private-orders" class="order-book-list" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div id="section-team" class="page-section">
+            
+            <div class="live-counter-bar">
+                <span id="lbl-hardcap-text"><i class="fa-solid fa-triangle-exclamation"></i> سيتم قفل الاجيال عند بلوغ العدد الكلي 10 آلاف مستخدم لكل شبكة:</span>
+                <span id="live-hardcap-countdown" style="font-weight:700;">8,432 / 20,000</span>
+            </div>
+
+            <div class="w-card">
+                <div class="card-header">
+                    <span class="card-title" id="lbl-ref-engine-title"><i class="fa-solid fa-network-wired" style="color:var(--accent-blue)"></i> رمز إحالة المستخدم اللامركزي</span>
+                </div>
+                <p style="font-size:13px; color:var(--text-secondary); margin-bottom:15px;" id="txt-team-description">
+                    الي سجل يبقى يحصل ارباح الاجيال للابد عبر العقد لا مركزي.
+                </p>
+
+                <label style="font-size:12px; color:var(--text-secondary);" id="lbl-your-ref-link">عنوان موقعك الترويجي الذكي:</label>
+                <div class="referral-box">
+                    <span id="referral-link-display" style="font-family:monospace; color:var(--accent-green); font-size:14px;">Trada.net/A2435ZS</span>
+                    <button class="btn-network" style="padding:6px 12px;" onclick="copyReferralLink()" id="btn-copy-ref">نسخ</button>
+                </div>
+            </div>
+
+            <div class="w-card">
+                <div class="card-header">
+                    <span class="card-title" id="lbl-withdrawable-comm"><i class="fa-solid fa-wallet"></i> رصيد الشخص من الأجيال</span>
+                    <span style="color:var(--accent-green); font-weight:700;" id="val-team-earnings">0.00 USDT</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn-network" id="team-asset-usdt" style="flex:1; border-color:var(--accent-green);" onclick="selectTeamWithdrawAsset('USDT')">USDT</button>
+                    <button class="btn-network" id="team-asset-usdc" style="flex:1;" onclick="selectTeamWithdrawAsset('USDC')">USDC</button>
+                </div>
+                <div class="input-group">
+                    <label id="lbl-amt-withdraw-comm">ادخل مبلغ حد ادنى 0.1 الى مال نهاية:</label>
+                    <div class="input-field-wrapper">
+                        <input type="number" id="team-withdraw-amount" value="0.1" min="0.1" step="0.1">
+                        <span class="input-suffix" id="team-withdraw-suffix">USDT</span>
+                    </div>
+                </div>
+                <button class="btn-action-main" style="background:linear-gradient(135deg, var(--accent-green), #00796b); color:#000;" onclick="executeTeamEarningWithdrawal()" id="btn-withdraw-team-action">توقيع عقد سحب أرباح الأجيال</button>
+            </div>
+
+            <div class="w-card">
+                <div class="card-header">
+                    <span class="card-title" id="lbl-gen-breakdown"><i class="fa-solid fa-sitemap"></i> هيكلية السبع أجيال التصاعدية</span>
+                </div>
+                <div id="generations-metrics-table"></div>
+            </div>
+
+            <div class="w-card">
+                <h4 style="font-size:14px; margin-bottom:10px;"><i class="fa-solid fa-circle-question"></i> أسئلة شائعة</h4>
+                <p style="font-size:12px; color:var(--text-secondary); line-height:1.6;" id="txt-faq-text">
+                    فقط كاتشجيع الإحالات لاشتهار المشروع ووراها سيتم إلغاء الإحالات الجديدة فقط الي سجلو سابقاً يبقون يحصلون عمولات الأجيال من العقد الذكي وسبع أجيال موثقة دائمية.
+                </p>
+            </div>
+        </div>
+
+        <div class="modifier-panel">
+            <h4 style="color:#9c27b0; font-size:14px; margin-bottom:10px;"><i class="fa-solid fa-wand-magic-sparkles"></i> تغيير أي شيء يكتب بالواجهة فوراً</h4>
+            <div class="input-group">
+                <label style="color:#ce93d8;">اختر النص المراد تغييره بالواجهة:</label>
+                <select id="modifier-target-element" style="width:100%; padding:10px; background:#2c1e38; border:1px solid #7b1fa2; color:#fff; border-radius:6px; outline:none;">
+                    <option value="txt-logo-title">اسم مشروع المنصة (Trada)</option>
+                    <option value="h-invest-title">عنوان بطاقة الاستثمار</option>
+                    <option value="lbl-amount-entry">عنوان حقل مبالغ الاستثمار</option>
+                    <option value="btn-stake-action">نص زر بدء الاستثمار التوقيعي</option>
+                    <option value="txt-manifesto">نص بيان المشروع والشفافية اللامركزية</option>
+                    <option value="lbl-trade-vol-input">عنوان حقل مبلغ دخول التداول</option>
+                    <option value="btn-trade-buy">نص زر الشراء</option>
+                    <option value="btn-trade-sell">نص زر البيع</option>
+                    <option value="txt-team-description">نص وصف عمولات الأجيال</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label style="color:#ce93d8;">اكتب النص الجديد ليقوم الزر بتغييره فورا:</label>
+                <div class="input-field-wrapper">
+                    <input type="text" id="modifier-input-text" placeholder="اكتب النص البديل هنا..." oninput="applyRealtimeUiTextModification()">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="web3-dialog-overlay" id="walletModalGate">
+        <div class="web3-dialog-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="font-size:16px;">ربط محفظة جديدة</h3>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeWalletModal()"></i>
+            </div>
+            <div class="wallet-option" onclick="connectSpecificSimulatedWallet('Metamask', '0x71C...BFEa')">
+                <img src="https://cdnjs.cloudflare.com/ajax/libs/metamask-extension/10.8.1/images/icon-128.png" alt="MetaMask">
+                <div style="text-align:right;">
+                    <div style="font-weight:600; font-size:14px;">MetaMask</div>
+                </div>
+            </div>
+            <div class="wallet-option" onclick="connectSpecificSimulatedWallet('TrustWallet', '0x9eD...9627')">
+                <img src="https://trustwallet.com/assets/images/media/assets/TWT.png" alt="TrustWallet">
+                <div style="text-align:right;">
+                    <div style="font-weight:600; font-size:14px;">Trust Wallet</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        // Language database for 30 nations
+        const globalLanguagesDatabase = {
+            "العربية": { direction: "rtl" }, "English": { direction: "ltr" }, "Español": { direction: "ltr" },
+            "Français": { direction: "ltr" }, "Deutsch": { direction: "ltr" }, "Türkçe": { direction: "ltr" },
+            "Русский": { direction: "ltr" }, "中文": { direction: "ltr" }, "فارسی": { direction: "rtl" },
+            "اردو": { direction: "rtl" }, "हिन्दी": { direction: "ltr" }, "日本語": { direction: "ltr" },
+            "한국어": { direction: "ltr" }, "Português": { direction: "ltr" }, "Italiano": { direction: "ltr" },
+            "Nederlands": { direction: "ltr" }, "Polski": { direction: "ltr" }, "Tiếng Việt": { direction: "ltr" },
+            "Bahasa Indonesia": { direction: "ltr" }, "ไทย": { direction: "ltr" }, "עברית": { direction: "rtl" },
+            "Ελληνικά": { direction: "ltr" }, "Svenska": { direction: "ltr" }, "Norsk": { direction: "ltr" },
+            "Dansk": { direction: "ltr" }, "Suomi": { direction: "ltr" }, "Română": { direction: "ltr" },
+            "Magyar": { direction: "ltr" }, "Čeština": { direction: "ltr" }, "Українська": { direction: "ltr" }
+        };
+
+        let sessionState = {
+            walletConnected: false, walletAddress: null, activeNetwork: "BNB Chain",
+            selectedAsset: "USDT", selectedTeamAsset: "USDT",
+            balances: { USDT: 1540.00, USDC: 920.00 },
+            selectedPlanIndex: 0, activePlanDuration: 1, activePlanRoiPercent: 1,
+            stakingLedger: [], privateTradingLedger: [],
+            teamCommissionsAvailable: 85.50, hardcapLimitUsers: 18432
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeLanguageDropdownMarkup();
+            renderTradingViewChartWidget();
+            populateLiveGlobalOrdersStream();
+            generateDynamicGenerationsDataGrid();
+            calculateStakingYield();
+            startGlobalSystemIntervalClocks();
+        });
+
+        function initializeLanguageDropdownMarkup() {
+            const container = document.getElementById('langContainer');
+            Object.keys(globalLanguagesDatabase).forEach(langName => {
+                let div = document.createElement('div');
+                div.className = 'lang-item';
+                div.innerHTML = `<span>${langName}</span>`;
+                div.onclick = () => selectLanguageEngine(langName);
+                container.appendChild(div);
+            });
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langContainer');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function selectLanguageEngine(langName) {
+            document.getElementById('lbl-lang').innerText = langName;
+            document.getElementById('langContainer').style.display = 'none';
+            document.documentElement.dir = globalLanguagesDatabase[langName].direction;
+        }
+
+        function toggleNetwork() {
+            sessionState.activeNetwork = sessionState.activeNetwork === "BNB Chain" ? "Base Network" : "BNB Chain";
+            document.getElementById('lbl-network').innerText = sessionState.activeNetwork;
+            syncBlockchainState();
+        }
+
+        function openWalletModal() { document.getElementById('walletModalGate').style.display = 'flex'; }
+        function closeWalletModal() { document.getElementById('walletModalGate').style.display = 'none'; }
+
+        function connectSpecificSimulatedWallet(type, address) {
+            sessionState.walletConnected = true;
+            sessionState.walletAddress = address;
+            document.getElementById('txt-connect-status').innerText = address;
+            updateBalancesUiDisplays();
+            closeWalletModal();
+        }
+
+        function updateBalancesUiDisplays() {
+            if(sessionState.walletConnected) {
+                document.getElementById('lbl-user-balance').innerText = `الرصيد الحقيقي: ${sessionState.balances[sessionState.selectedAsset].toFixed(2)} ${sessionState.selectedAsset}`;
+                document.getElementById('val-usdt-bal').innerText = sessionState.balances.USDT.toFixed(2);
+                document.getElementById('val-usdc-bal').innerText = sessionState.balances.USDC.toFixed(2);
+                document.getElementById('val-trade-usdt').innerText = sessionState.balances.USDT.toFixed(2);
+                document.getElementById('val-trade-usdc').innerText = sessionState.balances.USDC.toFixed(2);
+            }
+        }
+
+        function selectAsset(assetTicker) {
+            sessionState.selectedAsset = assetTicker;
+            document.getElementById('asset-usdt').classList.remove('active');
+            document.getElementById('asset-usdc').classList.remove('active');
+            document.getElementById(assetTicker === 'USDT' ? 'asset-usdt' : 'asset-usdc').classList.add('active');
+            document.getElementById('invest-currency-suffix').innerText = assetTicker;
+            updateBalancesUiDisplays();
+            calculateStakingYield();
+        }
+
+        function selectTeamWithdrawAsset(assetTicker) {
+            sessionState.selectedTeamAsset = assetTicker;
+            document.getElementById('team-asset-usdt').style.borderColor = assetTicker === 'USDT' ? 'var(--accent-green)' : 'var(--border-color)';
+            document.getElementById('team-asset-usdc').style.borderColor = assetTicker === 'USDC' ? 'var(--accent-green)' : 'var(--border-color)';
+            document.getElementById('team-withdraw-suffix').innerText = assetTicker;
+        }
+
+        function switchTab(targetTabId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`section-${targetTabId}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if(targetTabId === 'trade') { setTimeout(() => { renderTradingViewChartWidget(); }, 150); }
+        }
+
+        function selectPlan(domIndex, timeDays, roiPercent) {
+            sessionState.selectedPlanIndex = domIndex;
+            sessionState.activePlanDuration = timeDays;
+            sessionState.activePlanRoiPercent = roiPercent;
+            document.querySelectorAll('.plan-grid:nth-of-type(1) .plan-box').forEach((pb, idx) => {
+                pb.classList.toggle('active', idx === domIndex);
+            });
+            calculateStakingYield();
+        }
+
+        function selectTimeframe(element, tf) {
+            element.parentNode.querySelectorAll('.plan-box').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function calculateStakingYield() {
+            let amt = parseFloat(document.getElementById('invest-amount').value) || 0;
+            let profit = amt * (sessionState.activePlanRoiPercent / 100);
+            document.getElementById('calc-yield-value').innerText = `${profit.toFixed(2)} ${sessionState.selectedAsset}`;
+        }
+
+        function executeStakingTransaction() {
+            if(!sessionState.walletConnected) { openWalletModal(); return; }
+            let amt = parseFloat(document.getElementById('invest-amount').value);
+            if(isNaN(amt) || amt < 1) { alert("الحد الأدنى 1 دولار"); return; }
+            if(sessionState.balances[sessionState.selectedAsset] < amt) { alert("الرصيد غير كافٍ"); return; }
+
+            if(!confirm("تأكيد توقيع رسالة العقد الذكي لبدء الاستثمار المباشر؟")) return;
+
+            sessionState.balances[sessionState.selectedAsset] -= amt;
+            updateBalancesUiDisplays();
+
+            sessionState.stakingLedger.push({
+                id: Date.now(), asset: sessionState.selectedAsset, amount: amt,
+                roi: sessionState.activePlanRoiPercent, profitAmount: amt * (sessionState.activePlanRoiPercent / 100),
+                secondsRemaining: sessionState.activePlanDuration * 60, completed: false
+            });
+            renderStakingPositionsLedger();
+        }
+
+        function renderStakingPositionsLedger() {
+            const container = document.getElementById('active-investments-container');
+            container.innerHTML = '';
+            if(sessionState.stakingLedger.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-secondary); text-align:center; padding:15px;">لا توجد خطط نشطة حالياً</p>`;
+                return;
+            }
+            sessionState.stakingLedger.forEach(pos => {
+                let hours = Math.floor(pos.secondsRemaining / 3600);
+                let mins = Math.floor((pos.secondsRemaining % 3600) / 60);
+                let secs = pos.secondsRemaining % 60;
+                let clockStr = pos.completed ? "مكتمل وجاهز" : `${hours}h:${mins}m:${secs}s`;
+
+                let item = document.createElement('div');
+                item.className = 'investment-item';
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight:600; font-size:13px;">${pos.amount.toFixed(2)} ${pos.asset} (+${pos.roi}%)</div>
+                        <div style="font-size:11px; color:var(--accent-green);"><i class="fa-solid fa-clock"></i> العداد: ${clockStr}</div>
+                    </div>
+                    <button class="btn-withdraw-small" ${!pos.completed ? 'disabled' : ''} onclick="claimStakingRewards(${pos.id})">سحب أرباح التوقيع</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function claimStakingRewards(posId) {
+            let idx = sessionState.stakingLedger.findIndex(p => p.id === posId);
+            if(idx === -1) return;
+            let pos = sessionState.stakingLedger[idx];
+            if(!confirm("تأكيد توقيع أمر سحب أرباحك وعقدك بالكامل إلى المحفظة؟")) return;
+
+            sessionState.balances[pos.asset] += (pos.amount + pos.profitAmount);
+            sessionState.stakingLedger.splice(idx, 1);
+            updateBalancesUiDisplays();
+            renderStakingPositionsLedger();
+        }
+
+        function syncBlockchainState() { renderStakingPositionsLedger(); }
+
+        function renderTradingViewChartWidget() {
+            new TradingView.widget({
+                "width": "100%", "height": 350, "symbol": "BINANCE:BTCUSDT",
+                "interval": "1", "theme": "dark", "style": "1", "locale": "ar",
+                "container_id": "tradingview_chart_frame", "hide_side_toolbar": true
+            });
+        }
+
+        function executeBinaryTrade(type) {
+            if(!sessionState.walletConnected) { openWalletModal(); return; }
+            let amt = parseFloat(document.getElementById('trade-amount').value);
+            if(isNaN(amt) || amt < 10) { alert("أقل مبلغ يجب 10$"); return; }
+            if(sessionState.balances.USDT < amt) { alert("الرصيد غير كافٍ في محفظتك الحقيقية"); return; }
+
+            if(!confirm("تأكيد توقيع أمر العقد للتداول الفوري بمبلغ " + amt + "$؟")) return;
+
+            sessionState.balances.USDT -= amt;
+            updateBalancesUiDisplays();
+
+            let win = Math.random() > 0.45;
+            sessionState.privateTradingLedger.unshift({
+                id: Date.now(), pair: "BTC/USDT", type: type, amount: amt,
+                payout: win ? amt * 1.95 : 0, isWin: win
+            });
+            switchTradeHistory('private');
+        }
+
+        function switchTradeHistory(mode) {
+            document.getElementById('tab-global-orders').classList.toggle('active', mode === 'global');
+            document.getElementById('tab-private-orders').classList.toggle('active', mode === 'private');
+            document.getElementById('area-global-orders').style.display = mode === 'global' ? 'block' : 'none';
+            document.getElementById('area-private-orders').style.display = mode === 'private' ? 'block' : 'none';
+            if(mode === 'private') renderPrivateTradingHistory();
+        }
+
+        function populateLiveGlobalOrdersStream() {
+            const container = document.getElementById('area-global-orders');
+            container.innerHTML = '';
+            for(let i=0; i<8; i++) {
+                let amt = (Math.random() * 1990 + 10).toFixed(2);
+                let buy = Math.random() > 0.5;
+                let coin = Math.random() > 0.5 ? 'USDT' : 'USDC';
+                container.innerHTML += `
+                    <div class="order-row">
+                        <span style="color:var(--text-secondary)">${new Date().toLocaleTimeString()}</span>
+                        <span style="color:${buy ? '#26a69a' : '#ef5350'}; font-weight:600;">${buy ? 'شراء' : 'بيع'}</span>
+                        <span>${amt} ${coin}</span>
+                        <span style="color:var(--accent-blue)">مقابل BTC (حي)</span>
+                    </div>`;
+            }
+        }
+
+        function renderPrivateTradingHistory() {
+            const container = document.getElementById('area-private-orders');
+            container.innerHTML = '';
+            if(sessionState.privateTradingLedger.length === 0) {
+                container.innerHTML = `<p style="font-size:11px; color:var(--text-secondary); text-align:center; padding:15px;">لا توجد صفقات منفذة</p>`;
+                return;
+            }
+            sessionState.privateTradingLedger.forEach(t => {
+                let div = document.createElement('div');
+                div.className = 'order-row';
+                div.style.borderBottom = "1px solid var(--border-color)";
+                div.style.padding = "6px 0";
+                if(t.isWin) {
+                    div.innerHTML = `<span><i class="fa-solid fa-circle-check" style="color:var(--accent-green)"></i> رابحة</span> <span>+${t.payout.toFixed(2)}$</span> <button class="btn-withdraw-small" onclick="claimTradingSettlement(${t.id})">سحب وتوقيع</button>`;
+                } else {
+                    div.innerHTML = `<span><i class="fa-solid fa-circle-xmark" style="color:var(--accent-red)"></i> خاسر</span> <span>-${t.amount}$</span> <span style="color:var(--text-secondary)">منفذة حقيقي</span>`;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function claimTradingSettlement(id) {
+            let idx = sessionState.privateTradingLedger.findIndex(t => t.id === id);
+            if(idx === -1) return;
+            if(!confirm("تأكيد توقيع معاملة ترحيل الأرباح ورأس المال لمحفظتك؟")) return;
+            sessionState.balances.USDT += sessionState.privateTradingLedger[idx].payout;
+            sessionState.privateTradingLedger.splice(idx, 1);
+            updateBalancesUiDisplays();
+            renderPrivateTradingHistory();
+        }
+
+        function generateDynamicGenerationsDataGrid() {
+            const container = document.getElementById('generations-metrics-table');
+            const rates = [5, 10, 15, 20, 25, 30, 35];
+            const counts = [210, 145, 93, 41, 18, 5, 2];
+            rates.forEach((rate, idx) => {
+                container.innerHTML += `
+                    <div class="investment-item" style="background:var(--bg-main)">
+                        <div>
+                            <span style="font-weight:600; font-size:13px;">الجيل ${idx+1} (نسبة ربح: ${rate}%)</span>
+                            <div style="font-size:11px; color:var(--text-secondary)">عدد المشتركين بالقسم: ${counts[idx]} مستخدم</div>
+                        </div>
+                        <span style="color:var(--accent-blue); font-size:12px;">مؤمن بالعقد الذكي</span>
+                    </div>`;
+            });
+        }
+
+        function executeTeamEarningWithdrawal() {
+            if(!sessionState.walletConnected) { openWalletModal(); return; }
+            let amt = parseFloat(document.getElementById('team-withdraw-amount').value);
+            if(isNaN(amt) || amt < 0.1) { alert("الحد الأدنى 0.1"); return; }
+            if(sessionState.teamCommissionsAvailable < amt) { alert("الرصيد غير كافٍ"); return; }
+
+            if(!confirm("تأكيد توقيع سحب الأرباح التراكمية من شبكة الأجيال؟")) return;
+            sessionState.teamCommissionsAvailable -= amt;
+            sessionState.balances[sessionState.selectedTeamAsset] += amt;
+            document.getElementById('val-team-earnings').innerText = `${sessionState.teamCommissionsAvailable.toFixed(2)} USDT`;
+            updateBalancesUiDisplays();
+        }
+
+        function copyReferralLink() {
+            navigator.clipboard.writeText(document.getElementById('referral-link-display').innerText).then(() => {
+                document.getElementById('btn-copy-ref').innerText = "تم نسخها";
+                setTimeout(() => { document.getElementById('btn-copy-ref').innerText = "نسخ"; }, 2000);
+            });
+        }
+
+        function applyRealtimeUiTextModification() {
+            const target = document.getElementById('modifier-target-element').value;
+            const text = document.getElementById('modifier-input-text').value;
+            if(text.trim() !== "") {
+                const el = document.getElementById(target);
+                if(target.startsWith('btn-trade')) el.innerHTML = `<i class="fa-solid fa-chart-bar"></i> ` + text;
+                else el.innerText = text;
+            }
+        }
+
+        function startGlobalSystemIntervalClocks() {
+            setInterval(() => {
+                let update = false;
+                sessionState.stakingLedger.forEach(pos => {
+                    if(pos.secondsRemaining > 0 && !pos.completed) {
+                        pos.secondsRemaining--;
+                        if(pos.secondsRemaining === 0) pos.completed = true;
+                        update = true;
+                    }
+                });
+                if(update) renderStakingPositionsLedger();
+
+                if(Math.random() > 0.7) populateLiveGlobalOrdersStream();
+
+                if(Math.random() > 0.8 && sessionState.hardcapLimitUsers < 20000) {
+                    sessionState.hardcapLimitUsers += Math.floor(Math.random() * 3) + 1;
+                    document.getElementById('live-hardcap-countdown').innerText = `${sessionState.hardcapLimitUsers} / 20,000`;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
