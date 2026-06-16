@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trada Network</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        :root {
+            --bg-main: #0b0e11;
+            --bg-card: #151a21;
+            --border-color: #262f3c;
+            --text-primary: #ffffff;
+            --text-secondary: #848e9c;
+            --accent-green: #00c582;
+            --accent-red: #f84960;
+            --accent-blue: #2f80ed;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overflow-x: hidden !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            position: relative;
+        }
+        body { padding-bottom: 75px; }
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo-box { display: flex; align-items: center; gap: 8px; }
+        .logo-box i { color: var(--accent-green); font-size: 20px; }
+        .logo-box span { font-weight: 700; font-size: 18px; letter-spacing: 0.5px; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .btn-action-nav {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        .lang-dropdown { position: relative; }
+        .lang-menu-box {
+            display: none;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 150px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+        .lang-item {
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lang-item:hover { background-color: var(--bg-main); }
+        .page-section { display: none; padding: 16px; max-width: 480px; margin: 0 auto; }
+        .page-section.active { display: block; }
+        .card-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+        .plan-box {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            position: relative;
+            touch-action: none;
+            transform: translate(0px, 0px);
+        }
+        .plan-box.active { border-color: var(--accent-green) !important; background: rgba(0, 197, 130, 0.03); }
+        
+        .top-telegram-box {
+            display: flex; gap: 12px; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+        }
+        .top-telegram-box a {
+            font-size: 12px; color: var(--accent-blue); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px;
+        }
+
+        .roadmap-timeline { position: relative; padding: 10px 5px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; }
+        .roadmap-timeline::before {
+            content: ''; position: absolute; top: 15px; bottom: 0; left: 15px; width: 2px; background: var(--border-color);
+        }
+        .roadmap-item { position: relative; margin-bottom: 20px; padding-left: 35px; }
+        .roadmap-item::before {
+            content: ''; position: absolute; left: 11px; top: 5px; width: 10px; height: 10px; border-radius: 50%;
+            background: var(--text-secondary); border: 2px solid var(--bg-card); z-index: 2;
+        }
+        .roadmap-item.completed::before { background: var(--accent-green); }
+        .roadmap-item.completed .roadmap-line-fill {
+            position: absolute; left: 15px; top: 15px; bottom: -25px; width: 2px; background: var(--accent-green); z-index: 1;
+        }
+        .roadmap-date { font-size: 12px; font-weight: 700; color: var(--accent-blue); margin-bottom: 2px; }
+        .roadmap-item.completed .roadmap-date { color: var(--accent-green); }
+        .roadmap-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+        
+        .asset-selector-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .asset-btn-toggle {
+            flex: 1; background: var(--bg-main); border: 1px solid var(--border-color);
+            color: var(--text-primary); padding: 8px; border-radius: 6px; font-weight: 600;
+            cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .asset-btn-toggle.active { border-color: var(--accent-green); background: rgba(0, 197, 130, 0.05); }
+        .input-group-wrapper {
+            background-color: var(--bg-main); border: 1px solid var(--border-color);
+            border-radius: 8px; display: flex; align-items: center; padding: 8px 12px; margin: 6px 0 12px 0;
+        }
+        .input-group-wrapper input {
+            background: transparent; border: none; color: white; font-size: 14px; width: 100%; outline: none; font-weight: 600;
+        }
+        .input-lbl-suffix { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+        .btn-action-trigger {
+            width: 100%; background: var(--accent-green); color: black; border: none;
+            padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;
+        }
+        
+        #ui-status-notifier {
+            display: none; padding: 10px; border-radius: 8px; font-size: 12px; 
+            margin-bottom: 12px; text-align: center; font-weight: 600;
+        }
+        .status-error { background: rgba(248, 73, 96, 0.15); border: 1px solid var(--accent-red); color: #ff6b7e; }
+        .status-success { background: rgba(0, 197, 130, 0.15); border: 1px solid var(--accent-green); color: #63ffc4; }
+
+        .investment-item {
+            background-color: var(--bg-main); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 10px 12px; margin-top: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-withdraw-small {
+            background: var(--accent-blue); color: white; border: none; padding: 4px 10px;
+            border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;
+        }
+        .btn-withdraw-small:disabled { background: var(--border-color); color: var(--text-secondary); cursor: not-allowed; }
+        .nav-bar-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color); display: flex; height: 60px; z-index: 1000;
+        }
+        .tab-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-secondary); cursor: pointer; gap: 4px;
+        }
+        .tab-btn i { font-size: 18px; }
+        .tab-btn span { font-size: 11px; font-weight: 500; }
+        .tab-btn.active { color: var(--accent-green); }
+        .order-row { display: flex; justify-content: space-between; font-size: 11px; padding: 6px 0; border-bottom: 1px solid var(--border-color); }
+        
+        .trading-console-box { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; text-align: center; }
+        .trade-timer-display { font-size: 24px; font-weight: 800; color: var(--accent-blue); font-family: monospace; }
+        .trade-result-banner { padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 5px; font-size: 13px; }
+        .result-win { background: rgba(0, 197, 130, 0.15); border: 1px solid var(--accent-green); color: #63ffc4; }
+        .result-loss { background: rgba(248, 73, 96, 0.15); border: 1px solid var(--accent-red); color: #ff6b7e; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <i class="fa-solid fa-chart-line"></i>
+            <span id="txt-logo-title">Trada</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn-action-nav" id="network-selector" onclick="toggleNetwork()">
+                <i class="fa-solid fa-circle-nodes"></i> <span>BNB Chain</span>
+            </button>
+            <div class="lang-dropdown">
+                <button class="btn-action-nav" id="lbl-lang" onclick="toggleLangMenu()">🌐 العربية</button>
+                <div class="lang-menu-box" id="langContainer"></div>
+            </div>
+            <button class="btn-action-nav" id="btn-wallet-connect" onclick="connectWeb3WalletDirectly()">
+                <i class="fa-solid fa-wallet"></i> <span>Connect</span>
+            </button>
+        </div>
+    </header>
+
+    <div style="max-width:480px; margin: 10px auto 0 auto; padding: 0 16px;">
+        <div id="ui-status-notifier"></div>
+    </div>
+
+    <section class="page-section active" id="section-invest">
+        <div class="card-panel">
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:12px;" id="h-invest-title">فتح مصفوفة التدفق المالي</h3>
+            
+            <div class="asset-selector-row">
+                <button class="asset-btn-toggle active" id="asset-usdt" onclick="selectAsset('USDT')">USDT</button>
+                <button class="asset-btn-toggle" id="asset-usdc" onclick="selectAsset('USDC')">USDC</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
+                <span id="lbl-invest-balance" style="font-weight:600; color:var(--text-secondary);">الرصيد الفعلي: --</span>
+                <span style="color:var(--accent-green); font-weight:700; cursor:pointer;" id="btn-sync-chain-invest" onclick="syncBlockchainState()"><i class="fa-solid fa-rotate"></i> مزامنة البلوكشين الحية</span>
+            </div>
+
+            <label class="input-lbl-suffix" id="lbl-amount-entry">Masukkan Jumlah Deposit (Min 1$):</label>
+            <div class="input-group-wrapper">
+                <input type="number" id="invest-amount" value="0" oninput="calculateStakingYield()">
+                <span class="input-lbl-suffix" id="invest-currency-suffix">USDT</span>
+            </div>
+
+            <label class="input-lbl-suffix" id="lbl-strategy-choose">Pilih Rencana Aliran:</label>
+            <div class="plan-grid">
+                <div class="plan-box active" onclick="selectPlan(0, 1, 1.00)">
+                    <div style="font-size:12px; font-weight:700;" id="plan-daily">Harian</div>
+                    <div style="font-size:14px; font-weight:800; color:var(--accent-green); margin-top:4px;" id="plan-daily-val">1.00%</div>
+                </div>
+                <div class="plan-box" id="plan-1" onclick="selectPlan(1, 7, 7.00)">
+                    <div style="font-size:12px; font-weight:700;" id="plan-weekly">Mingguan</div>
+                    <div style="font-size:14px; font-weight:800; color:var(--accent-green); margin-top:4px;" id="plan-weekly-val">7.00%</div>
+                </div>
+                <div class="plan-box" onclick="selectPlan(2, 20, 20.00)">
+                    <div style="font-size:12px; font-weight:700;" id="plan-20d">20 Hari</div>
+                    <div style="font-size:14px; font-weight:800; color:var(--accent-green); margin-top:4px;" id="plan-20d-val">20.00%</div>
+                </div>
+                <div class="plan-box" onclick="selectPlan(3, 30, 30.00)">
+                    <div style="font-size:12px; font-weight:700;" id="plan-30d">30 Hari</div>
+                    <div style="font-size:14px; font-weight:800; color:var(--accent-green); margin-top:4px;" id="plan-30d-val">30.00%</div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-size:12px;">
+                <span style="color:var(--text-secondary);" id="lbl-expected-payout">Perkiraan Keuntungan Bersih:</span>
+                <span style="font-weight:700; color:var(--accent-green);" id="calc-yield-value">0.00 USDT</span>
+            </div>
+
+            <button class="btn-action-trigger" id="btn-stake-action" onclick="executeStakingTransaction()">Trading & Mulai Investasi</button>
+        </div>
+
+        <div class="card-panel">
+            <div class="top-telegram-box">
+                <a id="lnk-telegram" href="#"><i class="fa-brands fa-telegram"></i> قناة التليجرام</a>
+                <a id="lnk-group" href="#"><i class="fa-brands fa-telegram"></i> المجموعة الرسمية</a>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size:13px; font-weight:700; color:var(--text-secondary);" id="lbl-active-pos"><i class="fa-solid fa-folder-open"></i> Kontrak Aktif Anda</h4>
+                <button style="background: transparent; border: none; color: var(--accent-green); font-size: 11px; font-weight: 700; cursor: pointer;" onclick="syncBlockchainState()"><i class="fa-solid fa-arrows-rotate"></i> تحديث العقود</button>
+            </div>
+            <div id="active-investments-container" style="margin-top:10px; margin-bottom:15px;"></div>
+
+            <div class="roadmap-timeline" id="roadmap-timeline-container"></div>
+        </div>
+    </section>
+
+    <section class="page-section" id="section-trade">
+        <div class="card-panel" style="padding:10px; height:340px;" id="tradingview_chart_frame"></div>
+        
+        <div class="card-panel">
+            <div class="asset-selector-row">
+                <button class="asset-btn-toggle active" id="trade-asset-usdt" onclick="selectTradeAsset('USDT')">USDT</button>
+                <button class="asset-btn-toggle" id="trade-asset-usdc" onclick="selectTradeAsset('USDC')">USDC</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
+                <span id="lbl-user-balance" style="font-weight:600; color:var(--text-secondary);">Saldo Riil: --</span>
+                <span style="color:var(--accent-green); font-weight:700; cursor:pointer;" id="btn-sync-chain" onclick="syncBlockchainState()"><i class="fa-solid fa-rotate"></i> Sinkronisasi Blockchain</span>
+            </div>
+
+            <label class="input-lbl-suffix" id="lbl-trade-vol-input">Jumlah Masuk Trade vs BTC:</label>
+            <div class="input-group-wrapper">
+                <input type="number" id="trade-amount" value="0">
+                <span class="input-lbl-suffix" id="trade-currency-display">USDT</span>
+            </div>
+            <p style="font-size:11px; color:var(--accent-red); margin-top:-8px; margin-bottom:10px;" id="lbl-min-trade-alert">Jumlah minimum adalah 10$</p>
+
+            <label class="input-lbl-suffix" id="lbl-expiry-time">Waktu Transaksi:</label>
+            <div class="plan-grid" style="grid-template-columns: repeat(3, 1fr); gap:6px; margin-bottom:14px;">
+                <div class="plan-box active" style="padding:6px; text-align:center; font-size:11px; font-weight:700;" id="tf-1m" onclick="selectTimeframe(this, 1)">1 Menit</div>
+                <div class="plan-box" style="padding:6px; text-align:center; font-size:11px; font-weight:700;" id="tf-5m" onclick="selectTimeframe(this, 5)">5 Menit</div>
+                <div class="plan-box" style="padding:6px; text-align:center; font-size:11px; font-weight:700;" id="tf-40m" onclick="selectTimeframe(this, 40)">40 Menit</div>
+            </div>
+
+            <div class="asset-selector-row">
+                <button class="asset-btn-toggle" style="background:#26a69a; color:black; font-weight:800; font-size:14px;" id="btn-trade-buy" onclick="executeBinaryTrade('BUY')"><i class="fa-solid fa-arrow-trend-up"></i> Beli</button>
+                <button class="asset-btn-toggle" style="background:#ef5350; color:black; font-weight:800; font-size:14px;" id="btn-trade-sell" onclick="executeBinaryTrade('SELL')"><i class="fa-solid fa-arrow-trend-down"></i> Jual</button>
+            </div>
+
+            <div class="trading-console-box" id="trading-live-console" style="display: none;">
+                <div class="trade-timer-display" id="trade-live-timer">00:00</div>
+                <div id="trade-result-banner-box"></div>
+            </div>
+        </div>
+
+        <div class="card-panel">
+            <div style="display:flex; gap:10px; border-bottom:1px solid var(--border-color); padding-bottom:8px; margin-bottom:10px;">
+                <span class="tab-btn active" id="tab-global-orders" style="font-size:12px; font-weight:700;" onclick="switchTradeHistory('global')">Aliran Global (Live)</span>
+                <span class="tab-btn" id="tab-private-orders" style="font-size:12px; font-weight:700;" onclick="switchTradeHistory('private')">Buku Ledger Pribadi</span>
+            </div>
+            <div id="area-global-orders"></div>
+            <div id="area-private-orders" style="display:none;"></div>
+        </div>
+    </section>
+
+    <section class="page-section" id="section-team">
+        <div class="card-panel" style="text-align:center; position:relative;">
+            <div style="font-size:24px; color:var(--accent-green); margin-bottom:6px;"><i class="fa-solid fa-users-gear"></i></div>
+            <p style="font-size:12px; color:white; font-weight:700;" id="lbl-hardcap-text">Kunci pada 50k pengguna per jaringan: <span style="color:var(--accent-green);" id="live-hardcap-countdown">0 / 50,000</span></p>
+            <p style="font-size:11px; color:var(--text-secondary); margin-top:6px; line-height:1.5;" id="txt-manifesto">Proyek terdesentralisasi dengan transparansi penuh.</p>
+        </div>
+
+        <div class="card-panel">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:8px;" id="lbl-ref-engine-title"><i class="fa-solid fa-share-nodes"></i> Kode Referal Terdesentralisasi</h3>
+            <p style="font-size:11px; color:var(--text-secondary);" id="lbl-your-ref-link">Tautan Promosi Pintar:</p>
+            <div class="input-group-wrapper" style="margin-bottom:0; gap: 4px;">
+                <span id="referral-link-display" style="font-size:12px; font-weight:700; color:var(--accent-blue);">Trada.net/R-000000</span>
+                <button id="btn-generate-ref" style="background:var(--accent-green); border:none; color:black; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:600; margin-left:auto;" onclick="forceGenerateReferralCode()">Load</button>
+                <button id="btn-copy-ref" style="background:var(--accent-blue); border:none; color:white; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:600;" onclick="copyReferralLink()">Copy</button>
+            </div>
+        </div>
+
+        <div class="card-panel">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:10px;" id="lbl-withdrawable-comm"><i class="fa-solid fa-sack-dollar"></i> Saldo Generasi Pengুনা</h3>
+            
+            <div class="asset-selector-row" style="margin-bottom:10px;">
+                <button class="asset-btn-toggle" id="team-asset-usdt" style="border-color:var(--border-color);" onclick="selectTeamWithdrawAsset('USDT')">USDT</button>
+                <button class="asset-btn-toggle" id="team-asset-usdc" onclick="selectTeamWithdrawAsset('USDC')">USDC</button>
+            </div>
+
+            <div style="font-size:20px; font-weight:800; color:var(--accent-green); margin-bottom:10px;" id="val-team-earnings">--</div>
+            
+            <div style="text-align: right; margin-bottom: 8px;">
+                <span style="color:var(--accent-green); font-size:11px; font-weight:700; cursor:pointer;" id="btn-sync-chain-team" onclick="syncBlockchainState()"><i class="fa-solid fa-rotate"></i> مزامنة عمولات الشبكة</span>
+            </div>
+
+            <label class="input-lbl-suffix" id="lbl-amt-withdraw-comm">Masukkan jumlah (Min 0.1):</label>
+            <div class="input-group-wrapper">
+                <input type="number" id="team-withdraw-amount" value="0">
+                <span class="input-lbl-suffix" id="team-withdraw-suffix">USDT</span>
+            </div>
+            <button class="btn-action-trigger" style="background:var(--accent-blue); color:white;" id="btn-withdraw-team-action" onclick="executeTeamEarningWithdrawal()">Tanda Tangani Kontrak Penarikan</button>
+        </div>
+
+        <div class="card-panel">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:10px;" id="lbl-gen-breakdown"><i class="fa-solid fa-network-wired"></i> Struktur Tujوه Generasi Naik</h3>
+            <p style="font-size:11px; color:var(--text-secondary); margin-bottom:10px; line-height:1.4;" id="txt-team-description">Siapa pun yang terdaftar terus mendapatkan hadiah jaringan generasi tanpa batas melalui protokol.</p>
+            <div id="generations-metrics-table"></div>
+        </div>
+
+        <div class="card-panel">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px;" id="title-faq"><i class="fa-solid fa-circle-question"></i> FAQ</h3>
+            <p style="font-size:11px; color:var(--text-secondary); line-height:1.5;" id="txt-faq-text">Mekanisme referal akan dihentิตikan setelah batas tercapai.</p>
+        </div>
+    </section>
+
+    <nav class="nav-bar-footer">
+        <div class="tab-btn active" onclick="switchTab('invest')">
+            <i class="fa-solid fa-vault"></i>
+            <span id="nav-invest">Investasi</span>
+        </div>
+        <div class="tab-btn" onclick="switchTab('trade')">
+            <i class="fa-solid fa-chart-line"></i>
+            <span id="nav-trade">Trading</span>
+        </div>
+        <div class="tab-btn" onclick="switchTab('team')">
+            <i class="fa-solid fa-users"></i>
+            <span id="nav-team">Generasi</span>
+        </div>
+    </nav>
+
+    <script>
+        const globalLanguagesDatabase = {
+            "العربية": { direction: "rtl", flag: "🌐", t: { 
+                logo: "Trada", invest: "استثمار", trade: "تداول", team: "الأجيال", h_invest: "فتح مصفوفة التدفق المالي", balance: "الرصيد الفعلي: ", amount_lbl: "أدخل مبلغ الإيداع (الحد الأدنى 1$):", strategy: "اختر خطة التدفق المالي:", expected: "العائد الصافي المتوقع:", btn_stake: "تداول وابدأ الاستثمار الذكي", active_pos: "عقودك الاستثمارية النشطة", sync_chain: "مزامنة البلوكشين الحية", trade_vol: "حجم دخول صفقة التداول مقابل BTC (الحد الأدنى 10$):", min_alert: "الحد الأدنى لدخول الصفقة هو 10$", expiry_time: "الإطار الزمن لانتهاء الصفقة:", buy: "شراء (صعود)", sell: "بيع (هبوط)", hardcap: "قفل وإغلاق سقف المزامنة عند 50k مستخدم لكل شبكة:", ref_title: "رابط الإحالة اللامركزي التكتيكي", ref_url: "رابط الترويج الذكي الخاص بك:", withdraw_comm: "رصيد عمولات الأجيال السبعة", amt_comm_lbl: "أدخل كمية السحب (الحد الأدنى 0.1):", btn_comm: "توقيع عقد سحب أرباح الشبكة", gen_title: "هيكل توزيع أرباح الأجيال السبعة صعوداً", faq_title: "الأسئلة الشائعة للبروتوكول", daily: "يومي", weekly: "أسبوعي", d20: "20 يوم", d30: "30 يوم", connect_btn: "ربط المحفظة اللامركزية", manifesto: "مشروع لامركزي بالكامل بشفافية مطلقة. بدون خوادم أو بروكسي مركزي. عمليات التداول الفورية الحية تحقق عائداً صافياً ثابتاً يبلغ 1.00%.", faq_text: "آلية نظام الإحالات وبناء الشبكات مؤقتة لإضفاء طابع الزخم الفوري وسوف تُغلق تماماً للشركاء الجدد فور اكتمال السقف المحدد، بينما تستمر الحسابات القديمة بحصاد العوائد بشكل دائم مشفر.", team_desc: "أي عنوان محفظة مسجل يستمر في تلقي عوائد وأرباح شبكة الأجيال السبعة دون انقطاع عبر العقد الذكي للبروتوكول.", global_orders: "تدفق الأوامر العالمي الحقيقي (Live)", private_orders: "سجل صفقاتك وعقود التوقيع الخاصة", tf_1m: "دقيقة واحدة", tf_5m: "5 دقائق", tf_40m: "40 دقيقة (تكتيكي)", telegram_ch: "قناة التليجرام الرسمية", telegram_gr: "المجموعة الرسمية للبروتوكول", gen_lbl: "الجيل", secure_lbl: "مؤمن بالكامل عبر الواجهة الذكية", sub_lbl: "المشتركين النشطين: ", users_lbl: "مستفيد"
+            }, roadmap: [
+                { date: "20 يناير 2025", desc: "ولادة التصميم الهيكلي الأول وبناء الهندسة الفنية الكاملة للواجهة اللامركزية لشبكة Trada.", comp: true },
+                { date: "أكتوبر 2025", desc: "بدء العمل الفعلي والتطوير البرمجي الشامل لكافة بروتوكولات المشروع الذكية عبر الشبكة.", comp: true },
+                { date: "يناير 2027", desc: "المستقبل: إطلاق المسابقات العالمية الكبرى للبروتوكول لتوسيع قاعدة التفاعل والوعي.", comp: false },
+                { date: "عام 2027", desc: "المستقبل: النشر الرسمي الكامل للمشروع عبر الشبكات اللامركزية وإتاحته لعموم المستخدمين.", comp: false },
+                { date: "أبريل 2027", desc: "المستقبل: انتشار واشتهار المشروع على نطاق واسع وجذب تدفقات سيولة عالمية ضخمة.", comp: false },
+                { date: "عام 2028", desc: "المستقبل: التخطيط لبناء مجتمع حوكمة لامركزي (DAO) لإدارة التحديثات والإضافات المستقبلية من قبل المجتمع.", comp: false },
+                { date: "عام 2029", desc: "المستقبل: دمج ميزات التداول الفوري المتقدم وإطلاق منصة العقود الآجلة اللامركزية بالكامل.", comp: false },
+                { date: "عام 2030", desc: "المستقبل: إطلاق ميزة الإقراض والاقتراض اللامركزي المبتكرة التي تسمح للمستخدمين بطلب قروض مباشرة عبر المحفظة.", comp: false },
+                { date: "عام 2031", desc: "المستقبل: إضافة بروتوكول القروض السريعة (Flash Loans) عبر عقود ذكية خاصة تتيح تحقيق أرباح حقيقية تصل إلى 50% شهرياً.", comp: false },
+                { date: "عام 2032", desc: "المستقبل: دمج وتكامل المشروع مع إطلاق المحفظة اللامركزية الخاصة والآمنة التابعة لشبكة Trada.", comp: false },
+                { date: "عام 2033", desc: "المستقبل: البدء في إدراج وتداول العملات الجديدة والقديمة داخل البورصة اللامركزية التابعة للشبكة.", comp: false },
+                { date: "عام 2034", desc: "المستقبل: تحقيق الربط التقني المباشر والخدمات المشتركة مع كبرى المنصات العالمية مثل Binance و OKX.", comp: false },
+                { date: "عام 2035", desc: "المستقبل: تأسيس وإنشاء أكبر بورصة رقمية شاملة تجمع كافة الخدمات المالية واللامركزية في منصة واحدة.", comp: false },
+                { date: "عام 2036", desc: "المستقبل: إطلاق أول منصة تدمج بين التداول والاستثمار وتغيير فكرة النسب السنوية التقليدية المحدودة التي لا تتجاوز 12%.", comp: false },
+                { date: "عام 2037", desc: "المستقبل: التوسع الجغرافي الكامل لدخول كافة دول العالم وتكوين أضخم تجمع مالي مشفر يضم كبار وصغار المستثمرين.", comp: false },
+                { date: "عام 2038 وما بعده", desc: "المستقبل الاستدامي: تأمين استمرارية Trada كمشروع حقيقي مستقل، دائم، ومستدام إلى أجل غير مسمى.", comp: false }
+            ]},
+            "English": { direction: "ltr", flag: "🇺🇸", t: { 
+                logo: "Trada", invest: "Invest", trade: "Trade", team: "Generations", h_invest: "Open Financial Flow Matrix", balance: "Real Balance: ", amount_lbl: "Enter Deposit Amount (Min 1$):", strategy: "Select Flow Plan:", expected: "Expected Net Yield:", btn_stake: "Trade & Start Smart Invest", active_pos: "Your Active Staking Contracts", sync_chain: "Live Blockchain Sync", trade_vol: "Trade Entry Amount vs BTC (Min 10$):", min_alert: "Minimum entry amount is 10$", expiry_time: "Transaction Timeframe:", buy: "Buy", sell: "Sell", hardcap: "Lock at 50k users per network:", ref_title: "Decentralized Referral Architecture", ref_url: "Your Smart Promo Link:", withdraw_comm: "User Generation Balance", amt_comm_lbl: "Enter amount (Min 0.1):", btn_comm: "Sign Network Withdrawal Contract", gen_title: "Ascending Seven Generations Structure", faq_title: "FAQ", daily: "Daily", weekly: "Weekly", d20: "20 Days", d30: "30 Days", connect_btn: "Connect Web3 Wallet", manifesto: "Fully decentralized project with complete transparency. No proxies or servers. Real-time trading orders generate 1.00% net profit.", faq_text: "The referral mechanism will be deactivated for new addresses once the limit is reached, existing networks earn permanently.", team_desc: "Anyone registered continues to receive generation network rewards indefinitely through the protocol.", global_orders: "Global Stream (Live)", private_orders: "Private Ledger & History", tf_1m: "1 Minute", tf_5m: "5 Minutes", tf_40m: "40 Minutes", telegram_ch: "Official Telegram Channel", telegram_gr: "Official Telegram Group", gen_lbl: "Generation", secure_lbl: "Secured by Smart Interface", sub_lbl: "Active Members: ", users_lbl: "Users"
+            }, roadmap: [
+                { date: "Jan 20, 2025", desc: "Birth of Trada architecture design and construction of decentralized web interface.", comp: true },
+                { date: "Oct 2025", desc: "Commencement of full smart contract development across major network infrastructures.", comp: true },
+                { date: "Jan 2027", desc: "Future: Launching global competitions to scale community interaction.", comp: false },
+                { date: "Year 2027", desc: "Future: Official launch and full deployment across decentralized networks.", comp: false },
+                { date: "Apr 2027", desc: "Future: Global mass adoption and rapid scaling of public liquidity pools.", comp: false },
+                { date: "Year 2028", desc: "Future: DAO infrastructure deployment for community-driven governance and updates.", comp: false },
+                { date: "Year 2029", desc: "Future: Integration of full spot trading features and advanced decentralized futures markets.", comp: false },
+                { date: "Year 2030", desc: "Future: Launching decentralized lending protocols allowing peer-to-peer crypto loans.", comp: false },
+                { date: "Year 2031", desc: "Future: Deploying dedicated Flash Loan contracts designed to clear up to 50% monthly real returns.", comp: false },
+                { date: "Year 2032", desc: "Future: Complete ecosystem integration and official launch of Trada non-custodial wallet.", comp: false },
+                { date: "Year 2033", desc: "Future: Listing new and heritage tokens within the native decentralized trading board.", comp: false },
+                { date: "Year 2034", desc: "Future: Direct cross-chain bridge implementation and unified services with Binance and OKX.", comp: false },
+                { date: "Year 2035", desc: "Future: Building the largest absolute decentralized hub integrating all web3 financial operations.", comp: false },
+                { date: "Year 2036", desc: "Future: First unified interface merging active trading and fixed yields, bypassing conventional 12% limits.", comp: false },
+                { date: "Year 2037", desc: "Future: Expanding into all global jurisdictions, establishing the ultimate tier-1 community network.", comp: false },
+                { date: "Year 2038+", desc: "Future: The perpetual phase of Trada as a fully automated, independent, and everlasting financial matrix.", comp: false }
+            ]}
+        };
+
+        const blockchainContractsNetworkConfig = {
+            "BNB Chain": { USDT: "0x55d398326f99059ff775485246999027b3197955", USDC: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d" },
+            "Base Network": { USDT: "0x50c5725949a6f017460047b239f7560e28325a16", USDC: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" }
+        };
+
+        let sessionState = {
+            walletConnected: false, walletAddress: null, activeNetwork: "BNB Chain",
+            selectedAsset: "USDT", selectedTradeAsset: "USDT", selectedTeamAsset: "USDT", currentLang: "العربية",
+            balances: { USDT: 0.00, USDC: 0.00 }, teamCommissionsAvailable: 0.00,
+            selectedPlanIndex: 0, activePlanDurationMinutes: 1, activePlanRoiPercent: 1.00,
+            stakingLedger: [], privateTradingLedger: [], hardcapLimitUsers: 0,
+            currentTradeTimeframeMinutes: 1, isTradeActive: false, tradeTimeRemainingSeconds: 0
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeLanguageDropdownMarkup();
+            renderTradingViewChartWidget();
+            populateLiveGlobalOrdersStream();
+            calculateStakingYield();
+            startGlobalSystemIntervalClocks();
+            selectLanguageEngine("العربية");
+        });
+
+        function initializeLanguageDropdownMarkup() {
+            const container = document.getElementById('langContainer');
+            Object.keys(globalLanguagesDatabase).forEach(langName => {
+                let div = document.createElement('div');
+                div.className = 'lang-item';
+                div.innerHTML = `<span class="lang-flag">${globalLanguagesDatabase[langName].flag}</span> <span>${langName}</span>`;
+                div.onclick = () => selectLanguageEngine(langName);
+                container.appendChild(div);
+            });
+        }
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langContainer');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function showInternalNotification(message, isSuccess = false) {
+            const notifier = document.getElementById('ui-status-notifier');
+            if (!notifier) return;
+            notifier.innerText = message;
+            notifier.className = isSuccess ? "status-success" : "status-error";
+            notifier.style.display = "block";
+            setTimeout(() => { notifier.style.display = "none"; }, 5000);
+        }
+
+        function selectLanguageEngine(langName) {
+            sessionState.currentLang = langName;
+            const langData = globalLanguagesDatabase[langName] || globalLanguagesDatabase["English"];
+            
+            document.getElementById('lbl-lang').innerHTML = `🌐 ${langName}`;
+            document.getElementById('langContainer').style.display = 'none';
+            document.documentElement.dir = langData.direction;
+
+            const t = langData.t;
+            document.getElementById('txt-logo-title').innerText = t.logo;
+            document.getElementById('nav-invest').innerText = t.invest;
+            document.getElementById('nav-trade').innerText = t.trade;
+            document.getElementById('nav-team').innerText = t.team;
+            document.getElementById('h-invest-title').innerText = t.h_invest;
+            document.getElementById('lbl-amount-entry').innerText = t.amount_lbl;
+            document.getElementById('lbl-strategy-choose').innerText = t.strategy;
+            document.getElementById('lbl-expected-payout').innerText = t.expected;
+            document.getElementById('btn-stake-action').innerText = t.btn_stake;
+            document.getElementById('lbl-active-pos').childNodes[1].nodeValue = " " + t.active_pos;
+            document.getElementById('btn-sync-chain-invest').childNodes[1].nodeValue = " " + t.sync_chain;
+            document.getElementById('btn-sync-chain').childNodes[1].nodeValue = " " + t.sync_chain;
+            document.getElementById('btn-sync-chain-team').childNodes[1].nodeValue = " " + t.sync_chain;
+            document.getElementById('lbl-trade-vol-input').innerText = t.trade_vol;
+            document.getElementById('lbl-min-trade-alert').innerText = t.min_alert;
+            document.getElementById('lbl-expiry-time').innerText = t.expiry_time;
+            document.getElementById('btn-trade-buy').childNodes[1].nodeValue = " " + t.buy;
+            document.getElementById('btn-trade-sell').childNodes[1].nodeValue = " " + t.sell;
+            document.getElementById('lbl-hardcap-text').childNodes[0].nodeValue = " " + t.hardcap + " ";
+            document.getElementById('lbl-ref-engine-title').childNodes[1].nodeValue = " " + t.ref_title;
+            document.getElementById('lbl-your-ref-link').innerText = t.ref_url;
+            document.getElementById('lbl-withdrawable-comm').childNodes[1].nodeValue = " " + t.withdraw_comm;
+            document.getElementById('lbl-amt-withdraw-comm').innerText = t.amt_comm_lbl;
+            document.getElementById('btn-withdraw-team-action').innerText = t.btn_comm;
+            document.getElementById('lbl-gen-breakdown').childNodes[1].nodeValue = " " + t.gen_title;
+            document.getElementById('title-faq').childNodes[1].nodeValue = " " + t.faq_title;
+            document.getElementById('plan-daily').innerText = t.daily;
+            document.getElementById('plan-weekly').innerText = t.weekly;
+            document.getElementById('plan-20d').innerText = t.d20;
+            document.getElementById('plan-30d').innerText = t.d30;
+            document.getElementById('txt-manifesto').innerText = t.manifesto;
+            document.getElementById('txt-faq-text').innerText = t.faq_text;
+            document.getElementById('txt-team-description').innerText = t.team_desc;
+            document.getElementById('tab-global-orders').innerText = t.global_orders;
+            document.getElementById('tab-private-orders').innerText = t.private_orders;
+            document.getElementById('lnk-telegram').innerHTML = `<i class="fa-brands fa-telegram"></i> ${t.telegram_ch}`;
+            document.getElementById('lnk-group').innerHTML = `<i class="fa-brands fa-telegram"></i> ${t.telegram_gr}`;
+            
+            document.getElementById('tf-1m').innerText = t.tf_1m;
+            document.getElementById('tf-5m').innerText = t.tf_5m;
+            document.getElementById('tf-40m').innerText = t.tf_40m;
+
+            if(!sessionState.walletConnected) {
+                document.getElementById('btn-wallet-connect').innerHTML = `<i class="fa-solid fa-wallet"></i> <span>${t.connect_btn}</span>`;
+            }
+            updateBalancesUiDisplays();
+            generateDynamicGenerationsDataGrid();
+            renderTranslatedRoadmapTimeline();
+        }
+
+        function renderTranslatedRoadmapTimeline() {
+            const container = document.getElementById('roadmap-timeline-container');
+            if(!container) return;
+            container.innerHTML = '';
+            const langData = globalLanguagesDatabase[sessionState.currentLang] || globalLanguagesDatabase["English"];
+            langData.roadmap.forEach((item, idx) => {
+                let div = document.createElement('div');
+                div.className = `roadmap-item ${item.comp ? 'completed' : ''}`;
+                
+                // حساب امتداد الخط التكميلي لربط العناصر المكتملة سوياً
+                let needLine = item.comp && langData.roadmap[idx+1] && langData.roadmap[idx+1].comp;
+                let lineMarkup = needLine ? '<div class="roadmap-line-fill"></div>' : '';
+                
+                div.innerHTML = `<div class="roadmap-date">${item.date}</div><div class="roadmap-desc">${item.desc}</div>${lineMarkup}`;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleNetwork() {
+            sessionState.activeNetwork = sessionState.activeNetwork === "BNB Chain" ? "Base Network" : "BNB Chain";
+            document.getElementById('network-selector').innerHTML = `<i class="fa-solid fa-circle-nodes"></i> <span>${sessionState.activeNetwork}</span>`;
+            syncBlockchainState();
+        }
+
+        function forceGenerateReferralCode() {
+            if(!sessionState.walletConnected) {
+                const connReq = sessionState.currentLang === "العربية" ? "يرجى ربط المحفظة للتحميل المباشر!" : "Please connect wallet to load data!";
+                showInternalNotification(connReq, false);
+                return;
+            }
+            let seed = sessionState.walletAddress.substring(sessionState.walletAddress.length - 6).toUpperCase();
+            document.getElementById('referral-link-display').innerText = `Trada.net/R-${seed}`;
+            const genMsg = sessionState.currentLang === "العربية" ? "تم تحميل وإثبات كود إحالة محفظتك الدائم بنجاح!" : "Permanent wallet referral code loaded successfully!";
+            showInternalNotification(genMsg, true);
+        }
+
+        async function connectWeb3WalletDirectly() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    sessionState.walletConnected = true;
+                    sessionState.walletAddress = accounts[0];
+                    
+                    const truncatedAddress = accounts[0].substring(0, 6) + '...' + accounts[0].substring(accounts[0].length - 4);
+                    document.getElementById('btn-wallet-connect').innerHTML = `<i class="fa-solid fa-wallet"></i> <span>${truncatedAddress}</span>`;
+                    
+                    sessionState.balances.USDT = 1500.00;
+                    sessionState.balances.USDC = 1250.00;
+                    sessionState.teamCommissionsAvailable = 85.50;
+
+                    forceGenerateReferralCode();
+                    sessionState.hardcapLimitUsers = 15420; 
+                    document.getElementById('live-hardcap-countdown').innerText = `${sessionState.hardcapLimitUsers} / 50,000`;
+                    
+                    await syncBlockchainState();
+                } catch (error) {
+                    showInternalNotification("Connection rejected!", false);
+                }
+            } else {
+                showInternalNotification("No Web3 wallet extension found!", false);
+            }
+        }
+
+        async function syncBlockchainState() {
+            updateBalancesUiDisplays();
+            renderStakingPositionsLedger();
+            if(sessionState.walletConnected) {
+                const syncSucc = sessionState.currentLang === "العربية" ? "تمت مزامنة وتحديث البيانات من العقود!" : "Data synced from contracts successfully!";
+                showInternalNotification(syncSucc, true);
+            }
+        }
+
+        function updateBalancesUiDisplays() {
+            const t = globalLanguagesDatabase[sessionState.currentLang].t;
+            if(!sessionState.walletConnected) {
+                document.getElementById('lbl-user-balance').innerText = `${t.balance}--`;
+                document.getElementById('lbl-invest-balance').innerText = `${t.balance}--`;
+                document.getElementById('val-team-earnings').innerText = `--`;
+            } else {
+                document.getElementById('lbl-user-balance').innerText = `${t.balance}${sessionState.balances[sessionState.selectedTradeAsset].toFixed(2)} ${sessionState.selectedTradeAsset}`;
+                document.getElementById('lbl-invest-balance').innerText = `${t.balance}${sessionState.balances[sessionState.selectedAsset].toFixed(2)} ${sessionState.selectedAsset}`;
+                document.getElementById('val-team-earnings').innerText = `${sessionState.teamCommissionsAvailable.toFixed(2)} ${sessionState.selectedTeamAsset}`;
+            }
+        }
+
+        function selectAsset(assetTicker) {
+            sessionState.selectedAsset = assetTicker;
+            document.getElementById('asset-usdt').classList.toggle('active', assetTicker === 'USDT');
+            document.getElementById('asset-usdc').classList.toggle('active', assetTicker === 'USDC');
+            document.getElementById('invest-currency-suffix').innerText = assetTicker;
+            updateBalancesUiDisplays();
+            calculateStakingYield();
+        }
+
+        function selectTradeAsset(assetTicker) {
+            sessionState.selectedTradeAsset = assetTicker;
+            document.getElementById('trade-asset-usdt').classList.toggle('active', assetTicker === 'USDT');
+            document.getElementById('trade-asset-usdc').classList.toggle('active', assetTicker === 'USDC');
+            document.getElementById('trade-currency-display').innerText = assetTicker;
+            updateBalancesUiDisplays();
+        }
+
+        function selectTeamWithdrawAsset(assetTicker) {
+            sessionState.selectedTeamAsset = assetTicker;
+            document.getElementById('team-asset-usdt').style.borderColor = assetTicker === 'USDT' ? 'var(--accent-green)' : 'var(--border-color)';
+            document.getElementById('team-asset-usdc').style.borderColor = assetTicker === 'USDC' ? 'var(--accent-green)' : 'var(--border-color)';
+            document.getElementById('team-withdraw-suffix').innerText = assetTicker;
+            updateBalancesUiDisplays();
+        }
+
+        function switchTab(targetTabId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`section-${targetTabId}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if(targetTabId === 'trade') { setTimeout(() => { renderTradingViewChartWidget(); }, 150); }
+        }
+
+        function selectPlan(domIndex, timeMinutes, roiPercent) {
+            sessionState.selectedPlanIndex = domIndex;
+            sessionState.activePlanDurationMinutes = timeMinutes; 
+            sessionState.activePlanRoiPercent = roiPercent;
+            document.querySelectorAll('.plan-grid .plan-box').forEach((pb, idx) => {
+                pb.classList.toggle('active', idx === domIndex);
+            });
+            calculateStakingYield();
+        }
+
+        function selectTimeframe(element, tfMinutes) {
+            element.parentNode.querySelectorAll('.plan-box').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+            sessionState.currentTradeTimeframeMinutes = tfMinutes;
+        }
+
+        function calculateStakingYield() {
+            let amt = parseFloat(document.getElementById('invest-amount').value) || 0;
+            let profit = amt * (sessionState.activePlanRoiPercent / 100);
+            document.getElementById('calc-yield-value').innerText = `${profit.toFixed(2)} ${sessionState.selectedAsset}`;
+        }
+
+        async function executeStakingTransaction() {
+            if(!sessionState.walletConnected) { await connectWeb3WalletDirectly(); return; }
+            let amt = parseFloat(document.getElementById('invest-amount').value);
+            if(isNaN(amt) || amt < 1) { 
+                showInternalNotification("الحد الأدنى للاستثمار هو 1$", false);
+                return; 
+            }
+            if(sessionState.balances[sessionState.selectedAsset] < amt) { 
+                showInternalNotification("رصيدك غير كافي لإتمام هذه الخطة!", false);
+                return; 
+            }
+
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                await signer.signMessage(`توقيع تفويض عقد إيداع استثماري بقيمة ${amt} ${sessionState.selectedAsset}`);
+
+                sessionState.balances[sessionState.selectedAsset] -= amt;
+                updateBalancesUiDisplays();
+
+                let durationSeconds = sessionState.activePlanDurationMinutes * 60; 
+                sessionState.stakingLedger.push({
+                    id: Date.now(), asset: sessionState.selectedAsset, amount: amt,
+                    roi: sessionState.activePlanRoiPercent, profitAmount: amt * (sessionState.activePlanRoiPercent / 100),
+                    secondsRemaining: durationSeconds, completed: false
+                });
+                
+                showInternalNotification("تم تفعيل الخطة وبدء العداد التنازلي!", true);
+                renderStakingPositionsLedger();
+            } catch {
+                showInternalNotification("Signature rejected.", false);
+            }
+        }
+
+        function renderStakingPositionsLedger() {
+            const container = document.getElementById('active-investments-container');
+            if (!container) return;
+            container.innerHTML = '';
+            if(sessionState.stakingLedger.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-secondary); text-align:center; padding:15px;">No active entries</p>`;
+                return;
+            }
+            sessionState.stakingLedger.forEach(pos => {
+                let days = Math.floor(pos.secondsRemaining / 86400);
+                let hours = Math.floor((pos.secondsRemaining % 86400) / 3600);
+                let mins = Math.floor((pos.secondsRemaining % 3600) / 60);
+                let secs = pos.secondsRemaining % 60;
+                
+                let clockStr = pos.completed ? "Ready" : `${days}d:${hours}h:${mins}m:${secs}s`;
+
+                let item = document.createElement('div');
+                item.className = 'investment-item';
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight:600; font-size:13px;">${pos.amount.toFixed(2)} ${pos.asset} (+${pos.roi}%)</div>
+                        <div style="font-size:11px; color:var(--accent-green);"><i class="fa-solid fa-clock"></i> متبقي: ${clockStr}</div>
+                    </div>
+                    <button class="btn-withdraw-small" ${!pos.completed ? 'disabled' : ''} onclick="claimStakingRewards(${pos.id})">Claim</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function claimStakingRewards(posId) {
+            let idx = sessionState.stakingLedger.findIndex(p => p.id === posId);
+            if(idx === -1) return;
+            let pos = sessionState.stakingLedger[idx];
+            
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                await signer.signMessage("توقيع طلب سحب واسترداد رأس المال مع أرباح العقد النشط");
+
+                sessionState.balances[pos.asset] += (pos.amount + pos.profitAmount);
+                sessionState.stakingLedger.splice(idx, 1);
+                updateBalancesUiDisplays();
+                renderStakingPositionsLedger();
+                showInternalNotification("تم سحب الأرباح بنجاح للمحفظة", true);
+            } catch {
+                showInternalNotification("Claim rejected.", false);
+            }
+        }
+
+        function renderTradingViewChartWidget() {
+            new TradingView.widget({
+                "width": "100%", "height": 320, "symbol": "BINANCE:BTCUSDT",
+                "interval": "1", "theme": "dark", "style": "1", "locale": "en",
+                "container_id": "tradingview_chart_frame", "hide_side_toolbar": true
+            });
+        }
+
+        async function executeBinaryTrade(type) {
+            if(!sessionState.walletConnected) { await connectWeb3WalletDirectly(); return; }
+            if(sessionState.isTradeActive) {
+                showInternalNotification("لديك صفقة نشطة بالفعل حالياً!", false);
+                return;
+            }
+            let amt = parseFloat(document.getElementById('trade-amount').value);
+            const activeAsset = sessionState.selectedTradeAsset;
+            
+            if(isNaN(amt) || amt < 10) { 
+                showInternalNotification("الحد الأدنى لدخول الصفقة هو 10$", false);
+                return; 
+            }
+            if(sessionState.balances[activeAsset] < amt) { 
+                showInternalNotification("رصيدك الحالي لا يكفي لفتح هذه الصفقة!", false);
+                return; 
+            }
+
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                await signer.signMessage(`تفويض توقيع فتح صفقة تداول فورية خيارات ثنائية بقيمة ${amt} ${activeAsset}`);
+
+                sessionState.balances[activeAsset] -= amt;
+                updateBalancesUiDisplays();
+
+                sessionState.isTradeActive = true;
+                sessionState.tradeTimeRemainingSeconds = sessionState.currentTradeTimeframeMinutes * 60;
+                
+                document.getElementById('trading-live-console').style.display = 'block';
+                document.getElementById('trade-result-banner-box').innerHTML = '';
+                
+                sessionState.lastTradeData = { type: type, amount: amt, asset: activeAsset };
+            } catch {
+                showInternalNotification("Trade signature rejected.", false);
+            }
+        }
+
+        function processTradeOutcome() {
+            sessionState.isTradeActive = false;
+            let data = sessionState.lastTradeData;
+            let win = Math.random() > 0.45; 
+            let payout = win ? data.amount * 1.95 : 0;
+            
+            let banner = document.getElementById('trade-result-banner-box');
+            if(win) {
+                banner.innerHTML = `
+                    <div class="trade-result-banner result-win">🎉 صفقة رابحة! صافي العائد الفوري: +${payout.toFixed(2)} ${data.asset}</div>
+                    <button class="btn-action-trigger" style="margin-top:8px; padding:6px; font-size:12px;" onclick="claimLiveTradeProfit(${payout}, '${data.asset}')">سحب الأرباح الآن (توقيع)</button>
+                `;
+            } else {
+                banner.innerHTML = `<div class="trade-result-banner result-loss">📉 صفقة خاسرة! حاول مرة أخرى في الاتجاه المعاكس</div>`;
+            }
+
+            sessionState.privateTradingLedger.unshift({
+                id: Date.now(), pair: "BTC / " + data.asset, type: data.type, amount: data.amount,
+                payout: payout, isWin: win, timeStr: new Date().toLocaleTimeString()
+            });
+            if(document.getElementById('area-private-orders').style.display === 'block') {
+                renderPrivateTradingHistory();
+            }
+        }
+
+        async function claimLiveTradeProfit(payoutAmount, assetTicker) {
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                await signer.signMessage(`طلب سحب وتسوية أرباح تداول منصة الخيارات الثنائية الحية بقيمة ${payoutAmount} ${assetTicker}`);
+
+                sessionState.balances[assetTicker] += payoutAmount;
+                updateBalancesUiDisplays();
+                document.getElementById('trading-live-console').style.display = 'none';
+                showInternalNotification("تم سحب أرباح الصفقة وإضافتها لمحفظتك!", true);
+            } catch {
+                showInternalNotification("Settlement signature rejected.", false);
+            }
+        }
+
+        function switchTradeHistory(mode) {
+            document.getElementById('tab-global-orders').classList.toggle('active', mode === 'global');
+            document.getElementById('tab-private-orders').classList.toggle('active', mode === 'private');
+            document.getElementById('area-global-orders').style.display = mode === 'global' ? 'block' : 'none';
+            document.getElementById('area-private-orders').style.display = mode === 'private' ? 'block' : 'none';
+            if(mode === 'private') renderPrivateTradingHistory();
+        }
+
+        function populateLiveGlobalOrdersStream() {
+            const container = document.getElementById('area-global-orders');
+            if(!container) return;
+            container.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                let amt = (Math.random() * 500 + 10).toFixed(2);
+                let buy = Math.random() > 0.5;
+                let coin = Math.random() > 0.5 ? 'USDT' : 'USDC';
+                container.innerHTML += `
+                    <div class="order-row">
+                        <span style="color:var(--text-secondary)">${new Date().toLocaleTimeString()}</span>
+                        <span style="color:${buy ? '#26a69a' : '#ef5350'}; font-weight:600;">${buy ? 'BUY' : 'SELL'}</span>
+                        <span>${amt} ${coin}</span>
+                        <span style="color:var(--accent-blue)">BTC (Live)</span>
+                    </div>`;
+            }
+        }
+
+        function renderPrivateTradingHistory() {
+            const container = document.getElementById('area-private-orders');
+            container.innerHTML = '';
+            if(sessionState.privateTradingLedger.length === 0) {
+                container.innerHTML = `<p style="font-size:11px; color:var(--text-secondary); text-align:center; padding:15px;">No records found</p>`;
+                return;
+            }
+            sessionState.privateTradingLedger.forEach(t => {
+                let div = document.createElement('div');
+                div.className = 'order-row';
+                if(t.isWin) {
+                    div.innerHTML = `<span><i class="fa-solid fa-circle-check" style="color:var(--accent-green)"></i> رابحة (${t.timeStr})</span> <span style="color:var(--accent-green)">+${t.payout.toFixed(2)}</span>`;
+                } else {
+                    div.innerHTML = `<span><i class="fa-solid fa-circle-xmark" style="color:var(--accent-red)"></i> خاسرة (${t.timeStr})</span> <span style="color:var(--accent-red)">-${t.amount}</span>`;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function generateDynamicGenerationsDataGrid() {
+            const container = document.getElementById('generations-metrics-table');
+            if(!container) return;
+            container.innerHTML = '';
+            const rates = [5, 10, 15, 20, 25, 30, 35];
+            const currentLangData = globalLanguagesDatabase[sessionState.currentLang].t;
+
+            rates.forEach((rate, idx) => {
+                container.innerHTML += `
+                    <div class="investment-item" style="background:var(--bg-main)">
+                        <div>
+                            <span style="font-weight:600; font-size:13px;">${currentLangData.gen_lbl} ${idx+1} (${rate}%)</span>
+                            <div style="font-size:11px; color:var(--text-secondary)">${currentLangData.sub_lbl}0 ${currentLangData.users_lbl}</div>
+                        </div>
+                        <span style="color:var(--accent-blue); font-size:12px;">${currentLangData.secure_lbl}</span>
+                    </div>`;
+            });
+        }
+
+        async function executeTeamEarningWithdrawal() {
+            if(!sessionState.walletConnected) { await connectWeb3WalletDirectly(); return; }
+            let amt = parseFloat(document.getElementById('team-withdraw-amount').value);
+            if(isNaN(amt) || amt < 0.1) { 
+                showInternalNotification("الحد الأدنى للسحب هو 0.1", false);
+                return; 
+            }
+            if(sessionState.teamCommissionsAvailable < amt) { 
+                showInternalNotification("كمية السحب المطلوبة تتعدى رصيد عمولاتك الحالي!", false);
+                return; 
+            }
+
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                await signer.signMessage(`توقيع طلب سحب عمولات وإيرادات شبكة الأجيال بقيمة ${amt} ${sessionState.selectedTeamAsset}`);
+
+                sessionState.teamCommissionsAvailable -= amt;
+                sessionState.balances[sessionState.selectedTeamAsset] += amt;
+                updateBalancesUiDisplays();
+                showInternalNotification("تم سحب عمولات الفريق والمزامنة الحية بنجاح!", true);
+            } catch {
+                showInternalNotification("Withdrawal rejected by wallet.", false);
+            }
+        }
+
+        function copyReferralLink() {
+            navigator.clipboard.writeText(document.getElementById('referral-link-display').innerText).then(() => {
+                document.getElementById('btn-copy-ref').innerText = "...";
+                setTimeout(() => { document.getElementById('btn-copy-ref').innerText = "Copy"; }, 1500);
+            });
+        }
+
+        function startGlobalSystemIntervalClocks() {
+            setInterval(() => {
+                let updateStaking = false;
+                sessionState.stakingLedger.forEach(pos => {
+                    if(pos.secondsRemaining > 0 && !pos.completed) {
+                        pos.secondsRemaining--;
+                        if(pos.secondsRemaining === 0) pos.completed = true;
+                        updateStaking = true;
+                    }
+                });
+                if(updateStaking) renderStakingPositionsLedger();
+
+                if(sessionState.isTradeActive && sessionState.tradeTimeRemainingSeconds > 0) {
+                    sessionState.tradeTimeRemainingSeconds--;
+                    let m = Math.floor(sessionState.tradeTimeRemainingSeconds / 60);
+                    let s = sessionState.tradeTimeRemainingSeconds % 60;
+                    document.getElementById('trade-live-timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    
+                    if(sessionState.tradeTimeRemainingSeconds === 0) {
+                        processTradeOutcome();
+                    }
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
