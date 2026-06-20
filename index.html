@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب ويب - اتصال فورى ومضمون</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #efeae2; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .chat-container { width: 100%; max-width: 420px; height: 95vh; background: #fff; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { background: #075e54; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 42px; height: 42px; background: #128c7e; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; border: 2px solid #25d366; }
+        h4 { font-size: 16px; margin-bottom: 2px; }
+        .status-text { font-size: 12px; color: #d1f4cc; font-weight: normal; }
+        .controls { display: flex; gap: 8px; }
+        .btn-control { border: none; padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-mute { background-color: #34b7f1; }
+        .btn-mute.muted { background-color: #f5a623; }
+        .btn-end { background-color: #ea0038; }
+        .chat-messages { flex: 1; padding: 15px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .message { max-width: 75%; padding: 8px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+        .message.sent { background: #d9fdd3; align-self: flex-start; border-top-right-radius: 0; }
+        .message.received { background: #fff; align-self: flex-end; border-top-left-radius: 0; }
+        .chat-input-bar { background: #f0f2f5; padding: 10px; display: flex; align-items: center; gap: 10px; }
+        input { flex: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-size: 15px; }
+        .send-btn { background: #075e54; border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="user-info">
+            <div class="avatar">👤</div>
+            <div>
+                <h4>غرفة الاتصال المباشر</h4>
+                <div class="status-text" id="status">جاري تشغيل النظام...</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn-control btn-mute" id="muteBtn" onclick="toggleMute()" disabled>كتم 🎤</button>
+            <button class="btn-control btn-end" onclick="endCall()">فصل ✖</button>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages" onclick="forceAudioPlay()">
+        <div class="message received">مرحباً! النظام الآن يتصل عبر السحابة التلقائية المفتوحة. اضغط هنا لتفعيل الصوت إذا كنت تستخدم الهاتف.</div>
+    </div>
+
+    <audio id="remoteAudio" autoplay playsinline></audio>
+
+    <div class="chat-input-bar">
+        <input type="text" id="msgInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
+        <button class="send-btn" onclick="sendTextMessage()">🕊️</button>
+    </div>
+</div>
+
+<script>
+    // توليد معرفات عشوائية فريدة جداً لكل غلق للخط لضمان عدم التداخل مع مستخدمين آخرين
+    const randID = Math.floor(100000 + Math.random() * 900000);
+    const ROOM_A = "iraq_cloud_voice_room_host_" + randID;
+    const ROOM_B = "iraq_cloud_voice_room_peer_" + randID;
+
+    const mediaConstraints = {
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        video: false
+    };
+
+    let localStream = null;
+    let peer = null;
+    let currentCall = null;
+    let dataConnection = null;
+    let isMuted = false;
+    let isPeer = false;
+    let targetID = "";
+
+    async function init() {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+            document.getElementById('status').innerText = "جاري الاتصال بالسحابة...";
+            document.getElementById('muteBtn').disabled = false;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // إذا كان الرابط يحتوي على برامتر التوصيل المباشر كطرف ثاني
+            if (urlParams.has('join')) {
+                isPeer = true;
+                const roomKey = urlParams.get('join');
+                targetID = "iraq_cloud_voice_room_host_" + roomKey;
+                peer = new Peer("iraq_cloud_voice_room_peer_" + roomKey);
+            } else {
+                isPeer = false;
+                targetID = ROOM_B;
+                peer = new Peer(ROOM_A);
+            }
+
+            peer.on('open', (id) => {
+                if (!isPeer) {
+                    // الشخص الأول: يظهر له الرابط السحري الجاهز لإرساله فوراً
+                    const currentUrl = window.location.href.split('?')[0];
+                    const shareLink = `${currentUrl}?join=${randID}`;
+                    document.getElementById('status').innerText = "جاهز 🟢 أرسل الرابط لصاحبك للاتصال فوراً";
+                    console.log("رابط الشير المباشر:", shareLink);
+                    
+                    // إظهار الرابط داخل الشات لكي ينسخه المستخدم بسهولة
+                    appendMessage("انسخ هذا الرابط المباشر وأرسله للطرف الآخر ليفتح الصوت فوراً:\n\n" + shareLink, 'received');
+                } else {
+                    document.getElementById('status').innerText = "جاري ربط الخط الصوتي الآن...";
+                    // الطرف الثاني يتصل فوراً بالطرف الأول تلقائياً وبأكثر من محاولة تفادياً للنت الضعيف
+                    setTimeout(() => { tryConnectLoop(); }, 1500);
+                }
+            });
+
+            peer.on('call', (call) => {
+                currentCall = call;
+                call.answer(localStream);
+                call.on('stream', (remoteStream) => {
+                    handleRemoteStream(remoteStream);
+                });
+            });
+
+            peer.on('connection', (conn) => {
+                dataConnection = conn;
+                dataConnection.on('open', () => {
+                    setupChatListener();
+                });
+            });
+
+            peer.on('error', (err) => {
+                if(err.type === 'peer-unavailable') {
+                    setTimeout(() => { if(isPeer) tryConnectLoop(); }, 3000);
+                }
+            });
+
+        } catch (err) {
+            document.getElementById('status').innerText = "❌ خطأ: يرجى السماح بالمايك!";
+        }
+    }
+
+    function tryConnectLoop() {
+        if (!dataConnection || !dataConnection.open) {
+            startAudioCall(targetID);
+            startChatConnection(targetID);
+        }
+    }
+
+    function startAudioCall(id) {
+        currentCall = peer.call(id, localStream);
+        currentCall.on('stream', (remoteStream) => {
+            handleRemoteStream(remoteStream);
+        });
+    }
+
+    function startChatConnection(id) {
+        dataConnection = peer.connect(id, { reliable: true });
+        dataConnection.on('open', () => {
+            setupChatListener();
+        });
+    }
+
+    function handleRemoteStream(remoteStream) {
+        const audioControl = document.getElementById('remoteAudio');
+        audioControl.srcObject = remoteStream;
+        forceAudioPlay();
+        document.getElementById('status').innerText = "متصل والخط مفتوح 🗣️✨";
+    }
+
+    function forceAudioPlay() {
+        const audioControl = document.getElementById('remoteAudio');
+        if (audioControl.srcObject) {
+            audioControl.play().catch(() => {});
+        }
+    }
+
+    function setupChatListener() {
+        dataConnection.on('data', (data) => {
+            appendMessage(data, 'received');
+        });
+        dataConnection.on('close', () => {
+            document.getElementById('status').innerText = "غادر الطرف الآخر 🔴";
+        });
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        localStream.getAudioTracks()[0].enabled = !isMuted;
+        const muteBtn = document.getElementById('muteBtn');
+        muteBtn.innerText = isMuted ? "تشغيل 🎤" : "كتم 🎤";
+        if(isMuted) muteBtn.classList.add('muted'); else muteBtn.classList.remove('muted');
+    }
+
+    function sendTextMessage() {
+        const msgInput = document.getElementById('msgInput');
+        const text = msgInput.value.trim();
+        if (!text) return;
+
+        if (dataConnection && dataConnection.open) {
+            dataConnection.send(text);
+            appendMessage(text, 'sent');
+            msgInput.value = '';
+        } else {
+            alert("الطرف الآخر غير متصل بالدردشة بعد.");
+        }
+    }
+
+    function checkEnter(e) { if (e.key === 'Enter') sendTextMessage(); }
+
+    function appendMessage(text, side) {
+        const chatMessages = document.getElementById('chatMessages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${side}`;
+        msgDiv.innerText = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function endCall() {
+        document.getElementById('status').innerText = "تم فصل الخط 🔴";
+        if (currentCall) currentCall.close();
+        if (dataConnection) dataConnection.close();
+        document.getElementById('remoteAudio').srcObject = null;
+        setTimeout(() => { window.location.reload(); }, 1000);
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
