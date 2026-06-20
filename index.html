@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب ويب - اتصال مباشر بدون سيرفر</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #efeae2; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
+        .chat-container { width: 100%; max-width: 450px; height: 95vh; background: #fff; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* هيدر التحكم */
+        .chat-header { background: #075e54; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info h4 { font-size: 16px; }
+        .status-text { font-size: 12px; color: #d1f4cc; }
+        .controls { display: flex; gap: 8px; }
+        .btn-control { border: none; padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; color: white; }
+        .btn-mute { background-color: #34b7f1; }
+        .btn-mute.muted { background-color: #f5a623; }
+        .btn-end { background-color: #ea0038; }
+
+        /* منطقة إعداد الاتصال والرموز */
+        .setup-area { background: #f0f2f5; padding: 15px; border-bottom: 2px solid #ddd; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+        textarea { width: 100%; height: 50px; padding: 5px; border-radius: 5px; border: 1px solid #ccc; resize: none; font-size: 11px; }
+        .setup-buttons { display: flex; gap: 5px; }
+        .btn-setup { flex: 1; background: #128c7e; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-setup.orange { background: #f5a623; }
+
+        /* ساحة الرسائل */
+        .chat-messages { flex: 1; padding: 15px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .message { max-width: 75%; padding: 8px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; }
+        .message.sent { background: #d9fdd3; align-self: flex-start; border-top-right-radius: 0; }
+        .message.received { background: #fff; align-self: flex-end; border-top-left-radius: 0; box-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+
+        /* شريط الكتابة */
+        .chat-input-bar { background: #f0f2f5; padding: 10px; display: flex; align-items: center; gap: 10px; }
+        input { flex: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; font-size: 15px; }
+        .send-btn { background: #075e54; border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="user-info">
+            <h4>غرفة الاتصال المباشر (P2P)</h4>
+            <div class="status-text" id="status">انتظار إنشاء الاتصال... ⚪</div>
+        </div>
+        <div class="controls">
+            <button class="btn-control btn-mute" id="muteBtn" onclick="toggleMute()">كتم 🎤</button>
+            <button class="btn-control btn-end" onclick="endCall()">فصل ✖</button>
+        </div>
+    </div>
+
+    <div class="setup-area" id="setupArea">
+        <p><strong>الخطوة 1:</strong> اضغط إنشاء كود جهازك وأرسله لصاحبك.</p>
+        <div class="setup-buttons">
+            <button class="btn-setup" onclick="createOffer()">1. إنشاء كود جهازي 🔑</button>
+        </div>
+        <textarea id="localCode" readonly placeholder="كود جهازك سيظهر هنا... انسخه وأرسله"></textarea>
+        
+        <p><strong>الخطوة 2:</strong> ضع الكود المستلم من صاحبك هنا واضغط ربط.</p>
+        <textarea id="remoteCode" placeholder="الصق الكود الذي أرسله لك صاحبك هنا..."></textarea>
+        <div class="setup-buttons">
+            <button class="btn-setup orange" onclick="connectPeers()">2. ربط وتفعيل الخط ⚡</button>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message received">.اهلا اميرتي</div>
+    </div>
+
+    <audio id="remoteAudio" autoplay playsinline></audio>
+
+    <div class="chat-input-bar">
+        <input type="text" id="msgInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
+        <button class="send-btn" onclick="sendTextMessage()">🕊️</button>
+    </div>
+</div>
+
+<script>
+    // إنشاء الاتصال المباشر الخام بدون أي سيرفر وسيط
+    const pc = new RTCPeerConnection({ iceServers: [] }); 
+    let localStream = null;
+    let dataChannel = null;
+    let isMuted = false;
+
+    // طلب المايك فوراً عند التشغيل
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
+        localStream = stream;
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    }).catch(() => {
+        alert("يرجى السماح بالوصول للمايك لكي يشتغل الصوت!");
+    });
+
+    // استقبال الصوت من الطرف الآخر وبثه
+    pc.ontrack = (event) => {
+        document.getElementById('remoteAudio').srcObject = event.streams[0];
+        document.getElementById('status').innerText = "متصل صوتياً الآن! 🗣️✨";
+        document.getElementById('setupArea').style.display = 'none'; // إخفاء لوحة الأكواد بعد النجاح
+    };
+
+    // استقبال قناة الشات إذا كان الطرف الآخر هو من بدأ الاتصال
+    pc.ondatachannel = (event) => {
+        dataChannel = event.channel;
+        setupChannelEvents();
+    };
+
+    // 1. دالة إنشاء كود الجهاز (Offer / Answer)
+    async function createOffer() {
+        // إذا قام الطرف الآخر بوضع كود مسبقاً، سنقوم بإنشاء كود الرد (Answer)
+        const remoteValue = document.getElementById('remoteCode').value.trim();
+        
+        if (remoteValue) {
+            const desc = new RTCSessionDescription(JSON.parse(atob(remoteValue)));
+            await pc.setRemoteDescription(desc);
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            
+            // تحويل الكود لنص مشفر لسهولة النسخ على الواتساب
+            document.getElementById('localCode').value = btoa(JSON.stringify(pc.localDescription));
+            document.getElementById('status').innerText = "تم إنشاء كود الرد! انسخه لصاحبك 🟢";
+        } else {
+            // إذا كنا نحن من بدأ الاتصال، ننشئ قناة الشات أولاً ثم كود العرض (Offer)
+            dataChannel = pc.createDataChannel("chat");
+            setupChannelEvents();
+            
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            
+            // ننتظر ثانية لتجميع إشارات الشبكة الداخلية
+            setTimeout(() => {
+                document.getElementById('localCode').value = btoa(JSON.stringify(pc.localDescription));
+                document.getElementById('status').innerText = "تم إنشاء كود العرض! انسخه لصاحبك 🟢";
+            }, 1000);
+        }
+    }
+
+    // 2. دالة الربط النهائي بعد تبادل الأكواد
+    async function connectPeers() {
+        const remoteValue = document.getElementById('remoteCode').value.trim();
+        if (!remoteValue) return alert("الرجاء لصق كود الطرف الآخر أولاً!");
+        
+        const desc = new RTCSessionDescription(JSON.parse(atob(remoteValue)));
+        if (!pc.currentRemoteDescription) {
+            await pc.setRemoteDescription(desc);
+            document.getElementById('status').innerText = "تم الربط! الخط منفتح الآن 🗣️🟢";
+            document.getElementById('setupArea').style.display = 'none';
+        }
+    }
+
+    // إعدادات استقبال وإرسال الشات المباشر
+    function setupChannelEvents() {
+        dataChannel.onopen = () => document.getElementById('status').innerText = "الشات والصوت متصلان 🗣️✨";
+        dataChannel.onmessage = (e) => appendMessage(e.data, 'received');
+    }
+
+    function sendTextMessage() {
+        const msgInput = document.getElementById('msgInput');
+        const text = msgInput.value.trim();
+        if (!text || !dataChannel || dataChannel.readyState !== "open") return;
+        
+        dataChannel.send(text);
+        appendMessage(text, 'sent');
+        msgInput.value = '';
+    }
+
+    function checkEnter(e) { if (e.key === 'Enter') sendTextMessage(); }
+
+    function appendMessage(text, side) {
+        const chatMessages = document.getElementById('chatMessages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${side}`;
+        msgDiv.innerText = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // ميزة كتم المايك
+    function toggleMute() {
+        isMuted = !isMuted;
+        localStream.getAudioTracks()[0].enabled = !isMuted;
+        const muteBtn = document.getElementById('muteBtn');
+        muteBtn.innerText = isMuted ? "تشغيل 🎤" : "كتم 🎤";
+        if(isMuted) muteBtn.classList.add('muted'); else muteBtn.classList.remove('muted');
+    }
+
+    // ميزة إنهاء المكالمة
+    function endCall() {
+        pc.close();
+        document.getElementById('status').innerText = "تم قطع الاتصال 🔴";
+        setTimeout(() => { window.location.reload(); }, 800);
+    }
+</script>
+
+</body>
+</html>
