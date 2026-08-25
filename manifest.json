@@ -1,0 +1,16 @@
+{
+  "short_name": "PeetX",
+  "name": "PeetX - Web3 Platform",
+  "icons": [
+    {
+      "src": "https://mhamednajem.github.io/Trada/logo.png?v=12",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "display": "standalone"
+}
