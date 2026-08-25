@@ -1,0 +1,17 @@
+{
+  "short_name": "PeetX",
+  "name": "PeetX Web3 App",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00FF66",
+  "display": "standalone",
+  "orientation": "portrait"
+}
