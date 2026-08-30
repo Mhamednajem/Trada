@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX.app Web3</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512x512.png">
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="application-name" content="PeetX.app Web3">
+    <meta name="apple-mobile-web-app-title" content="PeetX">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta property="og:title" content="PeetX.app Web3">
+    <meta property="og:image" content="icon-512x512.png">
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #050811;
+            --bg-card: rgba(13, 19, 33, 0.85);
+            --border-color: rgba(0, 240, 255, 0.12);
+            --border-glow: rgba(0, 240, 255, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent-cyan: #00f0ff;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #00ff88;
+            --accent-red: #ff3b5c;
+            --accent-gold: #ffd700;
+            --primary-gradient: linear-gradient(135deg, #00f0ff 0%, #3b82f6 50%, #8b5cf6 100%);
+        }
+
+        body {
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overflow: hidden !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative;
+            top: 0 !important;
+        }
+
+        body.app-ready {
+            opacity: 1 !important;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Tajawal', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            background: rgba(8, 12, 24, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            z-index: 1000;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .logo-box img.logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.6));
+        }
+        .logo-box span { 
+            font-weight: 800; 
+            font-size: 20px; 
+            letter-spacing: 1px; 
+            background: var(--primary-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        
+        .globe-icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .globe-icon-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .globe-icon-btn:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .btn-action-nav {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(59, 130, 246, 0.12));
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            height: 36px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action-nav:hover { 
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn-action-nav.connected-wallet {
+            border-color: var(--accent-green);
+            color: #ffffff;
+            background: rgba(0, 255, 136, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+        }
+
+        .wallet-menu-container {
+            position: relative;
+        }
+
+        .wallet-dropdown {
+            display: none;
+            position: absolute;
+            top: 45px;
+            left: 0;
+            right: auto;
+            background: rgba(10, 15, 28, 0.98);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 12px;
+            width: max-content;
+            min-width: 190px;
+            max-width: calc(100vw - 32px);
+            padding: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 10000;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        html[dir="rtl"] .wallet-dropdown {
+            left: 0 !important;
+            right: auto !important;
+        }
+
+        html[dir="ltr"] .wallet-dropdown {
+            right: 0 !important;
+            left: auto !important;
+        }
+
+        .wallet-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .wallet-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .wallet-dropdown-item:hover {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .wallet-dropdown-item.disconnect {
+            color: #ff4d6d;
+        }
+
+        .wallet-dropdown-item.disconnect:hover {
+            background: rgba(255, 59, 92, 0.15);
+            color: #ff3b5c;
+        }
+        
+        .page-section { 
+            display: none; 
+            padding: 0; 
+            margin: 0;
+            width: 100vw;
+            height: calc(100vh - 128px); 
+            position: absolute;
+            top: 60px;
+            left: 0;
+        }
+        
+        .page-section.active { 
+            display: block;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            display: block;
+            background: transparent;
+        }
+
+        .nav-bar-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(8, 12, 24, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-color); 
+            display: flex; height: 68px; z-index: 1000;
+            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-secondary); cursor: pointer; gap: 4px; transition: all 0.25s ease;
+        }
+
+        .tab-btn i { font-size: 19px; }
+        .tab-btn span { font-size: 10px; font-weight: 700; text-align: center; }
+        .tab-btn.active { 
+            color: var(--accent-cyan); 
+            filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5)); 
+        }
+        
+        #global-entry-loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 8, 17, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .spinner-ring {
+            width: 55px;
+            height: 55px;
+            border: 3px solid rgba(0, 240, 255, 0.1);
+            border-top: 3px solid var(--accent-cyan);
+            border-right: 3px solid var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-bottom: 16px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+        }
+
+        #ui-status-notifier {
+            display: none; 
+            padding: 14px 18px; 
+            border-radius: 14px; 
+            font-size: 14px; 
+            position: fixed; 
+            top: 75px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 10000; 
+            text-align: center; 
+            font-weight: 800;
+            line-height: 1.5;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85); 
+            width: 92%; 
+            max-width: 460px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .status-error { 
+            background: rgba(255, 20, 60, 0.98) !important; 
+            border: 2px solid #ff4d6d !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 0 30px rgba(255, 30, 70, 0.6) !important;
+        }
+
+        .status-info { 
+            background: rgba(0, 240, 255, 0.98) !important; 
+            border: 2px solid #70f4ff !important; 
+            color: #050811 !important; 
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6) !important;
+        }
+
+        .status-success { 
+            background: rgba(0, 230, 118, 0.98) !important; 
+            border: 2px solid #69f0ae !important; 
+            color: #050811 !important; 
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.6) !important;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="global-entry-loader">
+        <div class="spinner-ring"></div>
+        <p style="font-size:13px; color:#fff; font-weight:700;" id="loader-text">PeetX Connecting Global System...</p>
+    </div>
+
+    <header>
+        <div class="logo-box">
+            <img src="favicon-32x32.png" alt="PeetX Logo" class="logo-icon">
+            <span class="no-translate">PeetX</span>
+        </div>
+        <div class="header-actions">
+            <button class="globe-icon-btn" id="country-flag-btn" onclick="showFlagExplanationInfo()">
+                <i class="fa-solid fa-globe" id="flag-placeholder"></i>
+            </button>
+            
+            <div class="wallet-menu-container">
+                <button class="btn-action-nav" id="btn-wallet-connect" onclick="handleWalletAction()">
+                    <i class="fa-solid fa-wallet"></i> <span id="txt-wallet-btn">ربط المحفظة</span>
+                </button>
+                <div class="wallet-dropdown" id="wallet-menu">
+                    <div class="wallet-dropdown-item" onclick="copyWalletAddress()">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="txt-copy-addr">نسخ عنوان المحفظة</span>
+                    </div>
+                    <div class="wallet-dropdown-item disconnect" onclick="disconnectWallet()">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span id="txt-disconnect-btn">فصل المحفظة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="ui-status-notifier"></div>
+
+    <!-- SECTIONS -->
+    <section class="page-section active" id="section-peetx">
+        <iframe src="https://mhamednajem.github.io/Trada/PeetX.html" class="content-frame" title="PeetX Main"></iframe>
+    </section>
+
+    <section class="page-section" id="section-trade">
+        <iframe src="https://mhamednajem.github.io/Trada/trading.html" class="content-frame" title="PeetX Trade"></iframe>
+    </section>
+
+    <section class="page-section" id="section-team">
+        <iframe src="https://mhamednajem.github.io/Trada/team.html" class="content-frame" title="PeetX Team"></iframe>
+    </section>
+
+    <section class="page-section" id="section-invest">
+        <iframe src="https://mhamednajem.github.io/Trada/invest.html" class="content-frame" title="PeetX Invest"></iframe>
+    </section>
+
+    <section class="page-section" id="section-dao">
+        <iframe src="https://mhamednajem.github.io/Trada/dao.html" class="content-frame" title="PeetX DAO"></iframe>
+    </section>
+
+    <!-- NAVIGATION FOOTER -->
+    <nav class="nav-bar-footer">
+        <div class="tab-btn active" id="nav-item-peetx" onclick="switchTab('peetx')">
+            <i class="fa-solid fa-cube"></i>
+            <span id="txt-nav-project">المشروع</span>
+        </div>
+        <div class="tab-btn" id="nav-item-trade" onclick="switchTab('trade')">
+            <i class="fa-solid fa-chart-line"></i>
+            <span id="txt-nav-trade">التداول</span>
+        </div>
+        <div class="tab-btn" id="nav-item-team" onclick="switchTab('team')">
+            <i class="fa-solid fa-users-viewfinder"></i>
+            <span id="txt-nav-team">الفريق</span>
+        </div>
+        <div class="tab-btn" id="nav-item-invest" onclick="switchTab('invest')">
+            <i class="fa-solid fa-vault"></i>
+            <span id="txt-nav-invest">الاستثمار</span>
+        </div>
+        <div class="tab-btn" id="nav-item-dao" onclick="switchTab('dao')">
+            <i class="fa-solid fa-landmark"></i>
+            <span id="txt-nav-dao">منظمة DAO</span>
+        </div>
+    </nav>
+
+    <script>
+        let sessionState = { walletConnected: false, walletAddress: null, currentLang: 'ar' };
+
+        const rtlLanguages = ['ar', 'fa', 'ur', 'he'];
+
+        // خريطة شاملة تغطي كافة دول والأقاليم العالمية (أكثر من 240 دولة وإقليم)
+        const COUNTRY_TO_LANG = {
+            "SA":"ar","AE":"ar","IQ":"ar","EG":"ar","KW":"ar","QA":"ar","OM":"ar","BH":"ar","JO":"ar","LB":"ar","SY":"ar","YE":"ar","DZ":"ar","MA":"ar","TN":"ar","LY":"ar","SD":"ar","PS":"ar","SO":"ar","DJ":"ar","KM":"ar","MR":"ar","EH":"ar",
+            "US":"en","GB":"en","CA":"en","AU":"en","NZ":"en","IE":"en","ZA":"en","SG":"en","IN":"hi","PK":"ur","BD":"bn","ID":"id","MY":"ms","PH":"tl","VN":"vi","TH":"th","CN":"zh-CN","TW":"zh-TW","HK":"zh-TW","MO":"zh-TW","JP":"ja","KR":"ko",
+            "RU":"ru","UA":"uk","BY":"be","KZ":"ru","UZ":"uz","DE":"de","AT":"de","CH":"de","FR":"fr","BE":"fr","NL":"nl","IT":"it","ES":"es","PT":"pt","BR":"pt","MX":"es","AR":"es","CL":"es","CO":"es","PE":"es","VE":"es","EC":"es","GT":"es","CUB":"es","BO":"es","DO":"es","HN":"es","PY":"es","SV":"es","NI":"es","CR":"es","PR":"es","UY":"es","PA":"es","GQ":"es",
+            "TR":"tr","GR":"el","PL":"pl","RO":"ro","HU":"hu","CZ":"cs","SK":"sk","SE":"sv","NO":"no","FI":"fi","DK":"da","IR":"fa","AF":"fa","IL":"he","BG":"bg","LK":"si","NP":"ne","MM":"my","KH":"km","LA":"lo",
+            "MN":"mn","GE":"ka","AM":"hy","AZ":"az","TJ":"tg","TM":"tk","KG":"ky","ET":"am","KE":"sw","TZ":"sw","UG":"sw","NG":"en","GH":"en","CI":"fr","SN":"fr","CM":"fr","AO":"pt","MZ":"pt","ZW":"en","AD":"ca","AL":"sq","BA":"bs","HR":"hr","EE":"et","IS":"is","LV":"lv","LT":"lt","LU":"lb","MK":"mk","MT":"mt","MD":"ro","ME":"sr","RS":"sr","SI":"sl","VG":"en","VI":"en","AG":"en","BS":"en","BB":"en","BZ":"en","DM":"en","GD":"en","GY":"en","JM":"en","KN":"en","LC":"en","VC":"en","SR":"nl","HT":"ht","FJ":"en","PG":"en","SB":"en","VU":"bi","FM":"en","KI":"en","MH":"en","NR":"en","PW":"en","WS":"sm","TO":"to","TV":"en","BW":"en","GM":"en","LS":"en","LR":"en","MW":"ny","NA":"en","RW":"rw","SL":"en","SZ":"ss","ZM":"en","BI":"fr","CF":"fr","TD":"fr","CG":"fr","CD":"fr","GA":"fr","GN":"fr","MG":"mg","ML":"fr","NE":"fr","TG":"fr","BJ":"fr","BF":"fr","CV":"pt","GW":"pt","ST":"pt","TL":"pt"
+        };
+
+        let rawMessages = {
+            walletWarning: "يرجى الدخول الى متصفح المحافظ web3 لا مركزيه مثل تراست والت او ميتا ماسك او غيرها للربط وتطبيق بدء تشغيل لحماية المنصه من تلاعب بالمحافظ الوهميه للربط يتم حصرا داخل الويب ثري بدون اتصال عبر متصفح خارجي مثل <span class=\"no-translate\">Google Chrome</span>",
+            flagTooltip: "يتم الكشف تلقائي عن للغة لجميع للغات العالم اكثر من 200دوله ندعمها ونرحب بجميع مستخدمينها ويمكن للمستخدم دخول مباشر وبدء العمل في المنصه العالميه",
+            successConnect: "تم التوقيع والربط بنجاح!",
+            cancelConnect: "تم إلغاء عملية الربط أو التوقيع",
+            signPrompt: "يرجى توقيع الرسالة لتأكيد الملكية والأمان على peetx.app",
+            copiedMsg: "تم نسخ عنوان المحفظة بنجاح!",
+            disconnectedMsg: "تم فصل المحفظة"
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeGeoLocalizationAndTranslation();
+        });
+
+        async function initializeGeoLocalizationAndTranslation() {
+            let countryCode = "US";
+            let targetLang = "en";
+
+            try {
+                const res = await fetch('https://ipwho.is/');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.success) {
+                        countryCode = data.country_code.toUpperCase();
+                        targetLang = COUNTRY_TO_LANG[countryCode] || (data.languages ? data.languages.split(',')[0].split('-')[0] : 'en');
+                    }
+                }
+            } catch (e) {
+                const navLang = navigator.language || navigator.userLanguage || "en";
+                targetLang = navLang.split('-')[0];
+            }
+
+            // تعيين العلم تلقائياً لجميع دول العالم عبر FlagCDN (تغطي أكثر من 250 دولة وإقليم)
+            updateCountryFlagUI(countryCode);
+            sessionState.currentLang = targetLang;
+
+            // ضبط اتجاه الواجهة
+            applyOrientation(targetLang);
+
+            // الترجمة الفورية عبر API في الخلفية إذا كانت اللغة غير العربية
+            if (targetLang !== 'ar') {
+                await translatePageTextNodes(targetLang);
+                await translateSystemMessages(targetLang);
+            }
+
+            document.body.classList.add('app-ready');
+            triggerGlobalDataFetchLoader(400);
+        }
+
+        function updateCountryFlagUI(code) {
+            const btn = document.getElementById('country-flag-btn');
+            if (btn && code) {
+                const flagUrl = `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+                btn.innerHTML = `<img src="${flagUrl}" alt="${code}" />`;
+            }
+        }
+
+        function showFlagExplanationInfo() {
+            showInternalNotification(rawMessages.flagTooltip, "info");
+        }
+
+        function applyOrientation(lang) {
+            const htmlRoot = document.getElementById('html-root');
+            if (rtlLanguages.includes(lang)) {
+                htmlRoot.setAttribute('dir', 'rtl');
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+            }
+            htmlRoot.setAttribute('lang', lang);
+        }
+
+        // دالة ترجمة النص عبر API جوجل المباشر بدون مكتبات أو عناصر مرئية
+        async function fetchTranslation(text, targetLang) {
+            if (!text || !text.trim()) return text;
+            try {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text.trim())}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data[0]) {
+                        return data[0].map(item => item[0]).join('');
+                    }
+                }
+            } catch (e) {
+                console.warn("Translation API fetch error:", e);
+            }
+            return text;
+        }
+
+        // ترجمة جميع العقد النصية (Text Nodes) في الواجهة دون التأثير على الأزرار والأكواد
+        async function translatePageTextNodes(targetLang) {
+            const walker = document.createTreeWalker(
+                document.body,
+                NodeFilter.SHOW_TEXT,
+                {
+                    acceptNode: function(node) {
+                        if (!node.nodeValue.trim()) return NodeFilter.FILTER_SKIP;
+                        
+                        let parent = node.parentElement;
+                        while (parent) {
+                            if (parent.tagName === 'SCRIPT' || 
+                                parent.tagName === 'STYLE' || 
+                                parent.tagName === 'IFRAME' || 
+                                parent.classList.contains('no-translate')) {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            parent = parent.parentElement;
+                        }
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                }
+            );
+
+            const nodesToTranslate = [];
+            while (walker.nextNode()) {
+                nodesToTranslate.push(walker.currentNode);
+            }
+
+            // تنفيذ التراجم بالتوازي لسرعة الأداء
+            await Promise.all(nodesToTranslate.map(async (node) => {
+                const originalText = node.nodeValue.trim();
+                const translated = await fetchTranslation(originalText, targetLang);
+                node.nodeValue = node.nodeValue.replace(originalText, translated);
+            }));
+        }
+
+        // ترجمة رسائل النظام المتغيرة
+        async function translateSystemMessages(targetLang) {
+            const keys = Object.keys(rawMessages);
+            await Promise.all(keys.map(async (key) => {
+                rawMessages[key] = await fetchTranslation(rawMessages[key], targetLang);
+            }));
+        }
+
+        function triggerGlobalDataFetchLoader(durationMs = 600) {
+            const loader = document.getElementById('global-entry-loader');
+            if(!loader) return;
+            loader.style.opacity = '1';
+            loader.style.visibility = 'visible';
+
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, durationMs);
+        }
+
+        function showInternalNotification(message, type = "error") {
+            const notifier = document.getElementById('ui-status-notifier');
+            if (!notifier) return;
+            notifier.innerHTML = message;
+            
+            if (type === "success") {
+                notifier.className = "status-success";
+            } else if (type === "info") {
+                notifier.className = "status-info";
+            } else {
+                notifier.className = "status-error";
+            }
+
+            notifier.style.display = "block";
+            setTimeout(() => { notifier.style.display = "none"; }, 5000);
+        }
+
+        function handleWalletAction() {
+            if (sessionState.walletConnected) {
+                const menu = document.getElementById('wallet-menu');
+                menu.classList.toggle('show');
+            } else {
+                connectAndSignWallet();
+            }
+        }
+
+        async function connectAndSignWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                showInternalNotification(rawMessages.walletWarning, "error");
+                return;
+            }
+
+            try {
+                triggerGlobalDataFetchLoader(400);
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const userAddress = accounts[0];
+
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const signMessage = `${rawMessages.signPrompt}\n\nDomain: peetx.app\nTimestamp: ${Date.now()}`;
+                
+                await signer.signMessage(signMessage);
+
+                sessionState.walletConnected = true;
+                sessionState.walletAddress = userAddress;
+
+                const truncatedAddress = userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 4);
+                
+                const connectBtn = document.getElementById('btn-wallet-connect');
+                connectBtn.innerHTML = `<i class="fa-solid fa-link-slash"></i> <span>${truncatedAddress}</span>`;
+                connectBtn.classList.add('connected-wallet');
+
+                showInternalNotification(rawMessages.successConnect, "success");
+            } catch (error) {
+                showInternalNotification(rawMessages.cancelConnect, "error");
+            }
+        }
+
+        function copyWalletAddress() {
+            if (sessionState.walletAddress) {
+                navigator.clipboard.writeText(sessionState.walletAddress);
+                showInternalNotification(rawMessages.copiedMsg, "success");
+                document.getElementById('wallet-menu').classList.remove('show');
+            }
+        }
+
+        function disconnectWallet() {
+            sessionState.walletConnected = false;
+            sessionState.walletAddress = null;
+
+            const connectBtn = document.getElementById('btn-wallet-connect');
+            connectBtn.innerHTML = `<i class="fa-solid fa-wallet"></i> <span id="txt-wallet-btn">${sessionState.currentLang === 'ar' ? 'ربط المحفظة' : 'Connect Wallet'}</span>`;
+            connectBtn.classList.remove('connected-wallet');
+
+            document.getElementById('wallet-menu').classList.remove('show');
+            showInternalNotification(rawMessages.disconnectedMsg, "success");
+        }
+
+        window.addEventListener('click', (e) => {
+            const container = document.querySelector('.wallet-menu-container');
+            if (container && !container.contains(e.target)) {
+                const menu = document.getElementById('wallet-menu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+
+        function switchTab(targetTabId) {
+            triggerGlobalDataFetchLoader(350);
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const selectedSection = document.getElementById(`section-${targetTabId}`);
+            if(selectedSection) selectedSection.classList.add('active');
+            
+            const selectedNavItem = document.getElementById(`nav-item-${targetTabId}`);
+            if(selectedNavItem) selectedNavItem.classList.add('active');
+        }
+    </script>
+<script>
+    (function() {
+        try {
+            var walletChannel = new BroadcastChannel('web3_wallet_sync_channel');
+
+            function broadcastWallet(address, isConnected) {
+                var payload = { type: 'WEB3_SYNC_EVENT', connected: !!isConnected, address: address || null };
+                walletChannel.postMessage(payload);
+                if (window.parent && window.parent !== window) window.parent.postMessage(payload, '*');
+                if (window.opener) window.opener.postMessage(payload, '*');
+            }
+
+            walletChannel.onmessage = function(e) {
+                if (e.data && e.data.type === 'CHECK_WALLET_REQ') {
+                    var addr = typeof userAddress !== 'undefined' ? userAddress : (window.ethereum && window.ethereum.selectedAddress);
+                    broadcastWallet(addr, !!addr);
+                }
+            };
+
+            window.addEventListener('message', function(e) {
+                if (e.data && e.data.type === 'CHECK_WALLET_REQ') {
+                    var addr = typeof userAddress !== 'undefined' ? userAddress : (window.ethereum && window.ethereum.selectedAddress);
+                    broadcastWallet(addr, !!addr);
+                }
+            });
+
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', function(accs) {
+                    if (accs && accs.length > 0) broadcastWallet(accs[0], true);
+                    else broadcastWallet(null, false);
+                });
+            }
+
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    var addr = typeof userAddress !== 'undefined' ? userAddress : (window.ethereum && window.ethereum.selectedAddress);
+                    if (addr) broadcastWallet(addr, true);
+                }, 500);
+            });
+        } catch(err) {
+            console.error(err);
+        }
+    })();
+</script>
+</body>
+</html>
