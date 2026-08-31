@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX Swap</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-purple: #1a0b2e;
+            --card-purple: #281245;
+            --input-purple: #160826;
+            --gold: #f3ba2f;
+            --gold-hover: #d4a022;
+            --text-color: #ffffff;
+            --text-dim: #a092b6;
+            --success: #00ff88;
+            --error: #ff3366;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-purple);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .swap-container {
+            background: var(--card-purple);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            width: 420px;
+            padding: 24px;
+            box-shadow: 0 0 25px rgba(243, 186, 47, 0.25);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            color: var(--gold);
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(243, 186, 47, 0.1);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
+        }
+
+        .status-dot.active {
+            background: var(--success);
+        }
+
+        .box {
+            background: var(--input-purple);
+            border: 1px solid rgba(243, 186, 47, 0.3);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+
+        .box-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .percent-buttons {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .percent-btn {
+            flex: 1;
+            background: rgba(243, 186, 47, 0.1);
+            border: 1px solid rgba(243, 186, 47, 0.3);
+            color: var(--gold);
+            padding: 4px 0;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .percent-btn:hover {
+            background: var(--gold);
+            color: var(--bg-purple);
+        }
+
+        .box-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            width: 50%;
+            outline: none;
+            font-weight: bold;
+        }
+
+        select {
+            background: var(--card-purple);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 8px 12px;
+            border-radius: 12px;
+            outline: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            max-width: 45%;
+        }
+
+        .switch-btn-container {
+            display: flex;
+            justify-content: center;
+            margin: -16px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .switch-btn {
+            background: var(--gold);
+            border: 4px solid var(--card-purple);
+            color: var(--bg-purple);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .switch-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .info-panel {
+            margin-top: 16px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(243, 186, 47, 0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .timer-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        .timer-svg {
+            transform: rotate(-90deg);
+            width: 28px;
+            height: 28px;
+        }
+
+        .timer-svg circle {
+            fill: none;
+            stroke-width: 3;
+        }
+
+        .timer-bg {
+            stroke: rgba(243, 186, 47, 0.2);
+        }
+
+        .timer-progress {
+            stroke: var(--gold);
+            stroke-dasharray: 75;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-text {
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .action-btn {
+            width: 100%;
+            background: var(--gold);
+            color: var(--bg-purple);
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.2);
+        }
+
+        .action-btn:hover {
+            background: var(--gold-hover);
+        }
+
+        .action-btn:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .history-container {
+            margin-top: 20px;
+            border-top: 1px solid rgba(243, 186, 47, 0.2);
+            padding-top: 14px;
+        }
+
+        .history-title {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .history-item.success {
+            border-left: 3px solid var(--success);
+        }
+
+        .history-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .history-desc {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .history-time {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .history-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 8px;
+            background: rgba(243, 186, 47, 0.1);
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .history-link:hover {
+            background: rgba(243, 186, 47, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+<div class="swap-container">
+    <div class="header">
+        <div class="title">PeetX</div>
+        <div class="status-badge" id="walletStatus" onclick="initWallet()">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="accountText">Connecting...</span>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <span>From</span>
+            <span>Balance: <span id="fromBalance">0.0</span></span>
+        </div>
+        <div class="percent-buttons">
+            <button class="percent-btn" onclick="setPercentage(25)">25%</button>
+            <button class="percent-btn" onclick="setPercentage(50)">50%</button>
+            <button class="percent-btn" onclick="setPercentage(75)">75%</button>
+            <button class="percent-btn" onclick="setPercentage(100)">100%</button>
+        </div>
+        <div class="box-body">
+            <input type="number" id="fromAmount" placeholder="0.0" oninput="calculateSwap()">
+            <select id="fromToken" onchange="handleTokenChange()">
+            </select>
+        </div>
+    </div>
+
+    <div class="switch-btn-container">
+        <button class="switch-btn" onclick="switchTokens()">↓↑</button>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <span>To</span>
+            <span>Balance: <span id="toBalance">0.0</span></span>
+        </div>
+        <div class="box-body">
+            <input type="number" id="toAmount" placeholder="0.0" readonly>
+            <select id="toToken" onchange="handleTokenChange()">
+            </select>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <div class="info-row">
+            <span>Slippage Tolerance:</span>
+            <span style="color: var(--gold); font-weight: bold;">Auto (Lowest Fee)</span>
+        </div>
+        <div class="info-row">
+            <span>Price Update:</span>
+            <div class="timer-wrapper">
+                <svg class="timer-svg" viewBox="0 0 28 28">
+                    <circle class="timer-bg" cx="14" cy="14" r="12"></circle>
+                    <circle class="timer-progress" id="timerCircle" cx="14" cy="14" r="12"></circle>
+                </svg>
+                <span class="timer-text"><span id="timerText">9</span>s</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="action-btn" id="swapBtn" onclick="executeSwap()">Swap</button>
+
+    <div class="history-container">
+        <div class="history-title">Recent Transactions</div>
+        <div class="history-list" id="historyList">
+        </div>
+    </div>
+</div>
+
+<script>
+    const TOKENS = {
+        BNB: { address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", decimals: 18, isNative: true },
+        USDT: { address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18 },
+        USDC: { address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d", decimals: 18 },
+        BTCB: { address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", decimals: 18 },
+        ETH: { address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8", decimals: 18 },
+        DAI: { address: "0x1AF3F329e8BE154074D8769D1FFA4eE058B1CDC3", decimals: 18 },
+        DAY: { address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", decimals: 18 },
+        CAKE: { address: "0x0E09FaBB73BD3Ade0a17ECC321fD13a19e81cCE5", decimals: 18 },
+        XRP: { address: "0x1D2F0da169ceB9fC7B3144628dB156f3f6c60dBE", decimals: 18 },
+        ADA: { address: "0x3EE2200Efb3400fAbB9AacF31297cDbD3a427409", decimals: 18 },
+        DOGE: { address: "0xba2ae424d960c26247dd6c32edc70b295c744c43", decimals: 8 }
+    };
+
+    const PANCAKE_ROUTER_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
+    const WBNB_ADDRESS = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+    const BSC_RPC = "https://bsc-dataseed1.binance.org/";
+
+    const ERC20_ABI = [
+        "function balanceOf(address owner) view returns (uint256)",
+        "function allowance(address owner, address spender) view returns (uint256)",
+        "function approve(address spender, uint256 amount) returns (bool)"
+    ];
+    
+    const ROUTER_ABI = [
+        "function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)",
+        "function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)",
+        "function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)",
+        "function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)"
+    ];
+
+    let provider, publicProvider, signer, userAddress;
+    let countdown = 9;
+    const circleMaxOffset = 75;
+    let transactions = [];
+    let currentRawBalance = "0";
+
+    function populateDropdowns() {
+        const fromSelect = document.getElementById('fromToken');
+        const toSelect = document.getElementById('toToken');
+        
+        fromSelect.innerHTML = '';
+        toSelect.innerHTML = '';
+
+        const keys = Object.keys(TOKENS);
+        keys.forEach(symbol => {
+            const opt1 = document.createElement('option');
+            opt1.value = symbol;
+            opt1.innerText = symbol;
+            fromSelect.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = symbol;
+            opt2.innerText = symbol;
+            toSelect.appendChild(opt2);
+        });
+
+        fromSelect.value = "BNB";
+        toSelect.value = "USDT";
+    }
+
+    async function initWallet() {
+        publicProvider = new ethers.providers.JsonRpcProvider(BSC_RPC);
+
+        if (window.ethereum) {
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }]
+                        });
+                    } catch (e) {}
+                }
+
+                const accounts = await provider.send("eth_requestAccounts", []);
+                if (accounts.length > 0) {
+                    userAddress = accounts[0];
+                    signer = provider.getSigner();
+                    
+                    let shortAddr = userAddress.substring(0, 4) + "..." + userAddress.substring(userAddress.length - 4);
+                    document.getElementById('accountText').innerText = shortAddr;
+                    document.getElementById('statusDot').classList.add('active');
+                    
+                    loadTransactions();
+                    updateBalances();
+                    calculateSwap();
+                }
+            } catch (err) {
+                document.getElementById('accountText').innerText = "Connect Wallet";
+            }
+        } else {
+            document.getElementById('accountText').innerText = "Open in DApp Browser";
+        }
+    }
+
+    window.addEventListener('load', () => {
+        populateDropdowns();
+        initWallet();
+        setTimeout(initWallet, 1000);
+    });
+
+    setInterval(() => {
+        countdown--;
+        if (countdown < 0) {
+            countdown = 9;
+            calculateSwap();
+        }
+        document.getElementById('timerText').innerText = countdown;
+        const offset = circleMaxOffset - (circleMaxOffset * countdown / 9);
+        document.getElementById('timerCircle').style.strokeDashoffset = offset;
+    }, 1000);
+
+    async function updateBalances() {
+        if (!userAddress) return;
+
+        const fromToken = document.getElementById('fromToken').value;
+        const toToken = document.getElementById('toToken').value;
+
+        const fromBal = await getBalanceData(fromToken);
+        currentRawBalance = fromBal.raw;
+        document.getElementById('fromBalance').innerText = fromBal.formatted;
+
+        const toBal = await getBalanceData(toToken);
+        document.getElementById('toBalance').innerText = toBal.formatted;
+    }
+
+    async function getBalanceData(symbol) {
+        if (!userAddress) return { raw: "0", formatted: "0.0" };
+        try {
+            const activeProvider = provider || publicProvider;
+            if (TOKENS[symbol].isNative) {
+                const bal = await activeProvider.getBalance(userAddress);
+                return {
+                    raw: bal.toString(),
+                    formatted: parseFloat(ethers.utils.formatEther(bal)).toFixed(4)
+                };
+            } else {
+                const contract = new ethers.Contract(TOKENS[symbol].address, ERC20_ABI, activeProvider);
+                const bal = await contract.balanceOf(userAddress);
+                return {
+                    raw: bal.toString(),
+                    formatted: parseFloat(ethers.utils.formatUnits(bal, TOKENS[symbol].decimals)).toFixed(4)
+                };
+            }
+        } catch (e) {
+            return { raw: "0", formatted: "0.0" };
+        }
+    }
+
+    function setPercentage(percent) {
+        if (!currentRawBalance || currentRawBalance === "0") return;
+        const fromSymbol = document.getElementById('fromToken').value;
+        const decimals = TOKENS[fromSymbol].decimals;
+        
+        let totalBig = ethers.BigNumber.from(currentRawBalance);
+        
+        if (TOKENS[fromSymbol].isNative) {
+            const reserveGas = ethers.utils.parseEther("0.005");
+            if (totalBig.gt(reserveGas)) {
+                totalBig = totalBig.sub(reserveGas);
+            } else if (percent === 100) {
+                totalBig = ethers.BigNumber.from(0);
+            }
+        }
+
+        const calculated = totalBig.mul(percent).div(100);
+        const formatted = ethers.utils.formatUnits(calculated, decimals);
+        
+        document.getElementById('fromAmount').value = parseFloat(formatted) > 0 ? formatted : "";
+        calculateSwap();
+    }
+
+    function switchTokens() {
+        const fromSelect = document.getElementById('fromToken');
+        const toSelect = document.getElementById('toToken');
+        
+        const temp = fromSelect.value;
+        fromSelect.value = toSelect.value;
+        toSelect.value = temp;
+
+        updateBalances();
+        calculateSwap();
+    }
+
+    function handleTokenChange() {
+        const fromSelect = document.getElementById('fromToken');
+        const toSelect = document.getElementById('toToken');
+        
+        if (fromSelect.value === toSelect.value) {
+            const keys = Object.keys(TOKENS);
+            const altToken = keys.find(k => k !== fromSelect.value);
+            toSelect.value = altToken;
+        }
+
+        updateBalances();
+        calculateSwap();
+    }
+
+    function getSwapPath(fromSymbol, toSymbol) {
+        const fromAddr = TOKENS[fromSymbol].isNative ? WBNB_ADDRESS : TOKENS[fromSymbol].address;
+        const toAddr = TOKENS[toSymbol].isNative ? WBNB_ADDRESS : TOKENS[toSymbol].address;
+
+        if (fromAddr.toLowerCase() === toAddr.toLowerCase()) {
+            return [fromAddr];
+        }
+
+        if (fromSymbol !== "BNB" && toSymbol !== "BNB" && fromAddr !== WBNB_ADDRESS && toAddr !== WBNB_ADDRESS) {
+            return [fromAddr, WBNB_ADDRESS, toAddr];
+        }
+
+        return [fromAddr, toAddr];
+    }
+
+    async function calculateSwap() {
+        const amount = document.getElementById('fromAmount').value;
+        if (!amount || amount <= 0) {
+            document.getElementById('toAmount').value = "";
+            return;
+        }
+
+        try {
+            const fromSymbol = document.getElementById('fromToken').value;
+            const toSymbol = document.getElementById('toToken').value;
+
+            const path = getSwapPath(fromSymbol, toSymbol);
+            const activeProvider = publicProvider || provider;
+            const routerContract = new ethers.Contract(PANCAKE_ROUTER_ADDRESS, ROUTER_ABI, activeProvider);
+            const parsedAmount = ethers.utils.parseUnits(amount, TOKENS[fromSymbol].decimals);
+
+            const amounts = await routerContract.getAmountsOut(parsedAmount, path);
+            const outputAmount = ethers.utils.formatUnits(amounts[amounts.length - 1], TOKENS[toSymbol].decimals);
+
+            document.getElementById('toAmount').value = parseFloat(outputAmount).toFixed(6);
+        } catch (e) {
+            document.getElementById('toAmount').value = "";
+        }
+    }
+
+    function addTransactionRecord(status, hash, desc) {
+        if (status !== 'success') return;
+
+        const txRecord = {
+            status: status,
+            hash: hash,
+            desc: desc,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        
+        transactions.unshift(txRecord);
+        if (userAddress) {
+            localStorage.setItem('peetx_txs_' + userAddress, JSON.stringify(transactions.slice(0, 10)));
+        }
+        renderTransactions();
+    }
+
+    function loadTransactions() {
+        if (!userAddress) return;
+        const saved = localStorage.getItem('peetx_txs_' + userAddress);
+        if (saved) {
+            try {
+                const loaded = JSON.parse(saved);
+                transactions = loaded.filter(tx => tx.status === 'success');
+            } catch (e) {
+                transactions = [];
+            }
+        } else {
+            transactions = [];
+        }
+        renderTransactions();
+    }
+
+    function renderTransactions() {
+        const listEl = document.getElementById('historyList');
+        listEl.innerHTML = '';
+
+        if (transactions.length === 0) {
+            listEl.innerHTML = '<div style="font-size: 11px; color: var(--text-dim); text-align: center; padding: 10px;">No recent transactions</div>';
+            return;
+        }
+
+        transactions.forEach(tx => {
+            const item = document.createElement('div');
+            item.className = `history-item ${tx.status}`;
+
+            const details = document.createElement('div');
+            details.className = 'history-details';
+
+            const desc = document.createElement('div');
+            desc.className = 'history-desc';
+            desc.innerText = tx.desc;
+
+            const time = document.createElement('div');
+            time.className = 'history-time';
+            time.innerText = tx.timestamp;
+
+            details.appendChild(desc);
+            details.appendChild(time);
+
+            const link = document.createElement('a');
+            link.className = 'history-link';
+            link.target = '_blank';
+
+            if (tx.hash) {
+                link.href = `https://bscscan.com/tx/${tx.hash}`;
+                link.innerText = 'BscScan ↗';
+            } else {
+                link.href = `https://bscscan.com/address/${userAddress}`;
+                link.innerText = 'View Address ↗';
+            }
+
+            item.appendChild(details);
+            item.appendChild(link);
+            listEl.appendChild(item);
+        });
+    }
+
+    async function executeSwap() {
+        if (!userAddress || !signer) {
+            await initWallet();
+            return;
+        }
+
+        const amountInput = document.getElementById('fromAmount').value;
+        if (!amountInput || amountInput <= 0) {
+            return;
+        }
+
+        const swapBtn = document.getElementById('swapBtn');
+        const fromSymbol = document.getElementById('fromToken').value;
+        const toSymbol = document.getElementById('toToken').value;
+        const descText = `Swap ${amountInput} ${fromSymbol} for ${toSymbol}`;
+
+        const path = getSwapPath(fromSymbol, toSymbol);
+        const routerContract = new ethers.Contract(PANCAKE_ROUTER_ADDRESS, ROUTER_ABI, signer);
+        const parsedAmount = ethers.utils.parseUnits(amountInput, TOKENS[fromSymbol].decimals);
+
+        let txHash = null;
+
+        try {
+            swapBtn.disabled = true;
+            swapBtn.innerText = "Confirming Transaction...";
+
+            const amounts = await routerContract.getAmountsOut(parsedAmount, path);
+            const lastAmount = amounts[amounts.length - 1];
+            const amountOutMin = lastAmount.mul(995).div(1000); 
+            const deadline = Math.floor(Date.now() / 1000) + 60 * 10;
+
+            let tx;
+            if (TOKENS[fromSymbol].isNative) {
+                tx = await routerContract.swapExactETHForTokens(
+                    amountOutMin,
+                    path,
+                    userAddress,
+                    deadline,
+                    { value: parsedAmount }
+                );
+            } else if (TOKENS[toSymbol].isNative) {
+                const tokenContract = new ethers.Contract(TOKENS[fromSymbol].address, ERC20_ABI, signer);
+                const allowance = await tokenContract.allowance(userAddress, PANCAKE_ROUTER_ADDRESS);
+
+                if (allowance.lt(parsedAmount)) {
+                    const approveTx = await tokenContract.approve(PANCAKE_ROUTER_ADDRESS, ethers.constants.MaxUint256);
+                    await approveTx.wait();
+                }
+
+                tx = await routerContract.swapExactTokensForETH(
+                    parsedAmount,
+                    amountOutMin,
+                    path,
+                    userAddress,
+                    deadline
+                );
+            } else {
+                const tokenContract = new ethers.Contract(TOKENS[fromSymbol].address, ERC20_ABI, signer);
+                const allowance = await tokenContract.allowance(userAddress, PANCAKE_ROUTER_ADDRESS);
+
+                if (allowance.lt(parsedAmount)) {
+                    const approveTx = await tokenContract.approve(PANCAKE_ROUTER_ADDRESS, ethers.constants.MaxUint256);
+                    await approveTx.wait();
+                }
+
+                tx = await routerContract.swapExactTokensForTokens(
+                    parsedAmount,
+                    amountOutMin,
+                    path,
+                    userAddress,
+                    deadline
+                );
+            }
+
+            txHash = tx.hash;
+            await tx.wait();
+
+            addTransactionRecord('success', txHash, descText);
+            updateBalances();
+            document.getElementById('fromAmount').value = "";
+            document.getElementById('toAmount').value = "";
+        } catch (error) {
+            // المعاملات الفاشلة لن يتم إضافتها للسجل
+        } finally {
+            swapBtn.disabled = false;
+            swapBtn.innerText = "Swap";
+        }
+    }
+</script>
+
+</body>
+</html>
