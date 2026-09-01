@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX - Web3 Live System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0314;
+            --bg-secondary: #150727;
+            --purple-main: #6b21a8;
+            --purple-light: #c084fc;
+            --gold-main: #f59e0b;
+            --gold-light: #fef08a;
+            --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+            --purple-gradient: linear-gradient(135deg, #1e0836 0%, #3b0764 100%);
+            --text-color: #f3e8ff;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            perspective: 1000px;
+        }
+
+        header {
+            height: 70px;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--gold-main);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--gold-main);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px var(--gold-main); }
+            100% { text-shadow: 0 0 20px var(--purple-light), 0 0 30px var(--gold-main); }
+        }
+
+        .menu-btn {
+            background: var(--gold-gradient);
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .menu-btn:hover {
+            transform: translateZ(10px) rotateX(5deg);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.6);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 320px;
+            height: 100%;
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--gold-main);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            padding: 25px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        }
+
+        .sidebar.active { right: 0; }
+        
+        .sidebar .close-btn {
+            background: transparent;
+            color: var(--gold-main);
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            float: left;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 60px;
+        }
+
+        .sidebar-menu li {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(107, 33, 168, 0.15);
+            border: 1px solid var(--purple-light);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--gold-light);
+            transition: 0.3s;
+            transform-style: preserve-3d;
+        }
+
+        .sidebar-menu li:hover {
+            background: var(--purple-main);
+            border-color: var(--gold-main);
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+            transform: translateZ(15px) scale(1.03);
+        }
+
+        .main-wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--purple-gradient);
+            border-top: 2px solid var(--gold-main);
+            border-bottom: 2px solid var(--gold-main);
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 15px rgba(245, 158, 11, 0.2);
+            width: 100%;
+            margin-bottom: 0;
+            animation: slideIn3D 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5deg) rotateX(2deg);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.7), 0 0 25px rgba(192, 132, 252, 0.4);
+        }
+
+        @keyframes slideIn3D {
+            from { opacity: 0; transform: translateY(30px) rotateX(-10deg) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
+        }
+
+        .card-title {
+            color: var(--gold-main);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-notice-box {
+            background: rgba(107, 33, 168, 0.25);
+            border: 1px solid var(--purple-light);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--gold-light);
+        }
+
+        .info-notice-box.warning-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--gold-main);
+            color: #fef08a;
+        }
+
+        .earnings-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gold-main);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.1);
+            transform: translateZ(10px);
+        }
+
+        .earnings-title {
+            font-size: 16px;
+            color: var(--gold-light);
+            margin-bottom: 5px;
+        }
+
+        .earnings-amount {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .referral-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--gold-main);
+            margin: 15px 0;
+            transform: translateZ(10px);
+        }
+
+        .input-box {
+            width: 100%;
+            background: rgba(21, 7, 39, 0.8);
+            border: 1px solid var(--purple-light);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--gold-light);
+            font-weight: bold;
+            font-size: 15px;
+            direction: ltr;
+            outline: none;
+            text-align: center;
+        }
+
+        .action-btns-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn-gold {
+            flex: 1;
+            background: var(--gold-gradient);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            transform-style: preserve-3d;
+        }
+
+        .btn-gold:hover {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.8);
+            transform: translateZ(5px) scale(1.02);
+        }
+
+        .contract-box-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--gold-main);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transform: translateZ(10px);
+        }
+
+        .contract-box-title {
+            color: var(--gold-light);
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* حاوية الصور بأبعاد ثابتة 309×309 بكسل لكل الأقسام */
+        .image-container-1080 {
+            width: 309px;
+            height: 309px;
+            margin: 20px auto;
+            border: 1px solid var(--gold-main);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(107, 33, 168, 0.5);
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d;
+        }
+
+        .image-container-1080:hover {
+            transform: scale(1.01) rotateY(2deg);
+        }
+
+        .image-container-1080 img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .blockchain-visual {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            text-align: center;
+            transform: translateZ(10px);
+        }
+
+        .node-network {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .node {
+            width: 65px;
+            height: 65px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--gold-main);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+            z-index: 2;
+            animation: node3DFloat 3s ease-in-out infinite alternate;
+        }
+
+        .node:nth-child(2) { animation-delay: 0.5s; }
+        .node:nth-child(3) { animation-delay: 1s; }
+        .node:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes node3DFloat {
+            0% { transform: translateY(0) translateZ(0); box-shadow: 0 0 8px var(--gold-main); }
+            100% { transform: translateY(-10px) translateZ(20px); box-shadow: 0 10px 20px var(--purple-light); }
+        }
+
+        .node-icon { font-size: 18px; margin-bottom: 2px; }
+
+        .network-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold-main), var(--purple-light), var(--gold-main));
+            z-index: 1;
+            background-size: 200% 200%;
+            animation: flowLine 2s linear infinite;
+        }
+
+        @keyframes flowLine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .leaders-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .leader-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .leader-card:hover {
+            transform: translateZ(15px) scale(1.01);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .leader-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .leader-rank {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .leader-prize {
+            background: var(--gold-gradient);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .leader-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .explorer-btn {
+            color: var(--gold-light);
+            text-decoration: none;
+            background: rgba(107, 33, 168, 0.4);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--purple-light);
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .explorer-btn:hover {
+            background: var(--purple-main);
+            color: #fff;
+            box-shadow: 0 0 10px var(--purple-light);
+        }
+
+        .tab-content { display: none; width: 100%; }
+        .tab-content.active { display: block; }
+
+        .gen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .gen-card {
+            background: rgba(15, 5, 29, 0.8);
+            border: 1px solid var(--purple-light);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(107, 33, 168, 0.2);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .gen-card:hover {
+            transform: translateZ(10px);
+            border-color: var(--gold-main);
+        }
+
+        .gen-card h4 { color: var(--gold-main); margin-bottom: 8px; }
+
+        .gen-status-badge {
+            margin-top: 10px;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .gen-status-unlocked {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .gen-status-locked {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid var(--gold-main);
+            color: var(--gold-light);
+        }
+
+        .faq-item {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .faq-item:hover { transform: translateZ(5px); }
+
+        .faq-item h4 { color: var(--gold-main); margin-bottom: 6px; }
+
+        footer {
+            height: 60px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--purple-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--gold-main);
+            letter-spacing: 3px;
+        }
+
+        #custom-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--purple-gradient);
+            border: 1px solid var(--gold-main);
+            color: var(--gold-light);
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 158, 11, 0.4);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #custom-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-logo">PeetX</div>
+        <button class="menu-btn" onclick="toggleSidebar()">القائمة ☰</button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">✕</button>
+        <ul class="sidebar-menu">
+            <li onclick="switchTab('tab1')">الرئيسية والإحالة</li>
+            <li onclick="switchTab('tab2')">أجيال الفريق (5 أجيال)</li>
+            <li onclick="switchTab('tab3')">مسابقة القادة والجوائز</li>
+            <li onclick="switchTab('tab4')">الأسئلة والتحذيرات</li>
+        </ul>
+    </div>
+
+    <div class="main-wrapper">
+
+        <div id="tab1" class="tab-content active">
+            <div class="card">
+                <h3 class="card-title">🔗 رابط الإحالة اللامركزي</h3>
+
+                <div class="info-notice-box">
+                    ℹ️ <strong>تنبيه هام:</strong> بمجرد التسجيل، يبقى المستخدم مسجلاً بشكل دائم وإلى أجل غير مسمى داخل العقد الذكي.
+                </div>
+
+                <div class="info-notice-box warning-notice">
+                    ⚠️ <strong>تنبيه إغلاق الأجيال:</strong> سيتم قفل نظام الأجيال والعمولات تماماً فور وصول عدد المسجلين إلى <strong>10,000 مستخدم</strong>. أي مستخدم يسجل بعد هذا العدد يدخل كـ <strong>مستخدم عادي بدون عمولات أجيال</strong>، بينما المستخدمون المسجلون قبل الوصول لـ 10,000 يحصلون على الأرباح والعمولات بشكل دائم مستمر.
+                </div>
+
+                <div class="earnings-box">
+                    <div class="earnings-title">إجمالي الأرباح المحصلة من الأجيال</div>
+                    <div class="earnings-amount" id="totalEarnings">$0.00</div>
+                </div>
+
+                <div class="referral-container">
+                    <input type="text" id="refLink" class="input-box" readonly value="https://peetx.app/REGISTER">
+                    <div class="action-btns-row">
+                        <button class="btn-gold" onclick="copyInput('refLink')">📋 نسخ الرابط</button>
+                        <button class="btn-gold" onclick="fetchWalletAddress()">🔍 جلب عنوان المحفظة</button>
+                    </div>
+                </div>
+
+                <div class="blockchain-visual">
+                    <div class="node-network">
+                        <div class="network-line"></div>
+                        <div class="node">
+                            <span class="node-icon">👤</span>
+                            <span>أنت</span>
+                        </div>
+                        <div class="node">
+                            <span class="node-icon">📜</span>
+                            <span>العقد</span>
+                        </div>
+                        <div class="node">
+                            <span class="node-icon">👥</span>
+                            <span>الفريق</span>
+                        </div>
+                        <div class="node">
+                            <span class="node-icon">💰</span>
+                            <span>USDT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-container-1080">
+                    <img src="logo1.png" alt="PeetX Visual 1">
+                </div>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab-content">
+            <div class="card">
+                <h3 class="card-title">👥 توزيع أرباح الأجيال الخمسة</h3>
+
+                <div class="gen-grid">
+                    <div class="gen-card">
+                        <div>
+                            <h4>الجيل الأول (10%)</h4>
+                            <p>الأعضاء: <strong id="gen1_count" style="color: var(--gold-light);">0</strong></p>
+                            <p>التداول: $<strong id="gen1_vol" style="color: var(--success);">0.00</strong></p>
+                        </div>
+                        <div class="gen-status-badge gen-status-unlocked">
+                            🔓 مفتوح تلقائياً
+                        </div>
+                    </div>
+
+                    <div class="gen-card">
+                        <div>
+                            <h4>الجيل الثاني (15%)</h4>
+                            <p>الأعضاء: <strong id="gen2_count" style="color: var(--gold-light);">0</strong></p>
+                            <p>التداول: $<strong id="gen2_vol" style="color: var(--success);">0.00</strong></p>
+                        </div>
+                        <div class="gen-status-badge gen-status-unlocked">
+                            🔓 مفتوح تلقائياً
+                        </div>
+                    </div>
+
+                    <div class="gen-card">
+                        <div>
+                            <h4>الجيل الثالث (20%)</h4>
+                            <p>الأعضاء: <strong id="gen3_count" style="color: var(--gold-light);">0</strong></p>
+                            <p>التداول: $<strong id="gen3_vol" style="color: var(--success);">0.00</strong></p>
+                        </div>
+                        <div class="gen-status-badge gen-status-locked">
+                            🔒 شرط الفتح: إيداع 50$
+                        </div>
+                    </div>
+
+                    <div class="gen-card">
+                        <div>
+                            <h4>الجيل الرابع (25%)</h4>
+                            <p>الأعضاء: <strong id="gen4_count" style="color: var(--gold-light);">0</strong></p>
+                            <p>التداول: $<strong id="gen4_vol" style="color: var(--success);">0.00</strong></p>
+                        </div>
+                        <div class="gen-status-badge gen-status-locked">
+                            🔒 شرط الفتح: إيداع 100$
+                        </div>
+                    </div>
+
+                    <div class="gen-card">
+                        <div>
+                            <h4>الجيل الخامس (35%)</h4>
+                            <p>الأعضاء: <strong id="gen5_count" style="color: var(--gold-light);">0</strong></p>
+                            <p>التداول: $<strong id="gen5_vol" style="color: var(--success);">0.00</strong></p>
+                        </div>
+                        <div class="gen-status-badge gen-status-locked">
+                            🔒 شرط الفتح: إيداع 150$
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-container-1080">
+                    <img src="logo2.png" alt="PeetX Visual 2">
+                </div>
+            </div>
+        </div>
+
+        <div id="tab3" class="tab-content">
+            <div class="card">
+                <h3 class="card-title">🏆 لوحة صدارة القادة والمسابقات</h3>
+
+                <div class="info-notice-box">
+                    🏆 <strong>تفاصيل مسابقة القادة:</strong> تُقام هذه المسابقة <strong>مرة واحدة فقط</strong> لاشتهار منصة التداول. يتم فرز الرابحين تلقائياً في نهاية المسابقة، ويتم الدفع بشكل <strong>فوري ومباشر</strong> بواسطة العقد الذكي المفتوح المصدر.
+                </div>
+
+                <div class="contract-box-container">
+                    <div class="contract-box-title">عقد مسابقة القادة المفتوح المصدر</div>
+                    <input type="text" id="leaderContractAddress" class="input-box" readonly value="0x0000000000000000000000000000000000000000">
+                    <div class="action-btns-row" style="margin-top: 10px;">
+                        <button class="btn-gold" onclick="copyInput('leaderContractAddress')">📋 نسخ عنوان العقد</button>
+                    </div>
+                </div>
+
+                <div class="leaders-wrapper" id="leadersList"></div>
+
+                <div class="image-container-1080">
+                    <img src="logo3.png" alt="PeetX Visual 3">
+                </div>
+            </div>
+        </div>
+
+        <div id="tab4" class="tab-content">
+            <div class="card">
+                <h3 class="card-title">❓ الأسئلة الشائعة والتحذيرات</h3>
+
+                <div class="faq-item">
+                    <h4>شرط الـ 10,000 مستخدم الأول؟</h4>
+                    <p>تستمر عمولات الإحالة والأجيال فقط لأول 10,000 مستخدم يُسجلون في المنظومة. بعد هذا العدد يدخل أي مستخدم جديد كمستخدم عادي بدون عمولات أجيال.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>هل مدة التسجيل محدودة؟</h4>
+                    <p>لا، التسجيل بالمنظومة دائم ويبقى المستخدم مسجلاً في العقد الذكي إلى أجل غير مسمى.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h4>هل يتم سحب الأرباح يدوياً؟</h4>
+                    <p>تحول الأرباح فوراً وتلقائياً كعقد مالي مباشر إلى محفظتك الشخصية.</p>
+                </div>
+
+                <div class="image-container-1080">
+                    <img src="logo4.png" alt="PeetX Visual 4">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-logo">PeetX Ecosystem</div>
+    </footer>
+
+    <div id="custom-toast"></div>
+
+    <script>
+        const baseDomain = "peetx.app/";
+        const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000";
+        const CONTRACT_ABI = [
+            "function getUserData(address user) view returns (uint256 totalEarnings, uint256[5] genCounts, uint256[5] genVolumes)",
+            "function getTopLeaders() view returns (address[5] leaders, uint256[5] teamSizes, uint256[5] volumes)"
+        ];
+
+        const BSC_CHAIN_ID_HEX = '0x38';
+        const BSC_RPC_URL = 'https://bsc-dataseed.binance.org/';
+
+        let provider, signer, userAddress;
+
+        let leadersData = [
+            { rankName: "🥇 المركز الأول", prize: "$300,000", wallet: "0x0000000000000000000000000000000000000000", teamSize: 0, volume: 0 },
+            { rankName: "🥈 المركز الثاني", prize: "$150,000", wallet: "0x0000000000000000000000000000000000000000", teamSize: 0, volume: 0 },
+            { rankName: "🥉 المركز الثالث", prize: "$100,000", wallet: "0x0000000000000000000000000000000000000000", teamSize: 0, volume: 0 },
+            { rankName: "🎖️ المركز الرابع", prize: "$50,000", wallet: "0x0000000000000000000000000000000000000000", teamSize: 0, volume: 0 },
+            { rankName: "🎖️ المركز الخامس", prize: "$25,000", wallet: "0x0000000000000000000000000000000000000000", teamSize: 0, volume: 0 }
+        ];
+
+        // الحصول على موفر ethereum سواء كان مباشر أو داخل iframes
+        function getEthereumProvider() {
+            if (window.ethereum) return window.ethereum;
+            try {
+                if (window.parent && window.parent.ethereum) return window.parent.ethereum;
+            } catch (e) {}
+            try {
+                if (window.top && window.top.ethereum) return window.top.ethereum;
+            } catch (e) {}
+            return null;
+        }
+
+        function showNotification(message) {
+            const toast = document.getElementById('custom-toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function generateWalletCode(address) {
+            if (!address || address === "0x0000000000000000000000000000000000000000") return "SF24O";
+            let hash = 0;
+            for (let i = 0; i < address.length; i++) {
+                hash = (hash << 5) - hash + address.charCodeAt(i);
+                hash |= 0;
+            }
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let code = "";
+            hash = Math.abs(hash);
+            for (let i = 0; i < 5; i++) {
+                code += chars[hash % chars.length];
+                hash = Math.floor(hash / chars.length);
+            }
+            return code;
+        }
+
+        function updateReferralUI(addr) {
+            const code = generateWalletCode(addr);
+            document.getElementById('refLink').value = baseDomain + code;
+        }
+
+        function renderLeaders() {
+            leadersData.sort((a, b) => b.volume - a.volume);
+
+            const prizes = ["$300,000", "$150,000", "$100,000", "$50,000", "$25,000"];
+            const titles = ["🥇 المركز الأول", "🥈 المركز الثاني", "🥉 المركز الثالث", "🎖️ المركز الرابع", "🎖️ المركز الخامس"];
+
+            const wrapper = document.getElementById('leadersList');
+            wrapper.innerHTML = '';
+
+            leadersData.forEach((leader, index) => {
+                leader.rankName = titles[index];
+                leader.prize = prizes[index];
+
+                const card = document.createElement('div');
+                card.className = 'leader-card';
+                card.innerHTML = `
+                    <div class="leader-header">
+                        <span class="leader-rank">${leader.rankName}</span>
+                        <span class="leader-prize">الجوائز: ${leader.prize}</span>
+                    </div>
+                    <div class="leader-info-row">
+                        <span>القائد: <strong>${shortAddress(leader.wallet)}</strong></span>
+                        <a href="https://bscscan.com/address/${leader.wallet}" target="_blank" class="explorer-btn">🔍 مكتشف BscScan</a>
+                    </div>
+                    <div class="leader-info-row">
+                        <span>حجم الفريق: <strong>${leader.teamSize} عضو</strong></span>
+                        <span>تداول الفريق: <strong style="color: var(--success);">$${leader.volume.toLocaleString()}</strong></span>
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+
+        function shortAddress(addr) {
+            if (!addr || addr === "0x0000000000000000000000000000000000000000") return "في انتظار المتصدرين...";
+            return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+        }
+
+        async function ensureBscNetwork(eth) {
+            try {
+                const chainId = await eth.request({ method: 'eth_chainId' });
+                if (chainId !== BSC_CHAIN_ID_HEX) {
+                    try {
+                        await eth.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: BSC_CHAIN_ID_HEX }],
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            await eth.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: BSC_CHAIN_ID_HEX,
+                                    chainName: 'BNB Smart Chain Mainnet',
+                                    nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                                    rpcUrls: [BSC_RPC_URL],
+                                    blockExplorerUrls: ['https://bscscan.com/']
+                                }]
+                            });
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Error checking/switching network:", err);
+            }
+        }
+
+        async function fetchWalletAddress() {
+            const eth = getEthereumProvider();
+            if (eth) {
+                try {
+                    await ensureBscNetwork(eth);
+                    provider = new ethers.providers.Web3Provider(eth);
+                    const accounts = await eth.request({ method: 'eth_requestAccounts' });
+                    if (accounts && accounts.length > 0) {
+                        userAddress = accounts[0];
+                        signer = provider.getSigner();
+                        updateReferralUI(userAddress);
+                        showNotification("تم جلب وتحديد عنوان المحفظة بنجاح");
+                        await loadBlockchainData();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showNotification("تعذر الاتصال بالمحفظة الإلكترونية");
+                }
+            } else {
+                showNotification("يرجى الفتح من داخل تطبيق المحفظة");
+            }
+        }
+
+        async function initAutoConnect() {
+            const eth = getEthereumProvider();
+            if (eth) {
+                try {
+                    provider = new ethers.providers.Web3Provider(eth);
+                    await ensureBscNetwork(eth);
+
+                    // فحص صامت أولاً دون إزعاج المستخدم
+                    const accounts = await eth.request({ method: 'eth_accounts' });
+                    if (accounts && accounts.length > 0) {
+                        userAddress = accounts[0];
+                        signer = provider.getSigner();
+                        updateReferralUI(userAddress);
+                        await loadBlockchainData();
+                    }
+
+                    // ربط المستمعات المباشرة والتحديث الفوري
+                    eth.on('accountsChanged', async (newAccounts) => {
+                        if (newAccounts && newAccounts.length > 0) {
+                            userAddress = newAccounts[0];
+                            updateReferralUI(userAddress);
+                            await loadBlockchainData();
+                            showNotification("تم تغيير الحساب المتصل");
+                        } else {
+                            userAddress = null;
+                            updateReferralUI(null);
+                        }
+                    });
+
+                    eth.on('chainChanged', () => {
+                        window.location.reload();
+                    });
+
+                    // التحديث الحي الفوري مع كل بلوك جديد
+                    provider.on('block', async (blockNumber) => {
+                        if (userAddress) {
+                            await loadBlockchainData();
+                        }
+                    });
+
+                } catch (err) {
+                    console.error("AutoConnect Error:", err);
+                }
+            } else {
+                renderLeaders();
+            }
+        }
+
+        async function loadBlockchainData() {
+            if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
+                renderLeaders();
+                return;
+            }
+
+            try {
+                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                
+                if (userAddress) {
+                    const userData = await contract.getUserData(userAddress);
+                    document.getElementById('totalEarnings').innerText = '$' + ethers.utils.formatUnits(userData.totalEarnings, 18);
+
+                    for (let i = 0; i < 5; i++) {
+                        document.getElementById(`gen${i+1}_count`).innerText = userData.genCounts[i].toString();
+                        document.getElementById(`gen${i+1}_vol`).innerText = parseFloat(ethers.utils.formatUnits(userData.genVolumes[i], 18)).toFixed(2);
+                    }
+                }
+
+                const leaders = await contract.getTopLeaders();
+                for (let i = 0; i < 5; i++) {
+                    leadersData[i].wallet = leaders.leaders[i];
+                    leadersData[i].teamSize = leaders.teamSizes[i].toNumber();
+                    leadersData[i].volume = parseFloat(ethers.utils.formatUnits(leaders.volumes[i], 18));
+                }
+
+                renderLeaders();
+            } catch (error) {
+                console.log(error);
+                renderLeaders();
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            toggleSidebar();
+        }
+
+        function copyInput(inputId) {
+            const copyText = document.getElementById(inputId);
+            if (!copyText.value) return;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(copyText.value).then(() => {
+                    showNotification("تم النسخ بنجاح!");
+                }).catch(() => {
+                    fallbackCopy(copyText);
+                });
+            } else {
+                fallbackCopy(copyText);
+            }
+        }
+
+        function fallbackCopy(element) {
+            element.select();
+            document.execCommand("copy");
+            showNotification("تم النسخ بنجاح!");
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderLeaders();
+            initAutoConnect();
+        });
+    </script>
+</body>
+</html>
