@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX - Comprehensive Decentralized Protocol</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #080210;
+            --purple-dark: #3b0764;
+            --purple-main: #6b21a8;
+            --purple-light: #a855f7;
+            --purple-glow: #c084fc;
+            --gold-dark: #92400e;
+            --gold-main: #d97706;
+            --gold-light: #fbbf24;
+            --gold-glow: #fef08a;
+            --card-bg: rgba(20, 8, 36, 0.88);
+            --card-border: rgba(217, 119, 6, 0.35);
+            --text-main: #f3e8ff;
+            --text-sub: #d8b4fe;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden !important;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            position: relative;
+            line-height: 1.7;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 5%;
+            background: rgba(8, 2, 16, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--gold-main);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gold-light);
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        .lang-select {
+            background: #18062b;
+            color: var(--gold-light);
+            border: 1.5px solid var(--gold-main);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(107, 33, 168, 0.3);
+        }
+
+        .lang-select:hover {
+            border-color: var(--gold-light);
+            box-shadow: 0 0 15px var(--gold-light);
+        }
+
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 25px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--purple-light);
+            border-radius: 24px;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.25);
+            margin-bottom: 60px;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--gold-light) 0%, #fff 50%, var(--purple-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-sub);
+            max-width: 900px;
+            margin: 0 auto 35px;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--purple-main), var(--gold-main));
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(217, 119, 6, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 30px var(--gold-light);
+        }
+
+        .official-notice {
+            background: rgba(217, 119, 6, 0.15);
+            border: 2px solid var(--gold-light);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 50px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(217, 119, 6, 0.2);
+        }
+
+        .official-notice h3 {
+            color: var(--gold-light);
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .official-notice p {
+            color: var(--text-main);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .official-notice .official-link {
+            display: inline-block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            background: var(--purple-main);
+            padding: 10px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--gold-light);
+            text-decoration: none;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .official-notice .official-link:hover {
+            background: var(--purple-light);
+            border-color: #ffffff;
+            box-shadow: 0 0 25px var(--gold-light);
+        }
+
+        .diagram-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .diagram-container h3 {
+            color: var(--gold-light);
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        .svg-diagram {
+            width: 100%;
+            max-width: 900px;
+            height: auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin: 60px 0 35px;
+        }
+
+        .section-header h2 {
+            font-size: 38px;
+            color: var(--gold-light);
+            text-shadow: 0 0 12px rgba(217, 119, 6, 0.4);
+            display: inline-block;
+            border-bottom: 3px solid var(--purple-light);
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(6px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--purple-light), var(--gold-light));
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            border-color: var(--gold-light);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            color: var(--gold-light);
+            margin-bottom: 18px;
+        }
+
+        .card p {
+            color: var(--text-sub);
+            font-size: 15px;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .card ul li {
+            position: relative;
+            margin-bottom: 10px;
+            color: var(--text-main);
+            font-size: 14.5px;
+        }
+
+        [dir="ltr"] .card ul li { padding-left: 20px; }
+        [dir="rtl"] .card ul li { padding-right: 20px; }
+
+        [dir="ltr"] .card ul li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            color: var(--gold-light);
+        }
+
+        [dir="rtl"] .card ul li::before {
+            content: "✦";
+            position: absolute;
+            right: 0;
+            color: var(--gold-light);
+        }
+
+        .project-section {
+            background: linear-gradient(180deg, rgba(30, 9, 51, 0.95), rgba(11, 3, 20, 0.98));
+            border: 2px solid var(--gold-light);
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 0 50px rgba(107, 33, 168, 0.5);
+            margin-bottom: 60px;
+        }
+
+        .project-section h2 {
+            font-size: 40px;
+            color: var(--gold-light);
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 15px var(--gold-main);
+        }
+
+        .project-section p {
+            font-size: 16.5px;
+            line-height: 1.9;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .tech-badge {
+            background: rgba(107, 33, 168, 0.4);
+            border: 1px solid var(--purple-light);
+            color: var(--gold-light);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 4%; }
+            .hero h1 { font-size: 34px; }
+            .hero p { font-size: 16px; }
+            .section-header h2 { font-size: 28px; }
+            .project-section { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div class="logo">PeetX</div>
+        <select class="lang-select" id="langSelect" onchange="changeLanguage()">
+            <option value="en">🇺🇸 English</option>
+            <option value="ar">🇸🇦 العربية (Arabic)</option>
+            <option value="es">🇪🇸 Español (Spanish)</option>
+            <option value="fr">🇫🇷 Français (French)</option>
+            <option value="de">🇩🇪 Deutsch (German)</option>
+            <option value="zh">🇨🇳 中文 (Chinese)</option>
+            <option value="ja">🇯🇵 日本語 (Japanese)</option>
+            <option value="ru">🇷🇺 Русский (Russian)</option>
+            <option value="pt">🇧🇷 Português (Portuguese)</option>
+            <option value="it">🇮🇹 Italiano (Italian)</option>
+            <option value="tr">🇹🇷 Türkçe (Turkish)</option>
+            <option value="ko">🇰🇷 한국어 (Korean)</option>
+            <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+            <option value="nl">🇳🇱 Nederlands (Dutch)</option>
+            <option value="fa">🇮🇷 فارسی (Persian)</option>
+        </select>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1 id="hero-title">Decentralized Autonomous Architecture</h1>
+            <p id="hero-desc">Empowering global peer-to-peer networks with next-generation smart contracts, zero-trust cryptographic validation, and scalable multi-chain infrastructure.</p>
+            <button class="cta-btn" id="hero-btn">Explore Full Architecture</button>
+        </section>
+
+        <div class="official-notice">
+            <h3 id="notice-title">Official & Sole Domain Verification</h3>
+            <p id="notice-desc">To protect yourself against fake websites, phishing attempts, and scam portals, always verify that you are accessing the official platform via its sole official link:</p>
+            <a href="https://peetx.app" target="_blank" class="official-link">peetx.app</a>
+        </div>
+
+        <div class="diagram-container">
+            <h3 id="diagram-title">Decentralized Architecture & Execution Flow</h3>
+            <svg class="svg-diagram" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#6b21a8;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#3b0764;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#92400e;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect x="20" y="60" width="200" height="100" rx="15" fill="url(#grad1)" stroke="#fbbf24" stroke-width="2"/>
+                <text x="120" y="105" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">User Node</text>
+                <text x="120" y="130" fill="#d8b4fe" font-size="12" text-anchor="middle">Non-Custodial Sign</text>
+
+                <path d="M 220 110 L 290 110" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,5"/>
+
+                <rect x="300" y="60" width="200" height="100" rx="15" fill="url(#grad2)" stroke="#a855f7" stroke-width="2"/>
+                <text x="400" y="105" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">PeetX Smart Contract</text>
+                <text x="400" y="130" fill="#fef08a" font-size="12" text-anchor="middle">EVM Automated Logic</text>
+
+                <path d="M 500 110 L 570 110" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,5"/>
+
+                <rect x="580" y="60" width="200" height="100" rx="15" fill="url(#grad1)" stroke="#fbbf24" stroke-width="2"/>
+                <text x="680" y="105" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">Distributed Ledger</text>
+                <text x="680" y="130" fill="#d8b4fe" font-size="12" text-anchor="middle">Consensus & State</text>
+            </svg>
+        </div>
+
+        <div class="section-header">
+            <h2 id="sec1-head">Blockchain Fundamentals & Decentralization</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3 id="c1-title">Decentralization Mechanism</h3>
+                <p id="c1-p1">Decentralization shifts operational control and trust from a single centralized authority (corporations, central banks, or single servers) to a distributed global network. By utilizing peer-to-peer validation, consensus algorithms, and cryptographic verification, decentralization guarantees that no single entity can alter historical records, freeze accounts, or manipulate system rules.</p>
+                <ul id="c1-list">
+                    <li>Eliminates Single Points of Failure (SPOF)</li>
+                    <li>Ensures Complete Censorship Resistance</li>
+                    <li>Enhances Sovereign User Autonomy</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 id="c2-title">Consensus Algorithms</h3>
+                <p id="c2-p1">Consensus mechanisms are the mathematical protocols that force independent nodes across the world to agree on the state of the blockchain ledger. They prevent double-spending and ensure network security without needing a trusted intermediary.</p>
+                <ul id="c2-list">
+                    <li>Proof of Work (PoW): Computational mining security</li>
+                    <li>Proof of Stake (PoS): Energy-efficient economic staking</li>
+                    <li>Delegated Proof of Stake (DPoS): High-throughput validator elections</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 id="c3-title">Immutability & Cryptography</h3>
+                <p id="c3-p1">Data stored on a decentralized ledger is permanently locked using cryptographic hashing (such as SHA-256 or Keccak-256). Each block contains the cryptographic hash of the previous block, creating an unbreakable chain where modifying a single historical transaction invalidates all subsequent blocks across every node.</p>
+                <ul id="c3-list">
+                    <li>Asymmetric Public-Private Key Pairs</li>
+                    <li>Zero-Knowledge Proofs for Absolute Privacy</li>
+                    <li>Tamper-Proof Ledger Integrity</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2 id="sec2-head">Smart Contract Engine & Execution</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3 id="c4-title">How Smart Contracts Work</h3>
+                <p id="c4-p1">Smart contracts are immutable, self-executing software programs deployed directly on the blockchain. Written in high-level languages like Solidity, Rust, or Vyper, they compile into bytecode executed by virtual machines (e.g., Ethereum Virtual Machine - EVM). Once deployed, they automatically enforce agreements when predefined conditional parameters are met.</p>
+                <ul id="c4-list">
+                    <li>Deterministic Execution (If/Then Logic)</li>
+                    <li>Zero Intermediary Risk or Counterparty Bias</li>
+                    <li>Automated Escrow and Settlement</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 id="c5-title">DeFi & Automated Protocols</h3>
+                <p id="c5-p1">Decentralized Finance (DeFi) leverages smart contracts to rebuild traditional banking products—loans, borrowing, trading, and yield farming—without intermediaries. Automated Market Makers (AMMs) use mathematical constant-product algorithms (x * y = k) to maintain continuous liquidity pools.</p>
+                <ul id="c5-list">
+                    <li>Trustless Automated Market Making (AMM)</li>
+                    <li>Over-collateralized Lending & Borrowing Pools</li>
+                    <li>Flash Loans for Capital Efficiency</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 id="c6-title">Smart Contract Security & Auditing</h3>
+                <p id="c6-p1">Because smart contract code is permanent and handles real financial value, rigorous security standards are required. Vulnerabilities like reentrancy attacks, integer overflow, and front-running are mitigated through formal verification, static analysis, and multi-signature access controls.</p>
+                <ul id="c6-list">
+                    <li>Reentrancy Protection Guard Patterns</li>
+                    <li>Time-locks and Multi-Signature Ownership</li>
+                    <li>Automated Static Code Analysis</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="project-section">
+            <h2 id="proj-title">The PeetX Protocol Ecosystem</h2>
+            <p id="proj-p1">PeetX is an enterprise-grade decentralized finance framework and smart contract ecosystem engineered to solve the blockchain trilemma: achieving ultimate scalability, institutional security, and absolute decentralization simultaneously. Built upon a hybrid multi-layer architecture, PeetX links native liquidity pools, high-frequency execution engines, and automated yield routing directly to Web3 infrastructures.</p>
+            <p id="proj-p2">At its core, PeetX integrates advanced smart contract modules capable of processing sub-second dynamic state updates. Utilizing decentralized oracle networks, PeetX continuously aggregates off-chain data feeds to execute risk-free collateral checks, dynamic gas adjustments, and automated governance distributions. The system completely bypasses legacy financial friction, empowering users with non-custodial asset control and transparent yield mechanics.</p>
+            <p id="proj-p3">Furthermore, PeetX introduces a 3D Cryptographic Visual Matrix designed to render real-time state changes, transaction node connections, and contract execution flows. Through non-custodial architecture, zero-knowledge privacy layers, and cross-chain interoperability bridges, PeetX establishes the foundation for next-generation decentralized sovereign finance.</p>
+
+            <div class="tech-stack">
+                <div class="tech-badge">Solidity EVM</div>
+                <div class="tech-badge">Ethers.js Automation</div>
+                <div class="tech-badge">3D WebGL / Three.js</div>
+                <div class="tech-badge">AMM Liquidity Engine</div>
+                <div class="tech-badge">Zero-Knowledge Proofs</div>
+                <div class="tech-badge">Cross-Chain Interoperability</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const i18n = {
+            en: {
+                dir: "ltr",
+                heroTitle: "Decentralized Autonomous Architecture",
+                heroDesc: "Empowering global peer-to-peer networks with next-generation smart contracts, zero-trust cryptographic validation, and scalable multi-chain infrastructure.",
+                heroBtn: "Explore Full Architecture",
+                noticeTitle: "Official & Sole Domain Verification",
+                noticeDesc: "To protect yourself against fake websites, phishing attempts, and scam portals, always verify that you are accessing the official platform via its sole official link:",
+                diagramTitle: "Decentralized Architecture & Execution Flow",
+                sec1Head: "Blockchain Fundamentals & Decentralization",
+                c1Title: "Decentralization Mechanism",
+                c1P1: "Decentralization shifts operational control and trust from a single centralized authority to a distributed global network. By utilizing peer-to-peer validation, consensus algorithms, and cryptographic verification, decentralization guarantees that no single entity can alter historical records, freeze accounts, or manipulate system rules.",
+                c1L1: "Eliminates Single Points of Failure (SPOF)",
+                c1L2: "Ensures Complete Censorship Resistance",
+                c1L3: "Enhances Sovereign User Autonomy",
+                c2Title: "Consensus Algorithms",
+                c2P1: "Consensus mechanisms are the mathematical protocols that force independent nodes across the world to agree on the state of the blockchain ledger. They prevent double-spending and ensure network security without needing a trusted intermediary.",
+                c2L1: "Proof of Work (PoW): Computational mining security",
+                c2L2: "Proof of Stake (PoS): Energy-efficient economic staking",
+                c2L3: "Delegated Proof of Stake (DPoS): High-throughput validator elections",
+                c3Title: "Immutability & Cryptography",
+                c3P1: "Data stored on a decentralized ledger is permanently locked using cryptographic hashing (such as SHA-256 or Keccak-256). Each block contains the hash of the previous block, creating an unbreakable chain where modifying historical data invalidates all subsequent blocks.",
+                c3L1: "Asymmetric Public-Private Key Pairs",
+                c3L2: "Zero-Knowledge Proofs for Absolute Privacy",
+                c3L3: "Tamper-Proof Ledger Integrity",
+                sec2Head: "Smart Contract Engine & Execution",
+                c4Title: "How Smart Contracts Work",
+                c4P1: "Smart contracts are immutable, self-executing software programs deployed directly on the blockchain. Written in languages like Solidity or Rust, they compile into bytecode executed by virtual machines (EVM). They automatically enforce agreements when conditional parameters are met.",
+                c4L1: "Deterministic Execution (If/Then Logic)",
+                c4L2: "Zero Intermediary Risk or Counterparty Bias",
+                c4L3: "Automated Escrow and Settlement",
+                c5Title: "DeFi & Automated Protocols",
+                c5P1: "Decentralized Finance (DeFi) leverages smart contracts to rebuild traditional banking products—loans, borrowing, trading, and yield farming—without intermediaries. Automated Market Makers (AMMs) use mathematical formulas to maintain continuous liquidity.",
+                c5L1: "Trustless Automated Market Making (AMM)",
+                c5L2: "Over-collateralized Lending & Borrowing Pools",
+                c5L3: "Flash Loans for Capital Efficiency",
+                c6Title: "Smart Contract Security & Auditing",
+                c6P1: "Because smart contract code is permanent and handles real financial value, rigorous security standards are required. Vulnerabilities like reentrancy attacks and front-running are mitigated through formal verification, static analysis, and multi-signature controls.",
+                c6L1: "Reentrancy Protection Guard Patterns",
+                c6L2: "Time-locks and Multi-Signature Ownership",
+                c6L3: "Automated Static Code Analysis",
+                projTitle: "The PeetX Protocol Ecosystem",
+                projP1: "PeetX is an enterprise-grade decentralized finance framework and smart contract ecosystem engineered to solve the blockchain trilemma: achieving ultimate scalability, institutional security, and absolute decentralization simultaneously.",
+                projP2: "At its core, PeetX integrates advanced smart contract modules capable of processing sub-second dynamic state updates. Utilizing decentralized oracle networks, PeetX continuously aggregates off-chain data feeds to execute risk-free collateral checks and automated governance distributions.",
+                projP3: "Furthermore, PeetX introduces a 3D Cryptographic Visual Matrix designed to render real-time state changes, transaction node connections, and contract execution flows."
+            },
+            ar: {
+                dir: "rtl",
+                heroTitle: "المعمارية اللامركزية المستقلة",
+                heroDesc: "تمكين الشبكات العالمية الند للند من خلال عقود ذكية من الجيل القادم، والتوثيق التشفيري القائم على عدم الثقة المطلقة، وبنية تحتية متعددة السلاسل فائقة التوسع.",
+                heroBtn: "استكشف المعمارية الكاملة",
+                noticeTitle: "التحقق من الدومين الرسمي والوحيد",
+                noticeDesc: "لحماية نفسك من المواقع المزيفة وحيل الاحتيال والتصيد، تأكد دائماً من دخولك للمنصة عبر الرابط الرسمي والوحيد:",
+                diagramTitle: "توضيح معمارية النظام وتدفق التنفيذ اللامركزي",
+                sec1Head: "أساسيات البلوكجين واللامركزية",
+                c1Title: "آلية اللامركزية",
+                c1P1: "تنقل اللامركزية التحكم التشغيلي والثقة من سلطة مركزية واحدة إلى شبكة عالمية موزعة. باستخدام التحقق عبر الند للند وألغوريثمات التوافق، تضمن اللامركزية عدم قدرة أي طرف على تعديل السجلات التاريخية أو حظر الحسابات.",
+                c1L1: "إلغاء نقاط الفشل الأحادية (SPOF)",
+                c1L2: "ضمان المقاومة المطلقة للرقابة",
+                c1L3: "تعزيز سيادة واستقلالية المستخدم الكاملة",
+                c2Title: "خوارزميات التوافق (Consensus)",
+                c2P1: "خوارزميات التوافق هي البروتوكولات الرياضية التي تجبر العقد المستقلة حول العالم على الاتفاق على حالة دفتر السجلات، مما يمنع الإنفاق المزدوج ويضمن أمان الشبكة دون الحاجة لوسيط.",
+                c2L1: "إثبات العمل (PoW): أمان التعدين الحسابي",
+                c2L2: "إثبات الحصة (PoS): التخزين الاقتصادي الموفر للطاقة",
+                c2L3: "إثبات الحصة المفوض (DPoS): انتخابات المعالجين السريعة",
+                c3Title: "عدم القابلية للتغيير والتشفير",
+                c3P1: "يتم قفل البيانات المخزنة على البلوكجين بشكل دائم باستخدام التشفير بالهاش. تحتوي كل كتلة على هاش الكتلة السابقة، مما يخلق سلسلة لا يمكن كسرها.",
+                c3L1: "أزواج المفاتيح العامة والخاصة غير المتماثلة",
+                c3L2: "إثباتات المعرفة الصفرية (Zero-Knowledge) للخصوصية",
+                c3L3: "سلامة الدفتر المقاومة للتلاعب",
+                sec2Head: "محرك العقود الذكية وآلية التنفيذ",
+                c4Title: "كيف تعمل العقود الذكية",
+                c4P1: "العقود الذكية هي برامج برمجية ذاتية التنفيذ وغير قابلة للتغيير تُنشر مباشرة على البلوكجين، وتُترجم إلى Bytecode لتُنفذ بواسطة الآلات الافتراضية (EVM) فور تحقق الشروط المحددة.",
+                c4L1: "تنفيذ حتمي لا يقبل اللبس (منطق If/Then)",
+                c4L2: "انعدام مخاطر الوسطاء أو التحيز",
+                c4L3: "الضمان والتسوية التلقائية بالكامل",
+                c5Title: "المالية اللامركزية (DeFi)",
+                c5P1: "تستغل المالية اللامركزية العقود الذكية لإعادة بناء المنتجات المصرفية التقليدية بدون بنوك. تستخدم صانعات السوق الآلية (AMM) معادلات رياضية لخلق سيولة مستمرة.",
+                c5L1: "صناعة السوق الآلية بدون ثقة (AMM)",
+                c5L2: "أحواض الإقراض والاقتراض فائقة الضمان",
+                c5L3: "القروض الخاطفة (Flash Loans) لكفاءة رأس المال",
+                c6Title: "أمان العقود الذكية والتدقيق",
+                c6P1: "نظرًا لأن كود العقد الذكي دائم ويدير أموالاً حقيقية، فإن معايير الأمان الفائقة ضرورية. يتم الحد من الثغرات مثل الهجمات المرتدة عبر التحقق الصارم والتوقيعات المتعددة.",
+                c6L1: "نماذج الحماية من الهجمات المرتدة",
+                c6L2: "أقفال الوقت والتوقيعات المتعددة (Multi-Sig)",
+                c6L3: "التحليل البرمجي الساكن والأوتوماتيكي",
+                projTitle: "نظام ومشروع PeetX الشامل",
+                projP1: "مشروع PeetX هو إطار عمل متقدم للمالية اللامركزية والعقود الذكية صُمم لحل معضلة البلوكجين الثلاثية: تحقيق التوسع الفائق، الأمان المؤسسي، واللامركزية المطلقة في وقت واحد.",
+                projP2: "في جوهره، يدمج PeetX وحدات عقود ذكية قادرة على معالجة تحديثات الحالة في أجزاء من الثانية. باستخدام شبكات أوراكل اللامركزية، يجمع PeetX البيانات لضمان فحص الضمانات وتوزيع العوائد تلقائيًا.",
+                projP3: "علاوة على ذلك، يقدم PeetX مصفوفة رسومات تشفيرية ثلاثية الأبعاد لعرض التغيرات المباشرة، اتصالات العقد، وتدفقات تنفيذ العقود بأسلوب بصري تفاعلي."
+            },
+            es: {
+                dir: "ltr",
+                heroTitle: "Arquitectura Autónoma Descentralizada",
+                heroDesc: "Empoderando redes peer-to-peer globales con contratos inteligentes de última generación, validación criptográfica de cero confianza y una infraestructura multicadena escalable.",
+                heroBtn: "Explorar Arquitectura Completa",
+                noticeTitle: "Verificación de Dominio Oficial y Único",
+                noticeDesc: "Para protegerse contra sitios falsos y fraudes, verifique siempre que está accediendo a la plataforma a través de su único enlace oficial:",
+                diagramTitle: "Arquitectura Descentralizada y Flujo de Ejecución",
+                sec1Head: "Fundamentos de Blockchain y Descentralización",
+                c1Title: "Mecanismo de Descentralización",
+                c1P1: "La descentralización traslada el control operativo y la confianza de una autoridad centralizada a una red global distribuida mediante validación P2P y criptografía.",
+                c1L1: "Elimina puntos únicos de fallo (SPOF)",
+                c1L2: "Garantiza la resistencia a la censura",
+                c1L3: "Mejora la autonomía del usuario",
+                c2Title: "Algoritmos de Consenso",
+                c2P1: "Mecanismos matemáticos que obligan a los nodos independientes a acordar el estado del registro contable de la cadena sin necesidad de intermediarios.",
+                c2L1: "Proof of Work (PoW): Seguridad de minería",
+                c2L2: "Proof of Stake (PoS): Staking eficiente",
+                c2L3: "Delegated Proof of Stake (DPoS): Altas transacciones",
+                c3Title: "Inmutabilidad y Criptografía",
+                c3P1: "Los datos almacenados quedan sellados mediante funciones hash criptográficas, creando una cadena inalterable a lo largo de todos los nodos.",
+                c3L1: "Pares de llaves pública-privada",
+                c3L2: "Pruebas de Conocimiento Cero (Zero-Knowledge)",
+                c3L3: "Integridad del registro a prueba de manipulaciones",
+                sec2Head: "Motor de Contratos Inteligentes y Ejecución",
+                c4Title: "Cómo Funcionan los Contratos Inteligentes",
+                c4P1: "Programas de software autoejecutables e inmutables desplegados en la blockchain que se ejecutan automáticamente al cumplir condiciones.",
+                c4L1: "Ejecución determinista (Lógica If/Then)",
+                c4L2: "Sin riesgo de intermediarios",
+                c4L3: "Custodia y liquidación automatizadas",
+                c5Title: "DeFi y Protocolos Automatizados",
+                c5P1: "Finanzas Descentralizadas que reconstruyen servicios bancarios tradicionales sin bancos utilizando creadores de mercado automatizados (AMM).",
+                c5L1: "Creación de Mercado Automatizada (AMM)",
+                c5L2: "Pools de préstamos sobregarantizados",
+                c5L3: "Préstamos Flash para eficiencia de capital",
+                c6Title: "Seguridad y Auditoría de Contratos Inteligentes",
+                c6P1: "Dado que el código maneja valor financiero real, se aplican rigurosos estándares de seguridad como verificación formal y firmas múltiples.",
+                c6L1: "Patrones de protección contra ataques de reentrada",
+                c6L2: "Bloqueos temporales y firmas múltiples",
+                c6L3: "Análisis estático automatizado del código",
+                projTitle: "El Ecosistema del Protocolo PeetX",
+                projP1: "PeetX es un marco de finanzas descentralizadas diseñado para resolver el trilema de la blockchain: escalabilidad, seguridad e inmutabilidad.",
+                projP2: "Integra módulos de contratos inteligentes capaces de procesar actualizaciones de estado en milisegundos mediante oráculos descentralizados.",
+                projP3: "Presenta una Matriz Visual Criptográfica 3D que renderiza en tiempo real las conexiones entre nodos y la ejecución del código."
+            },
+            fr: {
+                dir: "ltr",
+                heroTitle: "Architecture Autonome Décentralisée",
+                heroDesc: "Autonomiser les réseaux P2P mondiaux avec des contrats intelligents de nouvelle génération et une infrastructure multi-chaîne évolutive.",
+                heroBtn: "Explorer l'Architecture",
+                noticeTitle: "Vérification du Domaine Officiel",
+                noticeDesc: "Pour vous protéger contre le phishing, vérifiez toujours que vous utilisez l'unique lien officiel :",
+                diagramTitle: "Architecture Décentralisée et Flux d'Exécution",
+                sec1Head: "Principes Fondamentaux de la Blockchain",
+                c1Title: "Mécanisme de Décentralisation",
+                c1P1: "La décentralisation transfère le contrôle opérationnel d'une autorité centrale vers un réseau mondial distribué sécurisé par cryptographie.",
+                c1L1: "Élimination des points uniques de défaillance (SPOF)",
+                c1L2: "Résistance totale à la censure",
+                c1L3: "Autonomie souveraine de l'utilisateur",
+                c2Title: "Algorithmes de Consensus",
+                c2P1: "Protocole mathématique garantissant que des nœuds indépendants s'accordent sur l'état du registre sans intermédiaire.",
+                c2L1: "Proof of Work (PoW) : Sécurité par minage",
+                c2L2: "Proof of Stake (PoS) : Staking économe en énergie",
+                c2L3: "Delegated PoS (DPoS) : Validation haute fréquence",
+                c3Title: "Inviolabilité et Cryptographie",
+                c3P1: "Chaque bloc contient le hash du précédent, créant une chaîne incassable où toute modification annule les blocs suivants.",
+                c3L1: "Paires de clés publique-privée",
+                c3L2: "Preuves à divulgation nulle de connaissance (ZKP)",
+                c3L3: "Inviolabilité du registre",
+                sec2Head: "Moteur de Smart Contracts & Exécution",
+                c4Title: "Fonctionnement des Smart Contracts",
+                c4P1: "Programmes autonomes exécutés par la machine virtuelle (EVM) dès que les conditions prédéfinies sont remplies.",
+                c4L1: "Exécution déterministe (Logique Si/Alors)",
+                c4L2: "Absence de risque de contrepartie",
+                c4L3: "Séquestre et règlement automatisés",
+                c5Title: "DeFi & Protocoles Automatisés",
+                c5P1: "Reconstruction des produits financiers traditionnels via des teneurs de marché automatisés (AMM) et des pools de liquidité.",
+                c5L1: "Automated Market Making (AMM) sans confiance",
+                c5L2: "Pools de prêt sur-collatéralisés",
+                c5L3: "Prêts Flash pour une efficacité optimale",
+                c6Title: "Sécurité & Audit des Smart Contracts",
+                c6P1: "Sécurisation renforcée du code pour éviter les vulnérabilités de réentrée et de dépassement de mémoire par analyse statique.",
+                c6L1: "Protection contre les attaques de réentrée",
+                c6L2: "Verrous temporels et multi-signatures",
+                c6L3: "Analyse automatique du code source",
+                projTitle: "L'Écosystème du Protocole PeetX",
+                projP1: "Une architecture DeFi conçue pour résoudre le trilemme blockchain : scalabilité, sécurité institutionnelle et décentralisation.",
+                projP2: "PeetX intègre des oracles décentralisés pour traiter des mises à jour d'état ultra-rapides et des distributions automatisées.",
+                projP3: "Comprend une matrice visuelle 3D rendant compte en temps réel des transactions et des connexions réseau."
+            },
+            de: {
+                dir: "ltr",
+                heroTitle: "Dezentrale Autonome Architektur",
+                heroDesc: "Befähigung globaler P2P-Netzwerke durch Smart Contracts der nächsten Generation und skalierbare Multichain-Infrastruktur.",
+                heroBtn: "Gesamte Architektur Erkunden",
+                noticeTitle: "Verifizierung der offiziellen Domain",
+                noticeDesc: "Schützen Sie sich vor Phishing. Nutzen Sie ausschließlich den offiziellen Link:",
+                diagramTitle: "Dezentrale Architektur & Ausführungsablauf",
+                sec1Head: "Blockchain-Grundlagen & Dezentralisierung",
+                c1Title: "Mechanismus der Dezentralisierung",
+                c1P1: "Verlagert die operative Kontrolle von einer zentralen Instanz auf ein verteiltes globales Netzwerk mittels kryptografischer Verifizierung.",
+                c1L1: "Eliminiert Single Points of Failure (SPOF)",
+                c1L2: "Vollständige Zensurresistenz",
+                c1L3: "Erhöhte Benutzerautonomie",
+                c2Title: "Konsensalgorithmen",
+                c2P1: "Mathematische Protokolle, die unabhängige Knoten zur Übereinstimmung über den Ledger-Zustand zwingen.",
+                c2L1: "Proof of Work (PoW): Absicherung durch Mining",
+                c2L2: "Proof of Stake (PoS): Energieeffizientes Staking",
+                c2L3: "Delegated PoS (DPoS): Hohe Transaktionsraten",
+                c3Title: "Unveränderlichkeit & Kryptografie",
+                c3P1: "Daten werden durch kryptografische Hashes dauerhaft gesperrt, sodass nachträgliche Änderungen unmöglich sind.",
+                c3L1: "Asymmetrische Schlüsselpaare",
+                c3L2: "Zero-Knowledge-Beweise für Datenschutz",
+                c3L3: "Manipulationssichere Integrität",
+                sec2Head: "Smart Contract Engine & Ausführung",
+                c4Title: "Funktionsweise von Smart Contracts",
+                c4P1: "Selbstausführender Code auf der Blockchain, der Vereinbarungen automatisch umsetzt, sobald Bedingungen erfüllt sind.",
+                c4L1: "Deterministische Ausführung (Wenn/Dann)",
+                c4L2: "Kein Zwischenhändler-Risiko",
+                c4L3: "Automatisierter Treuhanddienst",
+                c5Title: "DeFi & Automatisierte Protokolle",
+                c5P1: "Dezentrale Finanzmärkte nutzen AMMs und mathematische Formeln, um kontinuierliche Liquidität bereitzustellen.",
+                c5L1: "Trustless Automated Market Making (AMM)",
+                c5L2: "Überbesicherte Leih-Pools",
+                c5L3: "Blitzkredite (Flash Loans)",
+                c6Title: "Smart Contract Sicherheit & Audits",
+                c6P1: "Höchste Sicherheitsstandards zur Vermeidung von Reentrancy-Angriffen durch formale Verifizierung und Multisig.",
+                c6L1: "Schutz vor Reentrancy-Angriffen",
+                c6L2: "Zeitsperren & Multi-Signatur-Verwaltung",
+                c6L3: "Automatisierte statische Code-Analyse",
+                projTitle: "Das PeetX Protokoll-Ökosystem",
+                projP1: "Ein hochleistungsfähiges DeFi-Framework zur Lösung des Blockchain-Trilemmas aus Skalierbarkeit, Sicherheit und Dezentralisierung.",
+                projP2: "Nutzt dezentrale Orakel-Netzwerke zur Echtzeit-Datenverarbeitung und automatisierten Governance-Ausschüttung.",
+                projP3: "Inklusive 3D-Visualisierungsmatrix zur Darstellung von Knotentransaktionen in Echtzeit."
+            },
+            zh: {
+                dir: "ltr",
+                heroTitle: "去中心化自治架构",
+                heroDesc: "凭借下一代智能合约、零信任密码学验证和可扩展的多链基础设施，赋能全球点对点网络。",
+                heroBtn: "探索完整架构",
+                noticeTitle: "官方唯一域名验证",
+                noticeDesc: "为防止钓鱼和诈骗网站，请务必通过唯一的官方链接访问平台：",
+                diagramTitle: "去中心化架构与执行流程图",
+                sec1Head: "区块链基础与去中心化",
+                c1Title: "去中心化机制",
+                c1P1: "去中心化将控制权从单一机构转移到全球分布式网络，通过P2P验证和共识算法确保不可篡改性。",
+                c1L1: "消除单点故障 (SPOF)",
+                c1L2: "确保完全的抗审查性",
+                c1L3: "提升用户主权与自主权",
+                c2Title: "共识算法",
+                c2P1: "强制全球独立节点就账本状态达成一致的数学协议，防止双重支付。",
+                c2L1: "工作量证明 (PoW): 计算挖矿安全",
+                c2L2: "权益证明 (PoS): 高效质押机制",
+                c2L3: "委托权益证明 (DPoS): 高吞吐量选举",
+                c3Title: "不可篡改性与密码学",
+                c3P1: "数据使用哈希函数永久锁定，修改任意历史数据都将导致后续所有区块失效。",
+                c3L1: "非对称公钥-私钥对",
+                c3L2: "零知识证明 (Zero-Knowledge) 保护隐私",
+                c3L3: "防篡改账本完整性",
+                sec2Head: "智能合约引擎与执行",
+                c4Title: "智能合约运行原理",
+                c4P1: "部署在区块链上的自动执行代码，在预设条件满足时由虚拟机 (EVM) 自动触发。",
+                c4L1: "确定性执行 (If/Then 逻辑)",
+                c4L2: "无中介风险与对手方偏见",
+                c4L3: "自动化托管与结算",
+                c5Title: "DeFi 与 Protocol 自动化",
+                c5P1: "去中心化金融利用 AMM 恒定乘积公式重建传统借贷、交易和收益耕作服务。",
+                c5L1: "无信任自动做市商 (AMM)",
+                c5L2: "超额抵押借贷池",
+                c5L3: "闪电贷 (Flash Loans) 资金效率",
+                c6Title: "智能合约安全与审计",
+                c6P1: "通过形式化验证、静态代码分析和多重签名控制，全面消除重入攻击等安全隐患。",
+                c6L1: "防重入攻击保护 Pattern",
+                c6L2: "时间锁与多重签名所有权",
+                c6L3: "自动化静态代码分析",
+                projTitle: "PeetX 协议生态系统",
+                projP1: " PeetX 是企业级 DeFi 框架，旨在同时解决区块链的可扩展性、安全性和去中心化三难困境。",
+                projP2: "集成预言机网络，毫秒级处理状态更新，实现无托管资产控制与透明化收益分配。",
+                projP3: "配备 3D 密码学视觉矩阵，实时渲染交易节点连接与合约执行流程。"
+            },
+            ja: {
+                dir: "ltr",
+                heroTitle: "分散型自律アーキテクチャ",
+                heroDesc: "次世代のスマートコントラクトとゼロトラスト暗号検証により、グローバルなP2P networkを強化します。",
+                heroBtn: "アーキテクチャの詳細を見る",
+                noticeTitle: "公式ドメインの検証",
+                noticeDesc: "詐欺やフィッシングサイトから身を守るため、常に唯一の公式リンクからアクセスしてください：",
+                diagramTitle: "分散型実行フロー図",
+                sec1Head: "ブロックチェーンの基礎と分散化",
+                c1Title: "分散化メカニズム",
+                c1P1: "中央管理機関から global な分散型ネットワークへ制御を移行し、改ざんや口座凍結を防ぎます。",
+                c1L1: "単一障害点 (SPOF) の排除",
+                c1L2: "完全な検閲耐性の確保",
+                c1L3: " ユーザー自立性の向上",
+                c2Title: "コンセンサスアルゴリズム",
+                c2P1: "仲介者を必要とせずに、世界中のノード間で台帳の状態を一致させる数学的プロトコル。",
+                c2L1: "Proof of Work (PoW): 計算マイニングの安全性",
+                c2L2: "Proof of Stake (PoS): 省エネ型ステーキング",
+                c2L3: "Delegated PoS (DPoS): 高速バリデータ選出",
+                c3Title: "不可変更性と暗号技術",
+                c3P1: "ハッシュ関数によってデータは永久にロックされ、過去のデータを変更することは不可能です。",
+                c3L1: "非対称公開鍵・秘密鍵ペア",
+                c3L2: "プライバシーを守るゼロ知識証明",
+                c3L3: "改ざん耐性を持つ台帳の完全性",
+                sec2Head: "スマートコントラクトエンジンと実行",
+                c4Title: "スマートコントラクトの仕組み",
+                c4P1: "条件を満たしたときにEVM上で自動実行される、不可変なプログラムコード。",
+                c4L1: "決定論的実行 (If/Then ロジック)",
+                c4L2: "カウンターパーティリスクの排除",
+                c4L3: "エスクローと決済の自動化",
+                c5Title: "DeFiと自動化プロトコル",
+                c5P1: "AMM（自動マーケットメイカー）を活用し、中央集権的な銀行なしで金融サービスを提供。",
+                c5L1: "トラストレスな自動マーケットメイク",
+                c5L2: "過剰担保レンディングプール",
+                c5L3: "資本効率を高めるフラッシュローン",
+                c6Title: "スマートコントラクトのセキュリティ監査",
+                c6P1: "資金を扱うため、再入攻撃（Reentrancy）を防ぐ厳格なコード監査とマルチシグを実施。",
+                c6L1: "リエントランシー攻撃保護パターン",
+                c6L2: "タイムロックとマルチシグ所有権",
+                c6L3: "静的コード解析の自動化",
+                projTitle: "PeetX プロトコル エコシステム",
+                projP1: "PeetXは、スケーラビリティ、セキュリティ、分散化のトリレンマを解決する高度なDeFiフレームワークです。",
+                projP2: "分散型オラクルと連携し、ミリ秒単位で状態を更新。ノンカストディアルな資産管理を実現します。",
+                projP3: "リアルタイムのノード接続と取引の実行を可視化する3Dグラフィックマトリックスを搭載。"
+            },
+            ru: {
+                dir: "ltr",
+                heroTitle: "Децентрализованная Автономная Архитектура",
+                heroDesc: "Расширение возможностей P2P-сетей с помощью смарт-контрактов нового поколения и нулевого доверия.",
+                heroBtn: "Исследовать Архитектуру",
+                noticeTitle: "Проверка Официального Домена",
+                noticeDesc: "Для защиты от фишинга и мошенничества всегда проверяйте единственную официальную ссылку:",
+                diagramTitle: "Децентрализованная Архитектура и Поток Вычислений",
+                sec1Head: "Основы Блокчейна и Децентрализация",
+                c1Title: "Механизм Децентрализации",
+                c1P1: "Переносит операционный контроль на распределенную сеть, исключая возможность блокировки счетов.",
+                c1L1: "Исключение единых точек отказа (SPOF)",
+                c1L2: "Полная устойчивость к цензуре",
+                c1L3: "Суверенная автономия пользователей",
+                c2Title: "Алгоритмы Консенсуса",
+                c2P1: "Математические протоколы, обеспечивающие согласованность реестра между узлами без посредников.",
+                c2L1: "Proof of Work (PoW): Безопасность майнинга",
+                c2L2: "Proof of Stake (PoS): Энергоэффективный стекинг",
+                c2L3: "Delegated PoS (DPoS): Высокая скорость транзакций",
+                c3Title: "Неизменяемость и Криптография",
+                c3P1: "Данные запечатаны хешированием. Изменение одного блока делает недействительной всю цепочку.",
+                c3L1: "Асимметричные пары ключей",
+                c3L2: "Доказательства с нулевым разглашением (ZKP)",
+                c3L3: "Защищенная целостность реестра",
+                sec2Head: "Движок Смарт-Контрактов и Выполнение",
+                c4Title: "Принцип Работы Смарт-Контрактов",
+                c4P1: "Самоисполняемый код в EVM, который автоматически выполняет условия договора.",
+                c4L1: "Детерминированное выполнение (Логика Если/То)",
+                c4L2: "Отсутствие рисков контрагента",
+                c4L3: "Автоматическое удержание и расчеты",
+                c5Title: "DeFi и Автоматизированные Протоколы",
+                c5P1: "Децентрализованные финансы воссоздают банковские продукты с использованием AMM.",
+                c5L1: "Автоматизированный маркет-мейкинг (AMM)",
+                c5L2: "Пулы кредитования с избыточным залогом",
+                c5L3: "Мгновенные займы (Flash Loans)",
+                c6Title: "Безопасность и Аудит Смарт-Контрактов",
+                c6P1: "Строгие стандарты защиты от атак повторного входа (Reentrancy) и мультиподпись.",
+                c6L1: "Защита от Reentrancy атак",
+                c6L2: "Временные замки (Time-locks) и Multi-Sig",
+                c6L3: "Автоматизированный статический анализ",
+                projTitle: "Экосистема Протокола PeetX",
+                projP1: "Масштабируемый DeFi-фреймворк, решающий трилемму блокчейна: скорость, безопасность и децентрализация.",
+                projP2: "Интегрирует оракулы для обработки мгновенных обновлений состояния без передачи ключей.",
+                projP3: "Включает 3D-матрицу визуализации транзакций и связей между узлами сети в реальном времени."
+            },
+            pt: {
+                dir: "ltr",
+                heroTitle: "Arquitetura Autônoma Descentralizada",
+                heroDesc: "Capacitando redes P2P globais com contratos inteligentes de última geração e validação criptográfica de zero confiança.",
+                heroBtn: "Explorar Arquitetura Completa",
+                noticeTitle: "Verificação de Domínio Oficial",
+                noticeDesc: "Para se proteger contra fraudes e phishing, acesse sempre através do link oficial:",
+                diagramTitle: "Arquitetura Descentralizada e Fluxo de Execução",
+                sec1Head: "Fundamentos de Blockchain e Descentralização",
+                c1Title: "Mecanismo de Descentralização",
+                c1P1: "Transfere o controle operacional para uma rede distribuída, garantindo que nenhuma entidade altere registros.",
+                c1L1: "Elimina Pontos Únicos de Falha (SPOF)",
+                c1L2: "Garante resistência total à censura",
+                c1L3: "Aumenta a autonomia soberana do usuário",
+                c2Title: "Algoritmos de Consenso",
+                c2P1: "Protocolos matemáticos que forçam nós independentes a concordar sobre o estado do livro de registros.",
+                c2L1: "Proof of Work (PoW): Mineração segura",
+                c2L2: "Proof of Stake (PoS): Staking eficiente",
+                c2L3: "Delegated PoS (DPoS): Validação rápida",
+                c3Title: "Imutabilidade e Criptografia",
+                c3P1: "Os dados são selados com hashes criptográficos, criando uma cadeia impossível de ser alterada.",
+                c3L1: "Pares de chaves pública-privada",
+                c3L2: "Provas de Conhecimento Zero (Zero-Knowledge)",
+                c3L3: "Integridade inviolável do registro",
+                sec2Head: "Motor de Contratos Inteligentes e Execução",
+                c4Title: "Como Funcionam os Contratos Inteligentes",
+                c4P1: "Códigos autoexecutáveis implantados na blockchain que cumprem regras automaticamente.",
+                c4L1: "Execução determinística (Lógica Se/Então)",
+                c4L2: "Zero risco de intermediários",
+                c4L3: "Custódia e liquidação automatizadas",
+                c5Title: "DeFi e Protocolos Automatizados",
+                c5P1: "Reconstrução de serviços financeiros usando Formadores Automáticos de Mercado (AMM).",
+                c5L1: "Automated Market Making (AMM) sem confiança",
+                c5L2: "Pools de empréstimo sobregarantidos",
+                c5L3: "Empréstimos Flash para eficiência de capital",
+                c6Title: "Segurança e Auditoria de Contratos Inteligentes",
+                c6P1: "Padrões rígidos de segurança para evitar ataques de reentrada e falhas no código.",
+                c6L1: "Proteção contra ataques de Reentrancy",
+                c6L2: "Bloqueios temporais e Múltipla Assinatura",
+                c6L3: "Análise estática automatizada de código",
+                projTitle: "O Ecossistema do Protocolo PeetX",
+                projP1: "Estrutura DeFi avançada projetada para resolver o trilema da blockchain com alta escalabilidade.",
+                projP2: "Utiliza redes de oráculos para atualizar estados em milissegundos e gerenciar governança.",
+                projP3: "Inclui uma Matriz Visual 3D para renderizar conexões de nós e fluxos de execução em tempo real."
+            },
+            it: {
+                dir: "ltr",
+                heroTitle: "Architettura Autonoma Decentralizzata",
+                heroDesc: "Potenziare le reti P2P globali con smart contract di nuova generazione e convalida crittografica zero-trust.",
+                heroBtn: "Esplora l'Architettura",
+                noticeTitle: "Verifica del Dominio Ufficiale",
+                noticeDesc: "Per proteggerti da attacchi phishing, verifica sempre di accedere tramite l'unico link ufficiale:",
+                diagramTitle: "Architettura Decentralizzata e Flusso di Esecuzione",
+                sec1Head: "Fondamenti di Blockchain e Decentralizzazione",
+                c1Title: "Meccanismo di Decentralizzazione",
+                c1P1: "Sposta il controllo da un'autorità centrale a una rete globale distribuita proteggendo i dati da manipolazioni.",
+                c1L1: "Elimina i Single Points of Failure (SPOF)",
+                c1L2: "Garantisce una completa resistenza alla censura",
+                c1L3: "Aumenta l'autonomia dell'utente",
+                c2Title: "Algoritmi di Consenso",
+                c2P1: "Protocolli matematici che coordinano i nodi della rete per approvare lo stato del registro contabile.",
+                c2L1: "Proof of Work (PoW): Sicurezza del mining",
+                c2L2: "Proof of Stake (PoS): Staking ad alta efficienza",
+                c2L3: "Delegated PoS (DPoS): Transazioni ad alta velocità",
+                c3Title: "Immutabilità e Crittografia",
+                c3P1: "I dati sono bloccati permanentemente tramite hash crittografici che rendono impossibile la modifica del passato.",
+                c3L1: "Coppie di chiavi pubblica-privata",
+                c3L2: "Prove a Conoscenza Zero (Zero-Knowledge)",
+                c3L3: "Integrità del registro a prova di manomissione",
+                sec2Head: "Motore Smart Contract ed Esecuzione",
+                c4Title: "Come Funzionano gli Smart Contract",
+                c4P1: "Software autoeventanti eseguiti dalla Virtual Machine (EVM) non appena si verificano le condizioni.",
+                c4L1: "Esecuzione deterministica (Logica Se/Allora)",
+                c4L2: "Zero rischio di controparte",
+                c4L3: "Deposito a garanzia e liquidazione automatica",
+                c5Title: "DeFi e Protocolli Automatizzati",
+                c5P1: "La finanza decentralizzata ricrea i servizi bancari attraverso Automated Market Maker (AMM).",
+                c5L1: "Automated Market Making (AMM) trustless",
+                c5L2: "Pool di prestito sovraccoperti",
+                c5L3: "Prestiti Flash per massima efficienza",
+                c6Title: "Sicurezza e Audit degli Smart Contract",
+                c6P1: "Sicurezza avanzata per prevenire attacchi di reentrancy tramite analisi statica e firme multiple.",
+                c6L1: "Protezione contro attacchi di Reentrancy",
+                c6L2: "Blocchi temporali e Multi-Firma",
+                c6L3: "Analisi statica automatizzata del codice",
+                projTitle: "L'Ecosistema del Protocollo PeetX",
+                projP1: "Framework DeFi enterprise ideato per superare il trilemma della blockchain.",
+                projP2: "Integra oracoli decentralizzati per elaborare aggiornamenti in tempo reale e gestire la governance.",
+                projP3: "Dotato di una Matrice Visuale 3D per mostrare l'esecuzione dei contratti e i nodi della rete."
+            },
+            tr: {
+                dir: "ltr",
+                heroTitle: "Merkeziyetsiz Otonom Mimari",
+                heroDesc: "Yeni nesil akıllı sözleşmeler, sıfır güvenli kriptografik doğrulama ve çoklu zincir altyapısıyla küresel P2P ağları güçlendiriyor.",
+                heroBtn: "Mimarinin Tamamını Keşfet",
+                noticeTitle: "Resmi Domain Doğrulaması",
+                noticeDesc: "Dolandırıcılık ve sahte sitelerden korunmak için platforma her zaman resmi bağlantı üzerinden erişin:",
+                diagramTitle: "Merkeziyetsiz Mimari ve İşlem Akışı",
+                sec1Head: "Blokzincir Esasları ve Merkeziyetsizlik",
+                c1Title: "Merkeziyetsizlik Mekanizması",
+                c1P1: "Operasyonel kontrolü tek bir otoriteden küresel dağıtık ağa kaydırarak hesap dondurma ve veri değiştirme riskini yok eder.",
+                c1L1: "Tekil Başarısızlık Noktalarını (SPOF) Kaldırır",
+                c1L2: "Tam Sansür Direnci Sağlar",
+                c1L3: "Kullanıcı Özerkliğini Artırır",
+                c2Title: "Fikir Birliği (Consensus) Algoritmaları",
+                c2P1: "Ağdaki bağımsız düğümlerin aracısız bir şekilde blokzincir durumu üzerinde anlaşmasını sağlayan protokoller.",
+                c2L1: "Proof of Work (PoW): Madencilik güvenliği",
+                c2L2: "Proof of Stake (PoS): Enerji tasarruflu staking",
+                c2L3: "Delegated PoS (DPoS): Yüksek hızlı doğrulama",
+                c3Title: "Değiştirilemezlik ve Kriptografi",
+                c3P1: "Veriler kriptografik özetlerle (Hash) kilitlenir; geçmiş bir bloğun değiştirilmesi tüm zinciri geçersiz kılar.",
+                c3L1: "Asimetrik Açık-Gizli Anahtar Çiftleri",
+                c3L2: "Gizlilik için Sıfır Bilgi Kanıtları (ZKP)",
+                c3L3: "Müdahale Edilemez Defter Bütünlüğü",
+                sec2Head: "Akıllı Sözleşme Motoru ve Yürütme",
+                c4Title: "Akıllı Sözleşmeler Nasıl Çalışır?",
+                c4P1: "Koşullar sağlandığında EVM üzerinde otomatik çalışan, değiştirilemez yazılım kodları.",
+                c4L1: "Belirlemeli Yürütme (Eğer/O Halde Mantığı)",
+                c4L2: "Sıfır Aracı veya Karşı Taraf Riski",
+                c4L3: "Otomatik Takas ve Emanet Mekanizması",
+                c5Title: "DeFi ve Otomatik Protokoller",
+                c5P1: "Geleneksel bankacılık ürünlerini Otomatik Piyasa Yapıcılar (AMM) ile merkeziyetsiz hale getiren finansal sistem.",
+                c5L1: "Güvensiz Otomatik Piyasa Yapıcılığı (AMM)",
+                c5L2: "Aşırı Teminatlı Kredi Havuzları",
+                c5L3: "Sermaye Verimliliği İçin Flaş Krediler",
+                c6Title: "Akıllı Sözleşme Güvenliği ve Denetim",
+                c6P1: "Yeniden giriş (Reentrancy) açıklarını ve kod hatalarını önlemek için uygulanan katı denetim standartları.",
+                c6L1: "Reentrancy Saldırı Koruma Desenleri",
+                c6L2: "Zaman Kilitleri ve Çoklu İmza (Multi-Sig)",
+                c6L3: "Otomatik Statik Kod Analizi",
+                projTitle: "PeetX Protokol Ekosistemi",
+                projP1: "Ölçeklenebilirlik, güvenlik ve merkeziyetsizlik üçlemini çözmek için tasarlanmış kurumsal DeFi altyapısı.",
+                projP2: "Merkeziyetsiz kehanet (Oracle) ağları ile milisaniyelik durum güncellemeleri ve varlık yönetimi sunar.",
+                projP3: "İşlem akışlarını ve düğüm bağlantılarını canlı gösteren 3D Kriptografik Görsel Matris içerir."
+            },
+            ko: {
+                dir: "ltr",
+                heroTitle: "탈중앙화 자율 아키텍처",
+                heroDesc: "차세대 스마트 계약, 제로 트러스트 암호화 검증 및 확장 가능한 멀티체인 인프라로 글로벌 P2P 네트워크를 지원합니다.",
+                heroBtn: "전체 아키텍처 탐색",
+                noticeTitle: "공식 단일 도메인 검증",
+                noticeDesc: "피싱 및 사기 사이트로부터 자산을 보호하기 위해 항상 공식 단일 링크로 접속했는지 확인하세요:",
+                diagramTitle: "탈중앙화 아키텍처 및 실행 흐름",
+                sec1Head: "블록체인 기초 및 탈중앙화",
+                c1Title: "탈중앙화 메커니즘",
+                c1P1: "운영 제어 권한을 중앙 기관에서 전 세계 분산 네트워크로 이전하여 임의의 기록 변경이나 계정 동결을 방지합니다.",
+                c1L1: "단일 실패 지점(SPOF) 제거",
+                c1L2: "완벽한 검열 저항성 보장",
+                c1L3: "사용자 자율성 강화",
+                c2Title: "합의 알고리즘",
+                c2P1: "중개자 없이 전 세계 독립 노드들이 원장 상태에 동의하도록 강제하는 수학적 프로토콜입니다.",
+                c2L1: "Proof of Work (PoW): 연산 마이닝 보안",
+                c2L2: "Proof of Stake (PoS): 친환경 스테이킹",
+                c2L3: "Delegated PoS (DPoS): 고성능 검증 선거",
+                c3Title: "불변성 및 암호학",
+                c3P1: "암호화 해시를 통해 데이터가 영구 잠금되며, 과거 기록 수정 시 이후 모든 블록이 무효화됩니다.",
+                c3L1: "비대칭 공개키-개인키 쌍",
+                c3L2: "프라이버시를 위한 영지식 증명(ZKP)",
+                c3L3: "위변조 방지 원장 무결성",
+                sec2Head: "스마트 계약 엔진 및 실행",
+                c4Title: "스마트 계약 작동 방식",
+                c4P1: "조건이 충족되면 가상 머신(EVM)에서 자동으로 실행되는 블록체인상의 불변 프로그램 코드입니다.",
+                c4L1: "결정론적 실행 (If/Then 로직)",
+                c4L2: "중개자 및 거래 상대방 리스크 제로",
+                c4L3: "자동화된 에스크로 및 정산",
+                c5Title: "DeFi 및 자동화 프로토콜",
+                c5P1: "자동화된 마켓 메이커(AMM)를 활용하여 은행 없이 대출, 거래, 이자 농사 등의 금융 서비스를 재구성합니다.",
+                c5L1: "신뢰가 필요 없는 자동 마켓 메이킹 (AMM)",
+                c5L2: "초과 담보 대출 풀",
+                c5L3: "자본 효율성을 위한 플래시 론",
+                c6Title: "스마트 계약 보안 및 감사",
+                c6P1: "재진입 공격 등의 취약점을 방지하기 위해 정식 검증, 정적 분석, 다중 서명 제어를 적용합니다.",
+                c6L1: "재진입(Reentrancy) 공격 방어 패턴",
+                c6L2: "타임락 및 다중 서명(Multi-Sig) 소유권",
+                c6L3: "자동화된 정적 코드 분석",
+                projTitle: "PeetX 프로토콜 생태계",
+                projP1: "블록체인의 트릴레마인 확장성, 보안성, 탈중앙화를 동시에 해결하도록 설계된 프레임워크입니다.",
+                projP2: "탈중앙화 오라클 네트워크를 통해 실시간 데이터 업데이트와 자동화된 거버넌스를 실행합니다.",
+                projP3: "트랜잭션 노드 연결과 계약 실행 흐름을 렌더링하는 3D 암호화 비주얼 매트릭스를 제공합니다."
+            },
+            hi: {
+                dir: "ltr",
+                heroTitle: "विकेंद्रीकृत स्वायत्त वास्तुकला",
+                heroDesc: "अगली पीढ़ी के स्मार्ट अनुबंधों, शून्य-विश्वास क्रिप्टोग्राफिक सत्यापन और स्केलेबल मल्टी-चेन इंफ्रास्ट्रक्चर के साथ वैश्विक पी2पी नेटवर्क को सशक्त बनाना।",
+                heroBtn: "पूर्ण वास्तुकला का अन्वेषण करें",
+                noticeTitle: "आधिकारिक और एकमात्र डोमेन सत्यापन",
+                noticeDesc: "नकली वेबसाइटों और स्कैम से खुद को सुरक्षित रखने के लिए हमेशा केवल आधिकारिक लिंक से ही पहुंचें:",
+                diagramTitle: "विकेंद्रीकृत वास्तुकला और निष्पादित प्रवाह",
+                sec1Head: "ब्लॉकचेन के मूल सिद्धांत और विकेंद्रीकरण",
+                c1Title: "विकेंद्रीकरण तंत्र",
+                c1P1: "नियंत्रण को किसी केंद्रीय प्राधिकरण के बजाय विश्वव्यापी नेटवर्क पर स्थानांतरित करता है, जिससे डेटा हेरफेर असंभव हो जाता है।",
+                c1L1: "एकल विफलता बिंदुओं (SPOF) को समाप्त करता है",
+                c1L2: "पूर्ण सेंसरशिप प्रतिरोध सुनिश्चित करता है",
+                c1L3: "उपयोगकर्ता की स्वायत्तता को बढ़ाता है",
+                c2Title: "आम सहमति (Consensus) एल्गोरिदम",
+                c2P1: "वे गणितीय नियम जो स्वतंत्र नोड्स को बिना मध्यस्थ के बहीखाते की स्थिति पर सहमत होने के लिए बाध्य करते हैं।",
+                c2L1: "Proof of Work (PoW): कंप्यूटेशनल खनन सुरक्षा",
+                c2L2: "Proof of Stake (PoS): ऊर्जा कुशल स्टेकिंग",
+                c2L3: "Delegated PoS (DPoS): उच्च गति सत्यापन",
+                c3Title: "अपरिवर्तनीयता और क्रिप्टोग्राफी",
+                c3P1: "डेटा क्रिप्टोग्राफिक हैश द्वारा सुरक्षित रहता है। किसी भी पुराने ब्लॉक में बदलाव पूरी श्रृंखला को अमान्य कर देता है।",
+                c3L1: "असममित सार्वजनिक-निजी कुंजी जोड़े",
+                c3L2: "गोपनीयता के लिए जीरो-नॉलेज प्रूफ (ZKP)",
+                c3L3: "छेड़छाड़-मुक्त बहीखाता अखंडता",
+                sec2Head: "स्मार्ट अनुबंध इंजन और निष्पादन",
+                c4Title: "स्मार्ट अनुबंध कैसे काम करते हैं",
+                c4P1: "ब्लॉकचेन पर तैनात स्व-निष्पादित कोड जो शर्तें पूरी होने पर वर्चुअल मशीन (EVM) द्वारा स्वतः चलाए जाते हैं।",
+                c4L1: "निश्चित निष्पादन (यदि/तो तर्क)",
+                c4L2: "शून्य मध्यस्थ जोखिम",
+                c4L3: "स्वचालित एस्क्रो और निपटान",
+                c5Title: "DeFi और स्वचालित प्रोटोकॉल",
+                c5P1: "स्वचालित बाजार निर्माताओं (AMM) का उपयोग करके बिना बैंकों के वित्तीय सेवाएं प्रदान करने वाला सिस्टम।",
+                c5L1: "भरोसेमंद स्वचालित बाज़ार निर्माण (AMM)",
+                c5L2: "अति-जमानती ऋण पूल",
+                c5L3: "पूंजी दक्षता के लिए फ्लैश लोन",
+                c6Title: "स्मार्ट अनुबंध सुरक्षा और ऑडिटिंग",
+                c6P1: "रीएंट्रेंसी हमलों से बचाव और सुरक्षा सुनिश्चित करने के लिए बहु-हस्ताक्षर नियंत्रण लागू किए जाते हैं।",
+                c6L1: "रीएंट्रेंसी सुरक्षा पैटर्न",
+                c6L2: "टाइम-लॉक और मल्टी-सिग्नेचर स्वामित्व",
+                c6L3: "स्वचालित स्थैतिक कोड विश्लेषण",
+                projTitle: "PeetX प्रोटोकॉल पारिस्थितिकी तंत्र",
+                projP1: "स्केलेबिलिटी, सुरक्षा और विकेंद्रीकरण की त्रिविधा को हल करने के लिए डिज़ाइन किया गया enterprise-ग्रेड DeFi ढांचा।",
+                projP2: "विकेंद्रीकृत ओरेकल का उपयोग करके मिलीसेकंड में स्थिति अपडेट और स्वचालित शासन वितरण निष्पादित करता है।",
+                projP3: "लेन-देन नोड कनेक्शन को वास्तविक समय में प्रदर्शित करने के लिए 3D विज़ुअल मैट्रिक्स शामिल है।"
+            },
+            nl: {
+                dir: "ltr",
+                heroTitle: "Gedecentraliseerde Autonome Architectuur",
+                heroDesc: "Wereldwijde P2P-netwerken versterken met geavanceerde smart contracts, zero-trust cryptografie en schaalbare multi-chain infrastructuur.",
+                heroBtn: "Verken Volledige Architectuur",
+                noticeTitle: "Officiële Domeinverificatie",
+                noticeDesc: "Bescherm jezelf tegen phishing. Gebruik altijd de enige officiële link om het platform te openen:",
+                diagramTitle: "Gedecentraliseerde Architectuur & Uitvoeringsstroom",
+                sec1Head: "Blockchain Fundamenten & Decentralisatie",
+                c1Title: "Decentralisatiemechanisme",
+                c1P1: "Verplaatst operationele controle naar een wereldwijd gedistribueerd netwerk, waardoor accountblokkades onmogelijk worden.",
+                c1L1: "Elimineert Single Points of Failure (SPOF)",
+                c1L2: "Garandeert volledige censuurbestendigheid",
+                c1L3: "Verhoogt de autonomie van de gebruiker",
+                c2Title: "Consensusalgoritmen",
+                c2P1: "Wiskundige protocollen die onafhankelijke knooppunten dwingen overeenstemming te bereiken over de staat van het grootboek.",
+                c2L1: "Proof of Work (PoW): Beveiliging door mining",
+                c2L2: "Proof of Stake (PoS): Energiezuinige staking",
+                c2L3: "Delegated PoS (DPoS): Snelle transactieverwerking",
+                c3Title: "Onveranderlijkheid & Cryptografie",
+                c3P1: "Gegevens worden vergrendeld met cryptografische hashes; het wijzigen van één blok maakt alle opeenvolgende blokken ongeldig.",
+                c3L1: "Asymmetrische publiek-private sleutelparen",
+                c3L2: "Zero-Knowledge Proofs voor privacy",
+                c3L3: "Knoei-vrije grootboegintegriteit",
+                sec2Head: "Smart Contract Engine & Uitvoering",
+                c4Title: "Hoe Smart Contracts Werken",
+                c4P1: "Zelfuitvoerende programma's op de blockchain die automatisch overeenkomsten handhaven zodra aan voorwaarden wordt voldaan.",
+                c4L1: "Deterministische uitvoering (Als/Dan-logica)",
+                c4L2: "Nul risico op tussenpersonen",
+                c4L3: "Geautomatiseerde escrow en afwikkeling",
+                c5Title: "DeFi & Geautomatiseerde Protocollen",
+                c5P1: "Herbouwt traditionele bankproducten met behulp van Automated Market Makers (AMM) zonder tussenkomst van banken.",
+                c5L1: "Trustless Automated Market Making (AMM)",
+                c5L2: "Over-gecollateraliseerde leenpools",
+                c5L3: "Flash Loans voor kapitaalefficiëntie",
+                c6Title: "Smart Contract Beveiliging & Auditing",
+                c6P1: "Streng beveiligde code met bescherming tegen reentrancy-aanvallen en multi-handtekeningtoegangscontrole.",
+                c6L1: "Beschermingspatronen tegen reentrancy-aanvallen",
+                c6L2: "Tijdsloten en Multi-Signature beheer",
+                c6L3: "Geautomatiseerde statische code-analyse",
+                projTitle: "Het PeetX Protocol Ecosysteem",
+                projP1: "Een hoogwaardig DeFi-framework dat het trilemma van schaalbaarheid, veiligheid en decentralisatie oplost.",
+                projP2: "Maakt gebruik van gedecentraliseerde orakels voor snelle statusupdates en automatische rendementsverdeling.",
+                projP3: "Bevat een 3D Cryptografische Matrix die netwerkverbindingen en transacties live in beeld brengt."
+            },
+            fa: {
+                dir: "rtl",
+                heroTitle: "معماری خودمختار غیرمتمرکز",
+                heroDesc: "توانمندسازی شبکه‌های جهانی همتا به همتا با قراردادهای هوشمند نسل جدید، اعتبار سنجی رمزنگاری شده و زیرساخت‌های چند زنجیره‌ای.",
+                heroBtn: "کاوش کامل معماری",
+                noticeTitle: "تایید دامنه رسمی و تنها مرجع",
+                noticeDesc: "برای جلوگیری از کلاه‌برداری و سایت‌های جعلی، همیشه ورود خود را از طریق تنها لینک رسمی بررسی کنید:",
+                diagramTitle: "معماری غیرمتمرکز و جریان اجرای سیستم",
+                sec1Head: "مبانی بلاکچین و غیرمتمرکزسازی",
+                c1Title: "مکانیسم غیرمتمرکزسازی",
+                c1P1: "کنترل عملیاتی را از یک نهاد مرکزی به یک شبکه توزیع‌شده جهانی منتقل می‌کند تا امکان مسدودسازی حساب‌ها وجود نداشته باشد.",
+                c1L1: "حذف نقاط تک خطایی (SPOF)",
+                c1L2: "تضمین مقاومت کامل در برابر سانسور",
+                c1L3: "افزایش استقلال و حاکمیت کاربر",
+                c2Title: "الگوریتم‌های اجماع (Consensus)",
+                c2P1: "پروتکل‌های ریاضی که گره‌های مستقل در سراسر جهان را مجبور به توافق بر سر وضعیت دفتر کل می‌کنند.",
+                c2L1: "اثبات کار (PoW): امنیت استخراج محاسباتی",
+                c2L2: "اثبات سهام (PoS): استیکینگ بهینه از نظر انرژی",
+                c2L3: "اثبات سهام تفویض‌شده (DPoS): انتخابات سریع",
+                c3Title: "تغییرناپذیری و رمزنگاری",
+                c3P1: "داده‌ها با هش رمزنگاری قفل می‌شوند؛ تغییر در یک بلوک باعث بطلان تمام بلوک‌های بعدی می‌شود.",
+                c3L1: "جفت کلیدهای عمومی و خصوصی ناهمگون",
+                c3L2: "اثبات‌های دانش-صفر (ZKP) برای حریم خصوصی",
+                c3L3: "تمامیت و دست‌نخورده بودن دفتر کل",
+                sec2Head: "موتور قرارداد هوشمند و نحوه اجرا",
+                c4Title: "قراردادهای هوشمند چگونه کار می‌کنند",
+                c4P1: "برنامه‌های نرم‌افزاری خوداجرا روی بلاکچین که با برقراری شروط تعیین‌شده، توسط ماشین مجازی (EVM) اجرا می‌شوند.",
+                c4L1: "اجرای قطعی (منطق اگر/آنگاه)",
+                c4L2: "صفر بودن ریسک واسطه‌ها یا جانبداری",
+                c4L3: "تسویه و امانت‌داری کاملا خودکار",
+                c5Title: "دیفای (DeFi) و پروتکل‌های خودکار",
+                c5P1: "بازسازی خدمات مالی مانند وام‌دهی و معاملات بدون نیاز به بانک با استفاده از صانعان بازار خودکار (AMM).",
+                c5L1: "بازارسازی خودکار بدون نیاز به اعتماد (AMM)",
+                c5L2: "استخرهای وام‌دهی با وثیقه مازاد",
+                c5L3: "وام‌های آنی (Flash Loans) برای کارایی سرمایه",
+                c6Title: "امنیت قراردادهای هوشمند و حسابرسی",
+                c6P1: "پیاده‌سازی استانداردهای سخت‌گیرانه برای جلوگیری از حملات بازگشتی (Reentrancy) و استفاده از چندامضایی.",
+                c6L1: "الگوهای محافظت در برابر حملات Reentrancy",
+                c6L2: "قفل‌های زمانی و مالکیت چند امضایی (Multi-Sig)",
+                c6L3: "تحلیل ایستا و خودکار کدهای برمی",
+                projTitle: "اکوسیستم پروتکل PeetX",
+                projP1: "چارچوب دیفای پیشرفته برای حل سه‌گانه بلاکچین: مقیاس‌پذیری بالا، امنیت سازمانی و غیرمتمرکزسازی مطلق.",
+                projP2: "استفاده از اوراکل‌های غیرمتمرکز برای به‌روزرسانی میلی‌ثانیه‌ای اطلاعات و توزیع خودکار پاداش‌ها.",
+                projP3: "دارای ماتریکس بصری سه‌بعدی برای نمایش زنده اتصالات گره‌ها و جریان‌های اجرای قرارداد."
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById("langSelect").value;
+            const data = i18n[lang] || i18n['en'];
+
+            document.documentElement.dir = data.dir;
+            
+            document.getElementById("hero-title").innerText = data.heroTitle;
+            document.getElementById("hero-desc").innerText = data.heroDesc;
+            document.getElementById("hero-btn").innerText = data.heroBtn;
+
+            document.getElementById("notice-title").innerText = data.noticeTitle;
+            document.getElementById("notice-desc").innerText = data.noticeDesc;
+            document.getElementById("diagram-title").innerText = data.diagramTitle;
+
+            document.getElementById("sec1-head").innerText = data.sec1Head;
+            document.getElementById("sec2-head").innerText = data.sec2Head;
+
+            document.getElementById("c1-title").innerText = data.c1Title;
+            document.getElementById("c1-p1").innerText = data.c1P1;
+            document.getElementById("c1-list").children[0].innerText = data.c1L1;
+            document.getElementById("c1-list").children[1].innerText = data.c1L2;
+            document.getElementById("c1-list").children[2].innerText = data.c1L3;
+
+            document.getElementById("c2-title").innerText = data.c2Title;
+            document.getElementById("c2-p1").innerText = data.c2P1;
+            document.getElementById("c2-list").children[0].innerText = data.c2L1;
+            document.getElementById("c2-list").children[1].innerText = data.c2L2;
+            document.getElementById("c2-list").children[2].innerText = data.c2L3;
+
+            document.getElementById("c3-title").innerText = data.c3Title;
+            document.getElementById("c3-p1").innerText = data.c3P1;
+            document.getElementById("c3-list").children[0].innerText = data.c3L1;
+            document.getElementById("c3-list").children[1].innerText = data.c3L2;
+            document.getElementById("c3-list").children[2].innerText = data.c3L3;
+
+            document.getElementById("c4-title").innerText = data.c4Title;
+            document.getElementById("c4-p1").innerText = data.c4P1;
+            document.getElementById("c4-list").children[0].innerText = data.c4L1;
+            document.getElementById("c4-list").children[1].innerText = data.c4L2;
+            document.getElementById("c4-list").children[2].innerText = data.c4L3;
+
+            document.getElementById("c5-title").innerText = data.c5Title;
+            document.getElementById("c5-p1").innerText = data.c5P1;
+            document.getElementById("c5-list").children[0].innerText = data.c5L1;
+            document.getElementById("c5-list").children[1].innerText = data.c5L2;
+            document.getElementById("c5-list").children[2].innerText = data.c5L3;
+
+            document.getElementById("c6-title").innerText = data.c6Title;
+            document.getElementById("c6-p1").innerText = data.c6P1;
+            document.getElementById("c6-list").children[0].innerText = data.c6L1;
+            document.getElementById("c6-list").children[1].innerText = data.c6L2;
+            document.getElementById("c6-list").children[2].innerText = data.c6L3;
+
+            document.getElementById("proj-title").innerText = data.projTitle;
+            document.getElementById("proj-p1").innerText = data.projP1;
+            document.getElementById("proj-p2").innerText = data.projP2;
+            document.getElementById("proj-p3").innerText = data.projP3;
+        }
+
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const mainGroup = new THREE.Group();
+        const nodes = [];
+
+        const goldWireframe = new THREE.MeshBasicMaterial({ color: 0xfbbf24, wireframe: true });
+        const purpleWireframe = new THREE.MeshBasicMaterial({ color: 0xa855f7, wireframe: true });
+        const goldGlowMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.2, metalness: 0.9, emissive: 0x451a03 });
+        const purpleGlowMat = new THREE.MeshStandardMaterial({ color: 0x6b21a8, roughness: 0.2, metalness: 0.9, emissive: 0x2e1065 });
+
+        const nodeCount = 40;
+        const positions = [];
+
+        for (let i = 0; i < nodeCount; i++) {
+            const isGold = Math.random() > 0.4;
+            let geom;
+            const randType = Math.random();
+            
+            if (randType < 0.4) {
+                geom = new THREE.BoxGeometry(1.6, 1.6, 1.6);
+            } else if (randType < 0.7) {
+                geom = new THREE.IcosahedronGeometry(1.2, 0);
+            } else {
+                geom = new THREE.OctahedronGeometry(1.4, 0);
+            }
+
+            const mesh = new THREE.Mesh(geom, isGold ? (Math.random() > 0.5 ? goldWireframe : goldGlowMat) : (Math.random() > 0.5 ? purpleWireframe : purpleGlowMat));
+
+            const x = (Math.random() - 0.5) * 55;
+            const y = (Math.random() - 0.5) * 55;
+            const z = (Math.random() - 0.5) * 55;
+
+            mesh.position.set(x, y, z);
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+
+            nodes.push({
+                mesh: mesh,
+                rotSpeedX: (Math.random() - 0.5) * 0.012,
+                rotSpeedY: (Math.random() - 0.5) * 0.012,
+                floatOffset: Math.random() * Math.PI * 2
+            });
+
+            positions.push(new THREE.Vector3(x, y, z));
+            mainGroup.add(mesh);
+        }
+
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.25 });
+        for (let i = 0; i < nodeCount; i++) {
+            for (let j = i + 1; j < nodeCount; j++) {
+                if (positions[i].distanceTo(positions[j]) < 18) {
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints([positions[i], positions[j]]);
+                    const line = new THREE.Line(lineGeo, lineMaterial);
+                    mainGroup.add(line);
+                }
+            }
+        }
+
+        const ring1 = new THREE.Mesh(new THREE.TorusGeometry(12, 0.25, 16, 100), goldWireframe);
+        const ring2 = new THREE.Mesh(new THREE.TorusGeometry(16, 0.15, 16, 100), purpleWireframe);
+        const ring3 = new THREE.Mesh(new THREE.TorusGeometry(20, 0.1, 16, 100), goldWireframe);
+
+        ring1.rotation.x = Math.PI / 3;
+        ring2.rotation.y = Math.PI / 4;
+
+        mainGroup.add(ring1, ring2, ring3);
+        scene.add(mainGroup);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        const lightGold = new THREE.PointLight(0xfbbf24, 2.5, 120);
+        lightGold.position.set(20, 25, 20);
+        const lightPurple = new THREE.PointLight(0xa855f7, 2.5, 120);
+        lightPurple.position.set(-20, -25, -20);
+
+        scene.add(ambientLight, lightGold, lightPurple);
+
+        camera.position.z = 35;
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            mainGroup.rotation.y = elapsedTime * 0.05;
+            mainGroup.rotation.x = elapsedTime * 0.02;
+
+            ring1.rotation.z += 0.004;
+            ring2.rotation.z -= 0.005;
+            ring3.rotation.x += 0.003;
+
+            nodes.forEach((node) => {
+                node.mesh.rotation.x += node.rotSpeedX;
+                node.mesh.rotation.y += node.rotSpeedY;
+                node.mesh.position.y += Math.sin(elapsedTime * 1.5 + node.floatOffset) * 0.012;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
