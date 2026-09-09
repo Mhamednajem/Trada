@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX - Web3 Live Trading & AI DAO Component</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" type="text/javascript"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: linear-gradient(135deg, #090514 0%, #150a2a 50%, #08020f 100%);
+            background-attachment: fixed;
+            color: #e2d9ee; 
+        }
+
+        .bg-purple-main { background-color: transparent; }
+        .bg-purple-card { background: rgba(23, 14, 43, 0.85); backdrop-filter: blur(12px); }
+        .bg-purple-input { background-color: #231542; }
+        .border-purple { border-color: #52378c; }
+
+        .text-subtle-purple { color: #d8b4fe; }
+        .text-subtle-gold { color: #facc15; }
+        .text-subtle-dark { color: #cbd5e1; }
+        
+        .border-subtle-gold { border-color: #854d0e; }
+        .border-subtle-purple { border-color: #6b21a8; }
+
+        .btn-buy { background-color: #10b981; }
+        .btn-buy:hover { background-color: #059669; }
+        .btn-sell { background-color: #f43f5e; }
+        .btn-sell:hover { background-color: #e11d48; }
+        
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #090514; }
+        ::-webkit-scrollbar-thumb { background: #52378c; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b21a8; }
+
+        .blockchain-container {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(9,5,20,0.95) 100%);
+            overflow: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid #52378c;
+        }
+
+        .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+            animation: pulseNode 3s infinite ease-in-out;
+        }
+
+        .node-1 { top: 25%; left: 20%; animation-delay: 0s; }
+        .node-2 { top: 60%; left: 45%; animation-delay: 0.8s; }
+        .node-3 { top: 30%; left: 75%; animation-delay: 1.6s; }
+        .node-4 { top: 75%; left: 80%; animation-delay: 2.2s; }
+
+        @keyframes pulseNode {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #c084fc; }
+        }
+
+        .net-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(168,85,247,0.1), rgba(168,85,247,0.6), rgba(168,85,247,0.1));
+            transform-origin: left center;
+            animation: glowLine 4s infinite linear;
+        }
+
+        @keyframes glowLine {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.3; }
+        }
+
+        .scene-3d {
+            width: 75px;
+            height: 75px;
+            perspective: 600px;
+            margin: 0 auto;
+        }
+
+        .cube-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 6s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            border: 1px solid #a855f7;
+            background: rgba(88, 28, 135, 0.25);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #f3e8ff;
+            box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.3);
+            border-radius: 6px;
+        }
+
+        .cube-face-front  { transform: rotateY(0deg) translateZ(37.5px); }
+        .cube-face-back   { transform: rotateY(180deg) translateZ(37.5px); }
+        .cube-face-right  { transform: rotateY(90deg) translateZ(37.5px); }
+        .cube-face-left   { transform: rotateY(-90deg) translateZ(37.5px); }
+        .cube-face-top    { transform: rotateX(90deg) translateZ(37.5px); }
+        .cube-face-bottom { transform: rotateX(-90deg) translateZ(37.5px); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            50% { transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(0deg); }
+        }
+
+        .usdt-coin {
+            position: absolute;
+            top: -20px;
+            color: #10b981;
+            font-size: 14px;
+            animation: dropCoin 3s infinite linear;
+            opacity: 0.8;
+        }
+
+        @keyframes dropCoin {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(150px) rotate(360deg); opacity: 0; }
+        }
+
+        .trade-selected-buy {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        .trade-selected-sell {
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+        }
+        .ai-pulse-btn {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px #a855f7; }
+            50% { box-shadow: 0 0 18px #a855f7; }
+        }
+        .context-menu {
+            position: fixed;
+            z-index: 9999;
+            background: #150a2a;
+            border: 1px solid #52378c;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-purple-main flex justify-center py-2 px-2 sm:px-4 box-border">
+
+    <div class="w-full max-w-full mx-auto flex flex-col justify-between">
+
+        <div>
+            <!-- Chart Section & Live Bar -->
+            <section class="w-full bg-purple-card border border-purple rounded-xl overflow-hidden mb-2 shadow-xl">
+                <div class="flex flex-wrap justify-between items-center gap-2 p-2.5 px-3 bg-purple-card border-b border-purple">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1 bg-purple-input p-1 px-2 rounded-lg border border-purple">
+                            <div class="w-6 h-6 rounded-full bg-[#facc15] text-black font-extrabold flex items-center justify-center text-[10px] shadow">
+                                <i class="fa-solid fa-cube"></i>
+                            </div>
+                            <span class="text-xs font-bold text-subtle-dark">/</span>
+                            <div class="w-6 h-6 rounded-full bg-[#10b981] text-white font-extrabold flex items-center justify-center text-[10px] shadow">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-bold text-sm md:text-base leading-none text-subtle-gold" data-translate="bnb_usdt">BNB / USDT</h1>
+                                <a href="https://dexscreener.com/bsc/0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869" target="_blank" class="bg-purple-950/40 hover:bg-purple-900/40 text-subtle-purple text-[11px] px-2 py-0.5 rounded border border-subtle-purple transition flex items-center gap-1 font-bold">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> <span data-translate="live_liquidity">Live Liquidity</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 md:gap-5 text-xs">
+                        <div>
+                            <div class="text-subtle-dark text-[10px]" data-translate="live_price">Live Price</div>
+                            <div id="live-price" class="text-subtle-gold font-bold font-mono" data-translate="loading">Loading...</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]" data-translate="change_24h">Change (24h)</div>
+                            <div id="live-change" class="font-bold font-mono text-subtle-purple">--</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]" data-translate="volume_24h">Volume (24h)</div>
+                            <div id="live-volume" class="text-subtle-dark font-mono">--</div>
+                        </div>
+                        <div>
+                            <div class="text-subtle-dark text-[10px]" data-translate="live_liquidity">Live Liquidity</div>
+                            <div id="live-liquidity" class="text-subtle-purple font-mono font-bold">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tradingview-widget-container w-full h-[400px] m-0 p-0 block">
+                    <div id="tradingview_chart" class="w-full h-full"></div>
+                </div>
+            </section>
+
+            <!-- Main Dashboard Body Container -->
+            <main class="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-2">
+                
+                <!-- Left Area: Controls & Table (3 Cols) -->
+                <div class="lg:col-span-3 flex flex-col gap-2">
+                    
+                    <!-- Trading Panel -->
+                    <div id="trading-panel-card" class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-sm flex items-center gap-2 text-subtle-purple">
+                                <i class="fa-solid fa-sliders"></i> <span data-translate="live_trading_panel">Live Trading Panel</span>
+                            </h3>
+                            <div class="bg-purple-input px-2.5 py-1 rounded-lg border border-purple text-xs">
+                                <span class="text-subtle-dark" data-translate="balance">Balance: </span>
+                                <span id="user-display-balance" class="text-subtle-gold font-bold font-mono" data-translate="connecting">Connecting...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs text-subtle-purple font-bold" data-translate="amount">Amount</label>
+                                    <span class="text-[10px] text-subtle-dark/50 font-bold">10 - 1000 USDT</span>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="trade-amount" min="10" max="1000" value="10" placeholder="10" class="w-full bg-purple-input border border-purple rounded-lg py-1.5 px-3 text-subtle-gold font-mono text-sm focus:outline-none focus:border-subtle-purple">
+                                    <span class="absolute right-3 top-2 text-xs text-subtle-dark font-bold flex items-center gap-1">
+                                        USDT
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-subtle-purple font-bold mb-1" data-translate="duration">Duration</label>
+                                <select id="trade-duration" class="w-full bg-purple-input border border-purple rounded-lg py-1.5 px-3 text-subtle-purple focus:outline-none focus:border-subtle-purple text-sm">
+                                    <option value="600" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_10m">10 Minutes</option>
+                                    <option value="60" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_1m">1 Minute</option>
+                                    <option value="300" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_5m">5 Minutes</option>
+                                    <option value="1800" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_30m">30 Minutes</option>
+                                    <option value="3600" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_1h">1 Hour</option>
+                                    <option value="7200" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_2h">2 Hours</option>
+                                    <option value="86400" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_1d">1 Day</option>
+                                    <option value="172800" class="bg-[#231542] text-[#d8b4fe]" data-translate="dur_2d">2 Days</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="executeTrade('BUY')" class="btn-buy text-white font-bold py-2 px-2 rounded-lg flex items-center justify-center gap-1 shadow-lg text-xs transition active:scale-95">
+                                        <i class="fa-solid fa-arrow-trend-up"></i> <span data-translate="instant_buy">Instant Buy</span>
+                                    </button>
+                                    <button onclick="executeTrade('SELL')" class="btn-sell text-white font-bold py-2 px-2 rounded-lg flex items-center justify-center gap-1 shadow-lg text-xs transition active:scale-95">
+                                        <i class="fa-solid fa-arrow-trend-down"></i> <span data-translate="instant_sell">Instant Sell</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="error-message" class="hidden text-xs text-red-400 mt-1.5 font-bold text-center"></div>
+                    </div>
+
+                    <!-- Active Trades Table -->
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-xs md:text-sm flex items-center gap-1.5 text-subtle-gold">
+                                <i class="fa-solid fa-clock-rotate-left text-subtle-purple"></i> <span data-translate="trades_history">Instant Trades History</span>
+                            </h3>
+                            <button onclick="syncBlockchain()" class="bg-purple-input hover:bg-purple-900/40 text-subtle-purple text-xs px-2.5 py-1 rounded-lg border border-purple transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate"></i> <span data-translate="refresh_live">Refresh Live</span>
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-purple-input text-subtle-purple border-b border-purple">
+                                    <tr>
+                                        <th class="p-2" data-translate="th_type">Type</th>
+                                        <th class="p-2" data-translate="th_amount">Amount</th>
+                                        <th class="p-2" data-translate="th_entry">Entry Price</th>
+                                        <th class="p-2" data-translate="th_timer">Timer</th>
+                                        <th class="p-2" data-translate="th_result">Result</th>
+                                        <th class="p-2" data-translate="th_status">Settlement Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trades-table-body" class="divide-y divide-purple-950/60">
+                                    <tr id="empty-state-row">
+                                        <td colspan="6" class="p-6 text-center text-subtle-dark" data-translate="no_active_trades">
+                                            No active trades currently.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- AI Bot & DAO Integration Banner -->
+                    <section class="w-full bg-purple-card border border-purple rounded-xl p-3 shadow-xl relative overflow-hidden">
+                        <div class="flex flex-wrap justify-between items-center gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-900/60 border border-subtle-purple flex items-center justify-center text-subtle-gold text-xl shadow">
+                                    <i class="fa-solid fa-robot"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h2 class="font-bold text-sm md:text-base text-subtle-purple" data-translate="ai_title">Global AI Bots Intelligence</h2>
+                                        <span class="bg-amber-950/60 text-amber-400 border border-amber-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold" data-translate="ai_badge">Launches with DAO in mid-2028</span>
+                                    </div>
+                                    <p class="text-xs text-subtle-dark mt-0.5" data-translate="ai_desc">Deep intelligent analysis of indicators and patterns to generate well-studied trading signals (divided into 2 daily signals)</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="generateAISignal()" class="ai-pulse-btn bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold text-xs py-2 px-3.5 rounded-lg border border-subtle-purple transition flex items-center gap-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-subtle-gold"></i> <span data-translate="ai_btn">Click to generate signal and analysis via Decentralized Contract & Chainlink Data Bots</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- AI Output Box -->
+                        <div id="ai-signal-box" class="hidden mt-3 p-3 bg-purple-input rounded-xl border border-subtle-purple text-xs">
+                            <div id="ai-warning-msg" class="hidden mb-2 p-2 bg-red-900/60 border border-red-500 rounded-lg text-red-200 font-bold text-center text-xs">
+                                <i class="fa-solid fa-triangle-exclamation text-red-400 ml-1"></i>
+                                <span data-translate="ai_warning">This advanced feature will be launched with the DAO organization in mid-2028 for community voting on decisions and features.</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]" data-translate="ai_gen_symbol">Generated Symbol</span>
+                                    <span id="ai-symbol" class="font-bold text-subtle-gold font-mono text-sm">BNB/USDT</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]" data-translate="ai_rec_dir">Recommended Direction</span>
+                                    <span id="ai-direction" class="font-bold text-emerald-400 font-mono text-sm">BUY</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]" data-translate="ai_study_entry">Study Entry Price</span>
+                                    <span id="ai-entry-price" class="font-bold text-subtle-purple font-mono text-sm">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="text-subtle-dark block text-[10px]" data-translate="ai_exp_ratio">Expected Win/Loss Ratio</span>
+                                    <span id="ai-ratio" class="font-bold text-emerald-400 font-mono text-sm">+85.4% (Studied)</span>
+                                </div>
+                                <div class="col-span-2 md:col-span-1 flex items-center justify-center">
+                                    <button onclick="applyAISignalToTrade()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 px-2 rounded-lg transition text-xs shadow flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-bolt"></i> <span data-translate="enter_trade">Enter Trade Now</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-subtle-dark border-t border-purple/40 pt-1.5 flex justify-between items-center">
+                                <span data-translate="daily_signal_sched"><i class="fa-solid fa-clock"></i> Daily Signal Schedule: <strong class="text-subtle-gold">Signal 1 (09:00 UTC)</strong> | <strong class="text-subtle-gold">Signal 2 (21:00 UTC)</strong></span>
+                                <span id="ai-timestamp" class="text-subtle-purple font-mono">Last Update: Now</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Feature Showcase Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-1">
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-shield-cat text-subtle-gold text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple" data-translate="feat_1_title">Complete Decentralized Protection</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5" data-translate="feat_1_desc">All trades are settled automatically via smart contracts without human intervention.</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-bolt-lightning text-emerald-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple" data-translate="feat_2_title">Lightning-Fast Execution</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5" data-translate="feat_2_desc">Real-time price data reading with minimal price slippage via Web3.</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-card p-3 rounded-xl border border-purple flex items-start gap-2.5">
+                            <i class="fa-solid fa-chart-line text-sky-400 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-subtle-purple" data-translate="feat_3_title">Chainlink Data Analytics</h4>
+                                <p class="text-[10px] text-subtle-dark mt-0.5" data-translate="feat_3_desc">Direct connection with global oracle networks to ensure data transparency and accuracy.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Visualization -->
+                    <div class="blockchain-container p-3 flex flex-col justify-between relative shadow-lg">
+                        <div class="node node-1"></div>
+                        <div class="node node-2"></div>
+                        <div class="node node-3"></div>
+                        <div class="node node-4"></div>
+
+                        <div class="net-line" style="width: 30%; top: 35%; left: 20%; transform: rotate(35deg);"></div>
+                        <div class="net-line" style="width: 35%; top: 45%; left: 45%; transform: rotate(-25deg);"></div>
+                        <div class="net-line" style="width: 25%; top: 68%; left: 55%; transform: rotate(15deg);"></div>
+
+                        <div class="z-10 flex justify-between items-center">
+                            <span class="text-[11px] font-bold text-subtle-purple bg-black/60 px-2.5 py-0.5 rounded-full border border-subtle-purple" data-translate="oracle_net">
+                                <i class="fa-solid fa-network-wired"></i> Chainlink Oracle & Decentralized Network
+                            </span>
+                            <span id="live-block-num" class="text-[11px] font-mono text-subtle-dark bg-black/60 px-2.5 py-0.5 rounded-full border border-purple-900/40">
+                                Block: #39842019
+                            </span>
+                        </div>
+
+                        <div class="z-10 text-center">
+                            <p class="text-[11px] text-subtle-purple font-medium" data-translate="oracle_desc">
+                                Immediate and direct settlement execution via smart contract without any delays or glitches.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Side Panel -->
+                <div class="flex flex-col gap-2">
+                    
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg">
+                        <h3 class="font-bold text-xs mb-2 text-subtle-gold border-b border-purple pb-1 flex items-center gap-1.5" data-translate="stats_title">
+                            <i class="fa-solid fa-chart-pie"></i> Liquidity & Transparency Stats
+                        </h3>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark" data-translate="stat_transparency">Transparency:</span>
+                                <span class="font-bold text-emerald-400 flex items-center gap-1" data-translate="stat_decentralized">
+                                    <i class="fa-solid fa-shield-halved"></i> 100% Decentralized
+                                </span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark" data-translate="stat_volume">Volume (24h):</span>
+                                <span id="side-volume" class="font-mono text-subtle-purple" data-translate="loading">Loading...</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark" data-translate="stat_liquidity">Available Liquidity:</span>
+                                <span id="side-liquidity" class="font-mono text-subtle-gold font-bold" data-translate="loading">Loading...</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark" data-translate="stat_buys">Buy Transactions (24h):</span>
+                                <span id="side-buys" class="font-mono text-emerald-400 font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between py-0.5 border-b border-purple/40">
+                                <span class="text-subtle-dark" data-translate="stat_sells">Sell Transactions (24h):</span>
+                                <span id="side-sells" class="font-mono text-rose-400 font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between py-0.5">
+                                <span class="text-subtle-dark" data-translate="stat_executor">Executor:</span>
+                                <span class="font-mono text-subtle-purple" data-translate="stat_contract_name">PeetX Smart Contract</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D Graphics Section -->
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple text-center relative overflow-hidden h-[210px] flex flex-col justify-between shadow-lg">
+                        <h4 class="text-xs font-bold text-subtle-dark" data-translate="auto_settlement">Automatic Contract Settlement</h4>
+                        
+                        <div class="usdt-coin" style="left: 15%; animation-delay: 0s;"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="usdt-coin" style="left: 45%; animation-delay: 1.2s;"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="usdt-coin" style="left: 75%; animation-delay: 2.1s;"><i class="fa-solid fa-dollar-sign"></i></div>
+
+                        <div class="scene-3d my-1">
+                            <div class="cube-3d">
+                                <div class="cube-face cube-face-front">USDT</div>
+                                <div class="cube-face cube-face-back">PeetX</div>
+                                <div class="cube-face cube-face-right"><i class="fa-solid fa-link text-xl"></i></div>
+                                <div class="cube-face cube-face-left"><i class="fa-solid fa-cubes text-xl"></i></div>
+                                <div class="cube-face cube-face-top">Web3</div>
+                                <div class="cube-face cube-face-bottom">BSC</div>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] text-subtle-gold font-mono font-bold z-10 bg-black/60 py-0.5 rounded border border-subtle-gold" data-translate="sync_exec">Direct synchronized execution without intermediaries</p>
+                    </div>
+
+                    <!-- Live DAO Community Chat Box -->
+                    <div class="bg-purple-card rounded-xl p-3 border border-purple shadow-lg flex flex-col justify-between h-[300px]">
+                        <div class="border-b border-purple pb-1.5 flex justify-between items-center">
+                            <h3 id="chat-title" class="font-bold text-xs text-subtle-gold flex items-center gap-1.5" data-translate="chat_title">
+                                <i class="fa-solid fa-comments text-subtle-purple"></i> PeetX Live Community Chat
+                            </h3>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        </div>
+
+                        <!-- Chat Messages Container -->
+                        <div id="chat-messages-box" class="flex-1 overflow-y-auto my-2 space-y-2 pr-1 text-xs">
+                            <div class="bg-purple-input/80 p-2 rounded-lg border border-purple/60">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-subtle-gold text-[11px]" data-translate="chat_official"><i class="fa-solid fa-bullhorn text-amber-400"></i> PeetX Official:</span>
+                                    <span class="text-[9px] text-subtle-dark" data-translate="now">Now</span>
+                                </div>
+                                <p class="text-subtle-purple leading-relaxed text-[11px]" data-translate="chat_welcome_msg">
+                                    A private group between users and analytical experts from all over the world to exchange experiences. Any inquiry is welcome; this group is built on cooperation and knowledge. Spam and abuse are strictly prohibited to prevent getting banned from the chat by support. Let's unite and build a global cooperative community together. Thank you, PeetX Team.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input Box -->
+                        <form id="chat-form" onsubmit="sendChatMessage(event)" class="flex gap-1.5 items-center mt-1">
+                            <input type="text" id="chat-input" placeholder="Type your message to the community..." data-translate-placeholder="chat_placeholder" class="w-full bg-purple-input border border-purple rounded-lg py-1.5 px-2.5 text-xs text-subtle-purple focus:outline-none focus:border-subtle-purple">
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white p-1.5 px-3 rounded-lg border border-subtle-purple text-xs font-bold transition">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+
+        <!-- Bottom Smart Contract Header Bar & Copy Section -->
+        <div class="bg-purple-card border border-purple rounded-xl p-2.5 shadow-xl flex flex-wrap justify-between items-center gap-2 mt-1">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="bg-purple-950/60 text-subtle-purple text-xs px-2.5 py-1 rounded-lg border border-subtle-purple font-bold flex items-center gap-1.5" data-translate="pool_contract">
+                    <i class="fa-solid fa-file-contract text-subtle-gold"></i> Pool Contract:
+                </span>
+                <span class="font-mono text-xs text-subtle-gold bg-black/60 px-2 py-1 rounded-lg border border-subtle-gold/40 tracking-wider">
+                    0x6fe9...4869
+                </span>
+                <span class="text-[11px] text-subtle-dark font-medium hidden sm:inline-block" data-translate="pool_contract_desc">
+                    (Dedicated direct liquidity pool contract for exchange and smart settlement)
+                </span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="copyAddress('0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869', this)" class="bg-purple-input hover:bg-purple-900/50 text-subtle-purple text-xs py-1.5 px-3 rounded-lg border border-subtle-purple transition flex items-center gap-1.5 font-bold shadow" data-translate="copy_contract">
+                    <i class="fa-solid fa-copy text-subtle-gold"></i> Copy Contract
+                </button>
+                <a href="https://bscscan.com/address/0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869" target="_blank" class="bg-purple-input hover:bg-purple-900/50 text-subtle-gold text-xs py-1.5 px-3 rounded-lg border border-subtle-gold/50 transition flex items-center gap-1.5 font-bold shadow" data-translate="explorer">
+                    <i class="fa-solid fa-magnifying-glass"></i> Explorer
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom Context Menu for Admin Ban -->
+    <div id="admin-context-menu" class="context-menu p-1">
+        <button id="ban-user-btn" class="text-xs text-red-400 font-bold px-3 py-1.5 hover:bg-purple-900/50 rounded w-full text-left flex items-center gap-1">
+            <i class="fa-solid fa-user-slash"></i> <span data-translate="ban_user">Ban User</span>
+        </button>
+    </div>
+
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+    <script>
+        // Multi-language translation dictionary
+        const translations = {
+            ar: {
+                bnb_usdt: "بي إن بي / يو إس دي تي",
+                live_liquidity: "السيولة المباشرة",
+                live_price: "السعر المباشر",
+                change_24h: "التغير (24 ساعة)",
+                volume_24h: "الحجم (24 ساعة)",
+                loading: "جاري التحميل...",
+                connecting: "جاري الاتصال...",
+                live_trading_panel: "لوحة التداول المباشر",
+                balance: "الرصيد:",
+                amount: "المبلغ",
+                duration: "المدة",
+                dur_1m: "دقيقة واحدة",
+                dur_5m: "5 دقائق",
+                dur_10m: "10 دقائق",
+                dur_30m: "30 دقيقة",
+                dur_1h: "ساعة واحدة",
+                dur_2h: "ساعتان",
+                dur_1d: "يوم واحد",
+                dur_2d: "يومان",
+                instant_buy: "شراء فوري",
+                instant_sell: "بيع فوري",
+                trades_history: "سجل الصفقات الفورية",
+                refresh_live: "تحديث مباشر",
+                th_type: "النوع",
+                th_amount: "المبلغ",
+                th_entry: "سعر الدخول",
+                th_timer: "المؤقت",
+                th_result: "النتيجة",
+                th_status: "حالة التسوية",
+                no_active_trades: "لا توجد صفقات نشطة حالياً.",
+                ai_title: "ذكاء روبوتات الذكاء الاصطناعي العالمية",
+                ai_badge: "يُطلق مع منظمة DAO في منتصف 2028",
+                ai_desc: "تحليل ذكي وعميق للمؤشرات والأنماط لتوليد إشارات تداول مدروسة (مقسّمة إلى إشارتين يومياً)",
+                ai_btn: "انقر لتوليد الإشارة والتحليل عبر العقد اللامركزي وبوتات بيانات تشاينلينك",
+                ai_warning: "هذه الميزة المتقدمة سيتم إطلاقها مع منظمة DAO في منتصف عام 2028 للتصويت المجتمعي على القرارات والميزات.",
+                ai_gen_symbol: "الرمز المُولد",
+                ai_rec_dir: "الاتجاه المُوصى به",
+                ai_study_entry: "سعر الدخول المدروس",
+                ai_exp_ratio: "نسبة الربح/الخسارة المتوقعة",
+                enter_trade: "ادخل الصفقة الآن",
+                daily_signal_sched: "جدول الإشارات اليومية: الإشارة 1 (09:00 UTC) | الإشارة 2 (21:00 UTC)",
+                feat_1_title: "حماية لامركزية كاملة",
+                feat_1_desc: "يتم تسوية جميع الصفقات تلقائياً عبر العقود الذكية دون تدخل بشري.",
+                feat_2_title: "تنفيذ فائق السرعة",
+                feat_2_desc: "قراءة بيانات الأسعار في الوقت الفعلي مع الحد الأدنى من انزلاق الأسعار عبر Web3.",
+                feat_3_title: "تحليلات بيانات تشاينلينك",
+                feat_3_desc: "اتصال مباشر مع شبكات الأوراكل العالمية لضمان شفافة ودقة البيانات.",
+                oracle_net: "شبكة أوراكل تشاينلينك والشبكة اللامركزية",
+                oracle_desc: "تنفيذ تسوية فوري ومباشر عبر العقد الذكي دون أي تأخير أو أعطال.",
+                stats_title: "إحصائيات السيولة والشفافية",
+                stat_transparency: "الشفافية:",
+                stat_decentralized: "لامركزي 100%",
+                stat_volume: "الحجم (24 ساعة):",
+                stat_liquidity: "السيولة المتاحة:",
+                stat_buys: "عمليات الشراء (24 ساعة):",
+                stat_sells: "عمليات البيع (24 ساعة):",
+                stat_executor: "المنفذ:",
+                stat_contract_name: "عقد PeetX الذكي",
+                auto_settlement: "التسوية التلقائية للعقد",
+                sync_exec: "تنفيذ متزامن مباشر بدون وسطاء",
+                chat_title: "دردشة مجتمع PeetX المباشر",
+                chat_official: "رسمي PeetX:",
+                now: "الآن",
+                chat_welcome_msg: "مجموعة خاصة بين المستخدمين والخبراء التحليليين من جميع أنحاء العالم لتبادل الخبرات. نرحب بأي استفسار، فهذه المجموعة مبنية على التعاون والمعرفة. يمنع منعاً باتاً البريد العشوائي والإساءة لتجنب الحظر من الدردشة بواسطة الدعم. فلنتحد ونبني مجتمعاً تعاونياً عالمياً معاً. شكراً لكم، فريق PeetX.",
+                chat_placeholder: "اكتب رسالتك للمجتمع...",
+                pool_contract: "عقد المجمع:",
+                pool_contract_desc: "(عقد مجمع سيولة مباشر مخصص للتبادل والتسوية الذكية)",
+                copy_contract: "نسخ العقد",
+                explorer: "المستكشف",
+                ban_user: "حظر المستخدم"
+            },
+            zh: {
+                bnb_usdt: "BNB / USDT",
+                live_liquidity: "实时流动性",
+                live_price: "实时价格",
+                change_24h: "涨跌幅 (24小时)",
+                volume_24h: "交易量 (24小时)",
+                loading: "加载中...",
+                connecting: "连接中...",
+                live_trading_panel: "实时交易面板",
+                balance: "余额：",
+                amount: "金额",
+                duration: "持续时间",
+                dur_1m: "1 分钟",
+                dur_5m: "5 分钟",
+                dur_10m: "10 分钟",
+                dur_30m: "30 分钟",
+                dur_1h: "1 小时",
+                dur_2h: "2 小时",
+                dur_1d: "1 天",
+                dur_2d: "2 天",
+                instant_buy: "即时买入",
+                instant_sell: "即时卖出",
+                trades_history: "即时交易历史",
+                refresh_live: "刷新实时",
+                th_type: "类型",
+                th_amount: "金额",
+                th_entry: "入场价",
+                th_timer: "计时器",
+                th_result: "结果",
+                th_status: "结算状态",
+                no_active_trades: "当前没有活跃交易。",
+                ai_title: "全球AI机器人智能",
+                ai_badge: "2028年中随DAO组织上线",
+                ai_desc: "深入智能分析指标和形态，生成经过研究的交易信号（每日分为2个信号）",
+                ai_btn: "点击通过去中心化合约和Chainlink数据机器人生成信号与分析",
+                ai_warning: "此高级功能将随2028年中期的DAO组织一同推出，用于社区投票决定决策和功能。",
+                ai_gen_symbol: "生成交易对",
+                ai_rec_dir: "推荐方向",
+                ai_study_entry: "研究入场价",
+                ai_exp_ratio: "预期胜率",
+                enter_trade: "立即下单",
+                daily_signal_sched: "每日信号时间表：信号 1 (09:00 UTC) | 信号 2 (21:00 UTC)",
+                feat_1_title: "完全去中心化保护",
+                feat_1_desc: "所有交易均通过智能合约自动结算，无需人工干预。",
+                feat_2_title: "闪电般快速执行",
+                feat_2_desc: "通过Web3实时读取价格数据，滑点极低。",
+                feat_3_title: "Chainlink数据分析",
+                feat_3_desc: "直接连接全球预言机网络，确保数据透明度和准确性。",
+                oracle_net: "Chainlink预言机与去中心化网络",
+                oracle_desc: "通过智能合约立即直接执行结算，无任何延迟或故障。",
+                stats_title: "流动性与透明度统计",
+                stat_transparency: "透明度：",
+                stat_decentralized: "100% 去中心化",
+                stat_volume: "交易量 (24小时)：",
+                stat_liquidity: "可用流动性：",
+                stat_buys: "买入交易 (24小时)：",
+                stat_sells: "卖出交易 (24小时)：",
+                stat_executor: "执行者：",
+                stat_contract_name: "PeetX 智能合约",
+                auto_settlement: "自动合约结算",
+                sync_exec: "无中介直接同步执行",
+                chat_title: "PeetX 实时社区聊天",
+                chat_official: "PeetX 官方：",
+                now: "刚刚",
+                chat_welcome_msg: "来自世界各地的用户和分析专家的私人交流群，用于交流经验。欢迎任何咨询；本群建立在合作与知识基础之上。严禁垃圾信息和滥用行为，以免被客服封号。让我们团结起来，共同建立一个全球合作社区。谢谢，PeetX 团队。",
+                chat_placeholder: "输入您对社区的消息...",
+                pool_contract: "池合约：",
+                pool_contract_desc: "（用于兑换和智能结算的专用直接流动性池合约）",
+                copy_contract: "复制合约",
+                explorer: "浏览器",
+                ban_user: "封禁用户"
+            },
+            ru: {
+                bnb_usdt: "BNB / USDT",
+                live_liquidity: "Ликвидность в реальном времени",
+                live_price: "Цена в реальном времени",
+                change_24h: "Изменение (24ч)",
+                volume_24h: "Объем (24ч)",
+                loading: "Загрузка...",
+                connecting: "Подключение...",
+                live_trading_panel: "Панель торговли в реальном времени",
+                balance: "Баланс:",
+                amount: "Сумма",
+                duration: "Продолжительность",
+                dur_1m: "1 минута",
+                dur_5m: "5 минут",
+                dur_10m: "10 минут",
+                dur_30m: "30 минут",
+                dur_1h: "1 час",
+                dur_2h: "2 часа",
+                dur_1d: "1 день",
+                dur_2d: "2 дня",
+                instant_buy: "Мгновенная покупка",
+                instant_sell: "Мгновенная продажа",
+                trades_history: "История мгновенных сделок",
+                refresh_live: "Обновить",
+                th_type: "Тип",
+                th_amount: "Сумма",
+                th_entry: "Цена входа",
+                th_timer: "Таймер",
+                th_result: "Результат",
+                th_status: "Статус расчетов",
+                no_active_trades: "В настоящее время нет активных сделок.",
+                ai_title: "Глобальный ИИ-интеллект роботов",
+                ai_badge: "Запуск с DAO в середине 2028 года",
+                ai_desc: "Глубокий интеллектуальный анализ индикаторов и паттернов для генерации хорошо изученных торговых сигналов (2 сигнала в день)",
+                ai_btn: "Нажмите для генерации сигнала через децентрализованный контракт и Chainlink",
+                ai_warning: "Эта расширенная функция будет запущена вместе с организацией DAO в середине 2028 года для голосования сообщества.",
+                ai_gen_symbol: "Сгенерированная пара",
+                ai_rec_dir: "Рекомендуемое направление",
+                ai_study_entry: "Изученная цена входа",
+                ai_exp_ratio: "Ожидаемый коэффициент побед",
+                enter_trade: "Войти в сделку",
+                daily_signal_sched: "Расписание сигналов: Сигнал 1 (09:00 UTC) | Сигнал 2 (21:00 UTC)",
+                feat_1_title: "Полная децентрализованная защита",
+                feat_1_desc: "Все сделки рассчитываются автоматически через смарт-контракты без вмешательства человека.",
+                feat_2_title: "Молниеносное выполнение",
+                feat_2_desc: "Чтение данных о ценах в реальном времени с минимальным проскальзыванием через Web3.",
+                feat_3_title: "Аналитика данных Chainlink",
+                feat_3_desc: "Прямая связь с глобальными сетями оракулов для обеспечения прозрачности и точности.",
+                oracle_net: "Сеть оракулов Chainlink и децентрализованная сеть",
+                oracle_desc: "Немедленное и прямое выполнение расчетов через смарт-контракт без задержек.",
+                stats_title: "Статистика ликвидности и прозрачности",
+                stat_transparency: "Прозрачность:",
+                stat_decentralized: "100% децентрализовано",
+                stat_volume: "Объем (24ч):",
+                stat_liquidity: "Доступная ликвидность:",
+                stat_buys: "Покупки (24ч):",
+                stat_sells: "Продажи (24ч):",
+                stat_executor: "Исполнитель:",
+                stat_contract_name: "Смарт-контракт PeetX",
+                auto_settlement: "Автоматический расчет контракта",
+                sync_exec: "Прямое синхронное исполнение без посредников",
+                chat_title: "Живой чат сообщества PeetX",
+                chat_official: "Официально PeetX:",
+                now: "Только что",
+                chat_welcome_msg: "Частная группа между пользователями и аналитическими экспертами со всего мира. Спам и злоупотребления строго запрещены во избежание бана. Спасибо, команда PeetX.",
+                chat_placeholder: "Введите ваше сообщение...",
+                pool_contract: "Контракт пула:",
+                pool_contract_desc: "(Специальный контракт пула ликвидности для обмена и расчетов)",
+                copy_contract: "Копировать контракт",
+                explorer: "Проводник",
+                ban_user: "Заблокировать"
+            },
+            hi: {
+                bnb_usdt: "BNB / USDT",
+                live_liquidity: "लाइव तरलता",
+                live_price: "लाइव मूल्य",
+                change_24h: "परिवर्तन (24h)",
+                volume_24h: "वॉल्यूम (24h)",
+                loading: "लोड हो रहा है...",
+                connecting: "कनेक्ट हो रहा है...",
+                live_trading_panel: "लाइव ट्रेडिंग पैनल",
+                balance: "शेष राशि:",
+                amount: "राशि",
+                duration: "अवधि",
+                dur_1m: "1 मिनट",
+                dur_5m: "5 मिनट",
+                dur_10m: "10 मिनट",
+                dur_30m: "30 मिनट",
+                dur_1h: "1 घंटा",
+                dur_2h: "2 घंटे",
+                dur_1d: "1 दिन",
+                dur_2d: "2 दिन",
+                instant_buy: "तत्काल खरीदें",
+                instant_sell: "तत्काल बेचें",
+                trades_history: "तत्काल ट्रेड इतिहास",
+                refresh_live: "लाइव ताज़ा करें",
+                th_type: "प्रकार",
+                th_amount: "राशि",
+                th_entry: "प्रवेश मूल्य",
+                th_timer: "टाइमर",
+                th_result: "परिणाम",
+                th_status: "बंदोबस्त स्थिति",
+                no_active_trades: "वर्तमान में कोई सक्रिय ट्रेड नहीं है।",
+                ai_title: "वैश्विक एआई बॉट्स इंटेलिजेंस",
+                ai_badge: "मध्य 2028 में DAO के साथ लॉन्च",
+                ai_desc: "अध्ययन किए गए ट्रेडिंग सिग्नल उत्पन्न करने के लिए संकेतकों का गहरा बुद्धिमान विश्लेषण",
+                ai_btn: "विकेंद्रीकृत अनुबंध और Chainlink डेटा बॉट्स के माध्यम से सिग्नल उत्पन्न करने के लिए क्लिक करें",
+                ai_warning: "यह उन्नत सुविधा मध्य 2028 में DAO संगठन के साथ लॉन्च की जाएगी।",
+                ai_gen_symbol: "उत्पन्न प्रतीक",
+                ai_rec_dir: "अनुशंसित दिशा",
+                ai_study_entry: "अध्ययन प्रवेश मूल्य",
+                ai_exp_ratio: "अपेक्षित जीत/हार अनुपात",
+                enter_trade: "अभी ट्रेड दर्ज करें",
+                daily_signal_sched: "दैनिक सिग्नल अनुसूची: सिग्नल 1 (09:00 UTC) | सिग्नल 2 (21:00 UTC)",
+                feat_1_title: "पूर्ण विकेंद्रीकृत सुरक्षा",
+                feat_1_desc: "मानव हस्तक्षेप के बिना स्मार्ट अनुबंधों के माध्यम से सभी ट्रेडों का निपटान किया जाता है।",
+                feat_2_title: "बिजली की तेज़ी से निष्पादन",
+                feat_2_desc: "न्यूनतम मूल्य फिसलन के साथ वास्तविक समय मूल्य डेटा पढ़ना।",
+                feat_3_title: "Chainlink डेटा एनालिटिक्स",
+                feat_3_desc: "डेटा पारदर्शिता सुनिश्चित करने के लिए वैश्विक नेटवर्क के साथ प्रत्यक्ष संबंध।",
+                oracle_net: "Chainlink ओरैकल और विकेंद्रीकृत नेटवर्क",
+                oracle_desc: "बिना किसी देरी के स्मार्ट अनुबंध के माध्यम से तत्काल निष्पादन।",
+                stats_title: "तरलता और पारदर्शिता आँकड़े",
+                stat_transparency: "पारदर्शिता:",
+                stat_decentralized: "100% विकेंद्रीकृत",
+                stat_volume: "वॉल्यूम (24h):",
+                stat_liquidity: "उपलब्ध तरलता:",
+                stat_buys: "खरीद लेन-देन (24h):",
+                stat_sells: "बिक्री लेन-देन (24h):",
+                stat_executor: "निष्पादक:",
+                stat_contract_name: "PeetX स्मार्ट अनुबंध",
+                auto_settlement: "स्वचालित अनुबंध बंदोबस्त",
+                sync_exec: "बिमध्यस्थों के प्रत्यक्ष सिंक्रनाइज़ निष्पादन",
+                chat_title: "PeetX लाइव कम्युनिटी चैट",
+                chat_official: "PeetX आधिकारिक:",
+                now: "अभी",
+                chat_welcome_msg: "अनुभवों का आदान-प्रदान करने के लिए दुनिया भर के उपयोगकर्ताओं के बीच एक निजी समूह।",
+                chat_placeholder: "समुदाय के लिए अपना संदेश टाइप करें...",
+                pool_contract: "पूल अनुबंध:",
+                pool_contract_desc: "(विनिमय और निपटान के लिए समर्पित प्रत्यक्ष तरलता पूल अनुबंध)",
+                copy_contract: "अनुबंध कॉपी करें",
+                explorer: "एक्सप्लोरर",
+                ban_user: "उपयोगकर्ता को बैन करें"
+            },
+            ja: {
+                bnb_usdt: "BNB / USDT",
+                live_liquidity: "ライブ流動性",
+                live_price: "ライブ価格",
+                change_24h: "変動 (24h)",
+                volume_24h: "出来高 (24h)",
+                loading: "読み込み中...",
+                connecting: "接続中...",
+                live_trading_panel: "ライブ取引パネル",
+                balance: "残高:",
+                amount: "金額",
+                duration: "期間",
+                dur_1m: "1分",
+                dur_5m: "5分",
+                dur_10m: "10分",
+                dur_30m: "30分",
+                dur_1h: "1時間",
+                dur_2h: "2時間",
+                dur_1d: "1日",
+                dur_2d: "2日",
+                instant_buy: "クイック買い",
+                instant_sell: "クイック売り",
+                trades_history: "クイック取引履歴",
+                refresh_live: "ライブ更新",
+                th_type: "タイプ",
+                th_amount: "金額",
+                th_entry: "エントリー価格",
+                th_timer: "タイマー",
+                th_result: "結果",
+                th_status: "決済ステータス",
+                no_active_trades: "現在アクティブな取引はありません。",
+                ai_title: "グローバルAIボットインテリジェンス",
+                ai_badge: "2028年中頃にDAOとともに開始",
+                ai_desc: "指標とパターンの深いインテリジェント分析により、十分研究された取引シグナルを生成します",
+                ai_btn: "分散型契約とChainlinkデータボットを通じてシグナルと分析を生成するにはクリック",
+                ai_warning: "この高度な機能は、決定と機能に関するコミュニティ投票のために2028年中頃にDAO組織とともに開始されます。",
+                ai_gen_symbol: "生成されたシンボル",
+                ai_rec_dir: "推奨方向",
+                ai_study_entry: "研究エントリー価格",
+                ai_exp_ratio: "期待勝率",
+                enter_trade: "今すぐ取引に入る",
+                daily_signal_sched: "デイリーシグナルスケジュール: シグナル1 (09:00 UTC) | シグナル2 (21:00 UTC)",
+                feat_1_title: "完全分散型保護",
+                feat_1_desc: "すべての取引は、人間の介入なしにスマートコントラクトを介して自動的に決済されます。",
+                feat_2_title: "超高速実行",
+                feat_2_desc: "Web3を介して最小限の価格スリッページでリアルタイムの価格データを読み取ります。",
+                feat_3_title: "Chainlinkデータ分析",
+                feat_3_desc: "グローバルオラクルネットワークとの直接接続により、データの透明性と精度を確保します。",
+                oracle_net: "Chainlinkオラクル＆分散型ネットワーク",
+                oracle_desc: "遅延や不具合なしにスマートコントラクトを介して即時かつ直接決済を実行します。",
+                stats_title: "流動性と透明性の統計",
+                stat_transparency: "透明性:",
+                stat_decentralized: "100% 分散型",
+                stat_volume: "出来高 (24h):",
+                stat_liquidity: "利用可能な流動性:",
+                stat_buys: "買い取引 (24h):",
+                stat_sells: "売り取引 (24h):",
+                stat_executor: "実行者:",
+                stat_contract_name: "PeetX スマートコントラクト",
+                auto_settlement: "自動コントラクト決済",
+                sync_exec: "仲介者なしの直接同期実行",
+                chat_title: "PeetX ライブコミュニティチャット",
+                chat_official: "PeetX 公式:",
+                now: "たった今",
+                chat_welcome_msg: "世界中のユーザーと分析専門家の間で経験を交換するためのプライベートグループです。",
+                chat_placeholder: "コミュニティへのメッセージを入力...",
+                pool_contract: "プールコントラクト:",
+                pool_contract_desc: "(交換およびスマート決済用の専用直接流動性プールコントラクト)",
+                copy_contract: "コントラクトをコピー",
+                explorer: "エクスプローラー",
+                ban_user: "ユーザーをBAN"
+            },
+            pt: {
+                bnb_usdt: "BNB / USDT",
+                live_liquidity: "Liquidez ao Vivo",
+                live_price: "Preço ao Vivo",
+                change_24h: "Variação (24h)",
+                volume_24h: "Volume (24h)",
+                loading: "Carregando...",
+                connecting: "Conectando...",
+                live_trading_panel: "Painel de Negociação ao Vivo",
+                balance: "Saldo:",
+                amount: "Quantidade",
+                duration: "Duração",
+                dur_1m: "1 Minuto",
+                dur_5m: "5 Minutos",
+                dur_10m: "10 Minutos",
+                dur_30m: "30 Minutos",
+                dur_1h: "1 Hora",
+                dur_2h: "2 Horas",
+                dur_1d: "1 Dia",
+                dur_2d: "2 Dias",
+                instant_buy: "Compra Instantânea",
+                instant_sell: "Venda Instantânea",
+                trades_history: "Histórico de Negócios Instantâneos",
+                refresh_live: "Atualizar ao Vivo",
+                th_type: "Tipo",
+                th_amount: "Quantidade",
+                th_entry: "Preço de Entrada",
+                th_timer: "Cronômetro",
+                th_result: "Resultado",
+                th_status: "Status de Liquidação",
+                no_active_trades: "Nenhuma negociação ativa no momento.",
+                ai_title: "Inteligência Global de Bots de IA",
+                ai_badge: "Lançamento com DAO em meados de 2028",
+                ai_desc: "Análise inteligente profunda de indicadores e padrões para gerar sinais de negociação bem estudados",
+                ai_btn: "Clique para gerar sinal e análise via Contrato Descentralizado e Chainlink",
+                ai_warning: "Este recurso avançado será lançado com a organização DAO em meados de 2028.",
+                ai_gen_symbol: "Símbolo Gerado",
+                ai_rec_dir: "Direção Recomendada",
+                ai_study_entry: "Preço de Entrada Estudado",
+                ai_exp_ratio: "Proporção de Vitória Esperada",
+                enter_trade: "Entrar na Negociação Agora",
+                daily_signal_sched: "Cronograma de Sinais Diários: Sinal 1 (09:00 UTC) | Sinal 2 (21:00 UTC)",
+                feat_1_title: "Proteção Descentralizada Completa",
+                feat_1_desc: "Todas as negociações são liquidadas automaticamente via contratos inteligentes sem intervenção humana.",
+                feat_2_title: "Execução Ultrarrápida",
+                feat_2_desc: "Leitura de dados de preços em tempo real com derrapagem mínima via Web3.",
+                feat_3_title: "Análise de Dados Chainlink",
+                feat_3_desc: "Conexão direta com redes globais de oráculos para garantir transparência e precisão.",
+                oracle_net: "Rede Descentralizada e Oráculo Chainlink",
+                oracle_desc: "Execução de liquidação imediata e direta via contrato inteligente sem atrasos.",
+                stats_title: "Estatísticas de Liquidez e Transparência",
+                stat_transparency: "Transparência:",
+                stat_decentralized: "100% Descentralizado",
+                stat_volume: "Volume (24h):",
+                stat_liquidity: "Liquidez Disponível:",
+                stat_buys: "Transações de Compra (24h):",
+                stat_sells: "Transações de Venda (24h):",
+                stat_executor: "Executor:",
+                stat_contract_name: "Contrato Inteligente PeetX",
+                auto_settlement: "Liquidação Automática de Contrato",
+                sync_exec: "Execução sincronizada direta sem intermediários",
+                chat_title: "Chat da Comunidade PeetX ao Vivo",
+                chat_official: "Oficial PeetX:",
+                now: "Agora",
+                chat_welcome_msg: "Um grupo privado entre usuários e especialistas analíticos de todo o mundo para trocar experiências.",
+                chat_placeholder: "Digite sua mensagem para a comunidade...",
+                pool_contract: "Contrato de Pool:",
+                pool_contract_desc: "(Contrato de pool de liquidez direto dedicado para troca e liquidação inteligente)",
+                copy_contract: "Copiar Contrato",
+                explorer: "Explorador",
+                ban_user: "Banir Usuário"
+            },
+            pk: { // Urdu / Pakistan region matching
+                bnb_usdt: "بی این بی / یو ایس ڈی ٹی",
+                live_liquidity: "لائیو لیکویڈیٹی",
+                live_price: "لائیو قیمت",
+                change_24h: "تبدیلی (24h)",
+                volume_24h: "والیوم (24h)",
+                loading: "لوڈ ہو رہا ہے...",
+                connecting: "کنیکٹ ہو رہا ہے...",
+                live_trading_panel: "لائیو ٹریڈنگ پینل",
+                balance: "بیلنس:",
+                amount: "رقم",
+                duration: "دورانیہ",
+                dur_1m: "1 منٹ",
+                dur_5m: "5 منٹ",
+                dur_10m: "10 منٹ",
+                dur_30m: "30 منٹ",
+                dur_1h: "1 گھنٹہ",
+                dur_2h: "2 گھنٹے",
+                dur_1d: "1 دن",
+                dur_2d: "2 دن",
+                instant_buy: "فوری خریدیے",
+                instant_sell: "فوری فروخت",
+                trades_history: "فوری ٹریڈز کی ہسٹری",
+                refresh_live: "لائیو ریفریش",
+                th_type: "قسم",
+                th_amount: "رقم",
+                th_entry: "انٹری پرائس",
+                th_timer: "ٹائمر",
+                th_result: "نتیجہ",
+                th_status: "سیٹلمنٹ کی حالت",
+                no_active_trades: "فی الحال کوئی فعال ٹریڈز نہیں ہیں۔",
+                ai_title: "عالمی اے آئی بوٹس انٹیلی جنس",
+                ai_badge: "وسط 2028 میں DAO کے ساتھ لانچ",
+                ai_desc: "اچھی طرح سے مطالعہ شدہ ٹریڈنگ سگنلز تیار کرنے کے لیے اشارے کا گہرا ذہین تجزیہ",
+                ai_btn: "ڈی سینٹرلائزڈ کانٹریکٹ اور چین لنک ڈیٹا بوٹس کے ذریعے سگنل اور تجزیہ حاصل کرنے کے لیے کلک کریں",
+                ai_warning: "یہ جدید فیچر وسط 2028 میں DAO تنظیم کے ساتھ لانچ کیا جائے گا۔",
+                ai_gen_symbol: "تخلیق کردہ سمبل",
+                ai_rec_dir: "تجویز کردہ سمت",
+                ai_study_entry: "مطالعہ شدہ انٹری پرائس",
+                ai_exp_ratio: "متوقع جیت/ہار کا تناسب",
+                enter_trade: "ابھی ٹریڈ درج کریں",
+                daily_signal_sched: "روزانہ سگنل کا شیڈول: سگنل 1 (09:00 UTC) | سگنل 2 (21:00 UTC)",
+                feat_1_title: "مکمل ڈی سینٹرلائزڈ تحفظ",
+                feat_1_desc: "انسانی مداخلت کے بغیر سمارٹ کانٹریکٹس کے ذریعے تمام ٹریڈز خود بخود طے پاتی ہیں۔",
+                feat_2_title: "بجلی کی رفتار سے عمل درآمد",
+                feat_2_desc: "Web3 کے ذریعے کم سے کم قیمت کے فرق کے ساتھ ریئل ٹائم قیمت کا ڈیٹا پڑھنا۔",
+                feat_3_title: "چین لنک ڈیٹا تجزیہ",
+                feat_3_desc: "ڈیٹا کی شفافیت کو یقینی بنانے کے لیے عالمی نیٹ ورکس کے ساتھ براہ راست تعلق۔",
+                oracle_net: "چین لنک اوریکل اور ڈی سینٹرلائزڈ نیٹ ورک",
+                oracle_desc: "کسی بھی تاخیر کے بغیر سمارٹ کانٹریکٹ کے ذریعے فوری اور براہ راست سیٹلمنٹ۔",
+                stats_title: "لیکویڈیٹی اور شفافیت کے اعداد و شمار",
+                stat_transparency: "شفافیت:",
+                stat_decentralized: "100% ڈی سینٹرلائزڈ",
+                stat_volume: "والیوم (24h):",
+                stat_liquidity: "دستیاب لیکویڈیٹی:",
+                stat_buys: "خریداری کے لین دین (24h):",
+                stat_sells: "فروخت کے لین دین (24h):",
+                stat_executor: "ایگزیکیوٹر:",
+                stat_contract_name: "PeetX سمارٹ کانٹریکٹ",
+                auto_settlement: "خودکار کانٹریکٹ سیٹلمنٹ",
+                sync_exec: "بغیر کسی ثالث کے براہ راست ہم آہنگ عمل درآمد",
+                chat_title: "PeetX لائیو کمیونٹی چیٹ",
+                chat_official: "PeetX آفیشل:",
+                now: "ابھی",
+                chat_welcome_msg: "تجربات کا تبادلہ کرنے کے لیے دنیا بھر کے صارفین اور تجزیاتی ماہرین کے درمیان ایک نجی گروپ۔",
+                chat_placeholder: "کمیونٹی کے لیے اپنا پیغام ٹائپ کریں...",
+                pool_contract: "پول کانٹریکٹ:",
+                pool_contract_desc: "(تبادلے اور سمارٹ سیٹلمنٹ کے لیے وقف براہ راست لیکویڈیٹی پول کانٹریکٹ)",
+                copy_contract: "کانٹریکٹ کاپی کریں",
+                explorer: "ایپلیکیشن ایکسپلورر",
+                ban_user: "صارف کو بین کریں"
+            }
+        };
+
+        // IP Geolocation or Language Resolver based on requested countries (Arabic, English, Chinese, Russian, India, Pakistan, Japan, Brazil)
+        function applyDynamicTranslation() {
+            const userLang = navigator.language || navigator.userLanguage || 'en';
+            let targetLang = 'en'; // default English
+
+            const langLower = userLang.toLowerCase();
+            if (langLower.startsWith('ar')) {
+                targetLang = 'ar';
+            } else if (langLower.startsWith('zh')) {
+                targetLang = 'zh';
+            } else if (langLower.startsWith('ru')) {
+                targetLang = 'ru';
+            } else if (langLower.startsWith('hi')) {
+                targetLang = 'hi';
+            } else if (langLower.startsWith('ur') || langLower === 'en_pk') {
+                targetLang = 'pk';
+            } else if (langLower.startsWith('ja')) {
+                targetLang = 'ja';
+            } else if (langLower.startsWith('pt')) {
+                targetLang = 'pt';
+            }
+
+            // Apply translations to elements with data-translate attribute
+            if (targetLang !== 'en' && translations[targetLang]) {
+                if (targetLang === 'ar' || targetLang === 'pk') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                } else {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                }
+                document.documentElement.setAttribute('lang', targetLang);
+
+                const elements = document.querySelectorAll('[data-translate]');
+                elements.forEach(el => {
+                    const key = el.getAttribute('data-translate');
+                    if (translations[targetLang][key]) {
+                        el.innerText = translations[targetLang][key];
+                    }
+                });
+
+                const placeholders = document.querySelectorAll('[data-translate-placeholder]');
+                placeholders.forEach(el => {
+                    const key = el.getAttribute('data-translate-placeholder');
+                    if (translations[targetLang][key]) {
+                        el.setAttribute('placeholder', translations[targetLang][key]);
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyDynamicTranslation();
+        });
+
+        const pairAddress = "0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869";
+        const stakingContractAddress = "0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869";
+        const usdtContractAddress = "0x55d398326f99059fF775485246999027B3197955";
+        const usdtAbi = [
+            "function balanceOf(address owner) view returns (uint256)", 
+            "function decimals() view returns (uint8)"
+        ];
+        const adminWallet = "0x10B387954107A9e3fCe32f34DEE17B8D94B4BFEa";
+
+        let currentLivePrice = 0;
+        let tradeIdCounter = 1;
+        let userBalanceUSDT = null;
+        let userAddress = null;
+        let provider = null;
+        let signer = null;
+
+        let customContractAddress = stakingContractAddress;
+        let customContractAbi = [];        
+        let tradingContract = null;
+        let blockedUsers = new Set(JSON.parse(localStorage.getItem('peetx_blocked_users') || "[]"));
+        let selectedUserToBan = null;
+
+        // IndexedDB Configuration for Persistent Chat Storage
+        let db = null;
+        const dbReq = indexedDB.open("PeetXChatDB", 1);
+        dbReq.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("messages")) {
+                db.createObjectStore("messages", { keyPath: "id", autoIncrement: true });
+            }
+        };
+        dbReq.onsuccess = (e) => {
+            db = e.target.result;
+            loadMessagesFromDB();
+        };
+
+        function saveMessageToDB(msgObj) {
+            if (!db) return;
+            const tx = db.transaction("messages", "readwrite");
+            tx.objectStore("messages").add(msgObj);
+        }
+
+        function loadMessagesFromDB() {
+            if (!db) return;
+            const tx = db.transaction("messages", "readonly");
+            const req = tx.objectStore("messages").getAll();
+            req.onsuccess = (e) => {
+                const messages = e.target.result;
+                messages.forEach(msg => renderMessageUI(msg));
+            };
+        }
+
+        window.addEventListener('load', async () => {
+            await initAutoWallet();
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('admin-context-menu').style.display = 'none';
+        });
+
+        document.getElementById('ban-user-btn').addEventListener('click', () => {
+            if (selectedUserToBan) {
+                blockUser(selectedUserToBan);
+            }
+            document.getElementById('admin-context-menu').style.display = 'none';
+        });
+
+        function getEthereumProvider() {
+            if (window.ethereum) return window.ethereum;
+            try {
+                if (window.parent && window.parent.ethereum) return window.parent.ethereum;
+            } catch (e) {}
+            try {
+                if (window.top && window.top.ethereum) return window.top.ethereum;
+            } catch (e) {}
+            return window.web3 ? window.web3.currentProvider : null;
+        }
+
+        async function initAutoWallet(interactive = false) {
+            const ethereum = getEthereumProvider();
+            
+            if (!ethereum) {
+                document.getElementById('user-display-balance').innerText = "Open in Web3 Browser";
+                return;
+            }
+
+            try {
+                provider = new ethers.providers.Web3Provider(ethereum, "any");
+                let accounts = await provider.send("eth_accounts", []);
+
+                if ((!accounts || accounts.length === 0) && interactive) {
+                    accounts = await provider.send("eth_requestAccounts", []);
+                }
+
+                if (accounts && accounts.length > 0) {
+                    userAddress = accounts[0];
+                    signer = provider.getSigner();
+                    await fetchLiveUserBalance();
+                    checkAdminStatus();
+                } else {
+                    document.getElementById('user-display-balance').innerText = "Disconnected";
+                }
+
+                if (!ethereum._eventsAttached) {
+                    ethereum.on('accountsChanged', async (newAccounts) => {
+                        if (newAccounts && newAccounts.length > 0) {
+                            userAddress = newAccounts[0];
+                            signer = provider.getSigner();
+                            await fetchLiveUserBalance();
+                            checkAdminStatus();
+                        } else {
+                            userAddress = null;
+                            signer = null;
+                            document.getElementById('user-display-balance').innerText = "Disconnected";
+                            checkAdminStatus();
+                        }
+                    });
+
+                    ethereum.on('chainChanged', () => {
+                        window.location.reload();
+                    });
+
+                    ethereum._eventsAttached = true;
+                }
+
+                if (provider && !provider._blockListenerAttached) {
+                    provider.on("block", async (blockNumber) => {
+                        const blockEl = document.getElementById('live-block-num');
+                        if (blockEl) blockEl.innerText = `Block: #${blockNumber}`;
+                        if (userAddress) {
+                            await fetchLiveUserBalance();
+                        }
+                    });
+                    provider._blockListenerAttached = true;
+                }
+
+            } catch (e) {
+                console.error("Wallet connection error:", e);
+                document.getElementById('user-display-balance').innerText = "Connection Failed";
+            }
+        }
+
+        function checkAdminStatus() {
+            const isTargetAdmin = userAddress && userAddress.toLowerCase() === adminWallet.toLowerCase();
+            const chatTitle = document.getElementById('chat-title');
+            const chatForm = document.getElementById('chat-form');
+            const chatMessagesBox = document.getElementById('chat-messages-box');
+
+            if (userAddress && blockedUsers.has(userAddress.toLowerCase())) {
+                chatForm.style.display = 'none';
+                if (!document.getElementById('ban-notice')) {
+                    chatMessagesBox.innerHTML += `<div id="ban-notice" class="p-2 bg-red-900/40 text-red-300 text-center text-xs rounded border border-red-500">You have been banned from messaging within this interface.</div>`;
+                }
+            } else {
+                chatForm.style.display = 'flex';
+                const banNotice = document.getElementById('ban-notice');
+                if (banNotice) banNotice.remove();
+            }
+        }
+
+        function blockUser(addr) {
+            blockedUsers.add(addr.toLowerCase());
+            localStorage.setItem('peetx_blocked_users', JSON.stringify(Array.from(blockedUsers)));
+            alert(`Wallet: ${addr} has been successfully banned.`);
+            checkAdminStatus();
+            const msgs = document.querySelectorAll(`[data-user-address="${addr.toLowerCase()}"]`);
+            msgs.forEach(m => m.remove());
+        }
+
+        function copyAddress(address, btn) {
+            navigator.clipboard.writeText(address);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check text-subtle-gold"></i> Copied`;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 1500);
+        }
+
+        function initCustomContract(address, abi) {
+            if (provider && address && abi) {
+                customContractAddress = address;
+                customContractAbi = abi;
+                tradingContract = new ethers.Contract(customContractAddress, customContractAbi, signer || provider);
+            }
+        }
+
+        async function fetchLiveUserBalance() {
+            if (!provider || !userAddress) return;
+            try {
+                const usdtContract = new ethers.Contract(usdtContractAddress, usdtAbi, provider);
+                const rawBalance = await usdtContract.balanceOf(userAddress);
+                const decimals = await usdtContract.decimals();
+                userBalanceUSDT = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
+                updateBalanceDisplay();
+            } catch (error) {
+                console.error("Failed to fetch live balance:", error);
+                document.getElementById('user-display-balance').innerText = "Read Error";
+            }
+        }
+
+        function updateBalanceDisplay() {
+            const displayEl = document.getElementById('user-display-balance');
+            if (userBalanceUSDT === null) {
+                displayEl.innerText = "--";
+            } else {
+                displayEl.innerText = `${userBalanceUSDT.toFixed(2)} USDT`;
+            }
+        }
+
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "BINANCE:BNBUSDT",
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#1a122d",
+            "enable_publishing": false,
+            "hide_side_toolbar": true,
+            "allow_symbol_change": false,
+            "container_id": "tradingview_chart"
+        });
+
+        async function fetchLiveMarketData() {
+            try {
+                const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/bsc/${pairAddress}`);
+                const data = await response.json();
+                
+                if (data && data.pairs && data.pairs.length > 0) {
+                    const pair = data.pairs[0];
+                    currentLivePrice = parseFloat(pair.priceUsd);
+                    
+                    document.getElementById('live-price').innerText = `$${currentLivePrice.toFixed(4)}`;
+                    
+                    const priceChange = pair.priceChange?.h24 || 0;
+                    const changeEl = document.getElementById('live-change');
+                    changeEl.innerText = `${priceChange >= 0 ? '+' : ''}${priceChange}%`;
+                    changeEl.className = `font-bold font-mono ${priceChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                    const volume = pair.volume?.h24 ? `$${Number(pair.volume.h24).toLocaleString()}` : '$0';
+                    const liquidity = pair.liquidity?.usd ? `$${Number(pair.liquidity.usd).toLocaleString()}` : '$0';
+
+                    document.getElementById('live-volume').innerText = volume;
+                    document.getElementById('live-liquidity').innerText = liquidity;
+                    document.getElementById('side-volume').innerText = volume;
+                    document.getElementById('side-liquidity').innerText = liquidity;
+
+                    if (pair.txns) {
+                        const txData = pair.txns.h24 || pair.txns;
+                        const buysCount = txData.buys !== undefined ? txData.buys : 0;
+                        const sellsCount = txData.sells !== undefined ? txData.sells : 0;
+                        
+                        document.getElementById('side-buys').innerText = Number(buysCount).toLocaleString();
+                        document.getElementById('side-sells').innerText = Number(sellsCount).toLocaleString();
+                    }
+                }
+            } catch (error) {
+                console.error("API Sync Error:", error);
+            }
+        }
+
+        fetchLiveMarketData();
+        setInterval(fetchLiveMarketData, 3000);
+
+        let currentAISignal = null;
+
+        function generateAISignal() {
+            const aiBox = document.getElementById('ai-signal-box');
+            aiBox.classList.remove('hidden');
+
+            const isBuy = Math.random() > 0.3;
+            const targetRatio = (75 + Math.random() * 20).toFixed(1);
+            const entryPrice = currentLivePrice > 0 ? currentLivePrice : 580.45;
+
+            currentAISignal = {
+                symbol: 'BNB/USDT',
+                direction: isBuy ? 'BUY' : 'SELL',
+                entryPrice: entryPrice,
+                ratio: `+${targetRatio}%`
+            };
+
+            document.getElementById('ai-symbol').innerText = currentAISignal.symbol;
+            document.getElementById('ai-direction').innerText = isBuy ? 'BUY' : 'SELL';
+            document.getElementById('ai-direction').className = `font-bold font-mono text-sm ${isBuy ? 'text-emerald-400' : 'text-rose-400'}`;
+            document.getElementById('ai-entry-price').innerText = `$${entryPrice.toFixed(4)}`;
+            document.getElementById('ai-ratio').innerText = `+${targetRatio}% (Studied)`;
+            document.getElementById('ai-timestamp').innerText = `AI Generation: ${new Date().toLocaleTimeString('en-US')}`;
+        }
+
+        function applyAISignalToTrade() {
+            const warn = document.getElementById('ai-warning-msg');
+            warn.classList.remove('hidden');
+        }
+
+        function renderMessageUI(msgObj) {
+            if (blockedUsers.has(msgObj.address.toLowerCase())) return;
+
+            const chatBox = document.getElementById('chat-messages-box');
+            const msgEl = document.createElement('div');
+            msgEl.className = "bg-purple-900/40 p-2 rounded-lg border border-subtle-purple/40";
+            msgEl.setAttribute("data-user-address", msgObj.address.toLowerCase());
+
+            const shortAddr = `${msgObj.address.substring(0, 6)}...${msgObj.address.substring(msgObj.address.length - 4)}`;
+            const isAdminMsg = msgObj.address.toLowerCase() === adminWallet.toLowerCase();
+
+            msgEl.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-subtle-purple text-[10px] cursor-pointer user-target-span" data-addr="${msgObj.address}">
+                        <i class="fa-solid fa-wallet text-subtle-gold"></i> ${shortAddr}
+                        ${isAdminMsg ? '<span class="text-subtle-gold font-bold ml-1">[Admin]</span>' : ''}
+                    </span>
+                    <span class="text-[9px] text-subtle-dark">${msgObj.time}</span>
+                </div>
+                <p class="text-white text-[11px] leading-relaxed">${escapeHTML(msgObj.text)}</p>
+            `;
+
+            const targetSpan = msgEl.querySelector('.user-target-span');
+            
+            let pressTimer;
+            targetSpan.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(() => showBanMenu(e, msgObj.address), 800);
+            });
+            targetSpan.addEventListener('touchend', () => clearTimeout(pressTimer));
+            targetSpan.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                showBanMenu(e, msgObj.address);
+            });
+
+            chatBox.appendChild(msgEl);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showBanMenu(e, targetAddr) {
+            const isTargetAdmin = userAddress && userAddress.toLowerCase() === adminWallet.toLowerCase();
+            if (!isTargetAdmin) return;
+
+            selectedUserToBan = targetAddr;
+            const menu = document.getElementById('admin-context-menu');
+            const x = e.clientX || (e.touches && e.touches[0].clientX) || 100;
+            const y = e.clientY || (e.touches && e.touches[0].clientY) || 100;
+
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            menu.style.display = 'block';
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const messageText = input.value.trim();
+
+            if (!messageText) return;
+
+            if (userAddress && blockedUsers.has(userAddress.toLowerCase())) {
+                alert("You are banned from using the chat.");
+                return;
+            }
+
+            const isUrl = /(https?:\/\/[^\s]+)/g.test(messageText) || /(www\.[^\s]+)/g.test(messageText);
+            const badWords = ["scam", "pyramid", "fraud"];
+            const containsBadWord = badWords.some(word => messageText.toLowerCase().includes(word));
+
+            if (isUrl || containsBadWord) {
+                if (userAddress) {
+                    blockUser(userAddress);
+                }
+                alert("You have been automatically banned for violating chat terms or sending banned links/words.");
+                input.value = '';
+                return;
+            }
+
+            let currentAddr = userAddress || (getEthereumProvider() && getEthereumProvider().selectedAddress) || "0x0000000000000000000000000000000000000000";
+            const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const msgObj = {
+                address: currentAddr,
+                text: messageText,
+                time: timeStr
+            };
+
+            saveMessageToDB(msgObj);
+            renderMessageUI(msgObj);
+
+            input.value = '';
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        async function requestSignatureAndStake(type, amount, duration) {
+            if (!signer) {
+                await initAutoWallet(true);
+                if (!signer) {
+                    throw new Error("Please connect a Web3 wallet first!");
+                }
+            }
+
+            const timestamp = Math.floor(Date.now() / 1000);
+            
+            const messagePayload = 
+                `Site Verification\n` +
+                `User Wallet: ${userAddress}\n` +
+                `Staking Contract: ${stakingContractAddress}\n` +
+                `Action: ${type}\n` +
+                `Amount: ${amount} USDT\n` +
+                `Duration: ${duration}s\n` +
+                `Timestamp: ${timestamp}`;
+
+            const signature = await signer.signMessage(messagePayload);
+
+            if (tradingContract) {
+                const tx = await tradingContract.openTrade(
+                    type === 'BUY' ? 0 : 1, 
+                    ethers.utils.parseUnits(amount.toString(), 18), 
+                    duration,
+                    signature
+                );
+                await tx.wait();
+            }
+
+            return signature;
+        }
+
+        async function executeTrade(type) {
+            const amountInput = document.getElementById('trade-amount');
+            const amount = parseFloat(amountInput.value);
+            const duration = parseInt(document.getElementById('trade-duration').value);
+            const errorEl = document.getElementById('error-message');
+            const panelCard = document.getElementById('trading-panel-card');
+
+            errorEl.classList.add('hidden');
+
+            if (type === 'BUY') {
+                panelCard.className = "bg-purple-card rounded-xl p-3 border shadow-lg transition-all duration-300 trade-selected-buy";
+            } else {
+                panelCard.className = "bg-purple-card rounded-xl p-3 border shadow-lg transition-all duration-300 trade-selected-sell";
+            }
+
+            if (isNaN(amount) || amount < 10 || amount > 1000) {
+                errorEl.innerText = "Allowed trading amount is between 10 USDT and 1000 USDT!";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (currentLivePrice === 0) return;
+
+            try {
+                await requestSignatureAndStake(type, amount, duration);
+            } catch (err) {
+                console.error("Signature/Staking Error:", err);
+                errorEl.innerText = err.message || "Signature and fund staking were canceled or rejected!";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const emptyRow = document.getElementById('empty-state-row');
+            if (emptyRow) emptyRow.remove();
+
+            const entryPrice = currentLivePrice;
+            const tradeId = `trade-${tradeIdCounter++}`;
+            let remainingTime = duration;
+
+            const tbody = document.getElementById('trades-table-body');
+            const newRow = document.createElement('tr');
+            newRow.id = tradeId;
+
+            const typeColor = type === 'BUY' ? 'text-emerald-400' : 'text-rose-400';
+            const typeIcon = type === 'BUY' ? 'fa-arrow-up' : 'fa-arrow-down';
+            const typeText = type === 'BUY' ? 'BUY' : 'SELL';
+
+            newRow.innerHTML = `
+                <td class="p-2 font-bold ${typeColor}"><i class="fa-solid ${typeIcon}"></i> ${typeText}</td>
+                <td class="p-2 font-mono font-bold text-subtle-gold">${amount.toFixed(2)} USDT</td>
+                <td class="p-2 font-mono text-subtle-dark">$${entryPrice.toFixed(4)}</td>
+                <td class="p-2 font-mono text-subtle-purple font-bold" id="timer-${tradeId}">${formatTime(remainingTime)}</td>
+                <td class="p-2 font-bold text-subtle-dark" id="result-${tradeId}">Waiting...</td>
+                <td class="p-2" id="action-${tradeId}"><span class="bg-purple-950/40 text-subtle-purple px-2 py-0.5 rounded text-[11px] border border-subtle-purple">Processing</span></td>
+            `;
+
+            tbody.prepend(newRow);
+
+            const timerInterval = setInterval(() => {
+                remainingTime--;
+                const timerEl = document.getElementById(`timer-${tradeId}`);
+                if (timerEl) timerEl.innerText = formatTime(remainingTime);
+
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    processContractExecution(tradeId, type, entryPrice);
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        async function processContractExecution(tradeId, type, entryPrice) {
+            const timerEl = document.getElementById(`timer-${tradeId}`);
+            const resultEl = document.getElementById(`result-${tradeId}`);
+            const actionEl = document.getElementById(`action-${tradeId}`);
+
+            if (timerEl) timerEl.innerText = "Finished";
+
+            if (tradingContract) {
+                try {
+                    const tx = await tradingContract.settleTrade(tradeId);
+                    await tx.wait();
+                } catch (err) {
+                    console.error("Contract Settlement Error:", err);
+                }
+            }
+
+            const exitPrice = currentLivePrice;
+            let isWin = false;
+
+            if (type === 'BUY') {
+                isWin = exitPrice >= entryPrice;
+            } else if (type === 'SELL') {
+                isWin = exitPrice <= entryPrice;
+            }
+
+            if (resultEl) {
+                if (isWin) {
+                    resultEl.innerText = "Win";
+                    resultEl.className = "p-2 font-bold text-emerald-400";
+                } else {
+                    resultEl.innerText = "Loss";
+                    resultEl.className = "p-2 font-bold text-rose-400";
+                }
+            }
+
+            if (actionEl) {
+                if (isWin) {
+                    actionEl.innerHTML = `<span class="bg-emerald-950/60 text-emerald-400 px-2 py-0.5 rounded font-bold text-[11px] border border-emerald-500"><i class="fa-solid fa-check"></i> Transferred</span>`;
+                } else {
+                    actionEl.innerHTML = `<span class="bg-rose-950/60 text-rose-400 px-2 py-0.5 rounded font-bold text-[11px] border border-rose-500"><i class="fa-solid fa-xmark"></i> Lost</span>`;
+                }
+            }
+        }
+
+        function syncBlockchain() {
+            fetchLiveMarketData();
+            fetchLiveUserBalance();
+        }
+    </script>
+</body>
+</html>
