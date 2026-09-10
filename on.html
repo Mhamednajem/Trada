@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX - Ecosystem Whitepaper & System Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #06020e;
+            --bg-sidebar: #0d0718;
+            --bg-card: rgba(24, 15, 43, 0.85);
+            --text-main: #f3effc;
+            --text-muted: #a899c7;
+            --accent-gold: #ffd700;
+            --accent-purple: #9d4edd;
+            --accent-purple-glow: rgba(157, 78, 221, 0.5);
+            --accent-green: #00ff88;
+            --border-color: #2c1b4d;
+            --hover-bg: #23153d;
+        }
+
+        /* Anti-Horizontal Scroll & Full Bleed Layout */
+        html, body {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            box-sizing: border-box !important;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', 'Tajawal', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        *, *:before, *:after {
+            box-sizing: border-box !important;
+        }
+
+        /* Ambient Cyber Grid Background */
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 0%, #1c0b38 0%, #06020e 80%),
+                        linear-gradient(rgba(157, 78, 221, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(157, 78, 221, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        html[dir="rtl"] .sidebar {
+            border-right: none;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .sidebar-header {
+            padding: 24px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .wp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .wp-btn:hover {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .trade-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent-purple), #7b2cbf);
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 15px var(--accent-purple-glow);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .trade-link-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Language Selector */
+        .lang-selector-wrapper {
+            position: relative;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .lang-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(157, 78, 221, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 16px;
+            right: 16px;
+            max-height: 250px;
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+        }
+
+        .lang-dropdown.show { display: block; }
+
+        .lang-option {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .lang-option:hover {
+            background-color: var(--hover-bg);
+            color: var(--accent-gold);
+        }
+
+        /* Navigation Groups */
+        .nav-group {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-title {
+            padding: 0 16px 8px 16px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        html[dir="rtl"] .nav-item { border-left: none; border-right: 3px solid transparent; }
+
+        .nav-item:hover, .nav-item.active {
+            color: #fff;
+            background-color: var(--hover-bg);
+            border-left-color: var(--accent-gold);
+        }
+
+        html[dir="rtl"] .nav-item:hover, html[dir="rtl"] .nav-item.active { border-right-color: var(--accent-gold); }
+
+        /* Main Content Workspace */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 20px;
+            width: 100%;
+        }
+
+        .content-container { max-width: 950px; margin: 0 auto; width: 100%; }
+
+        .section-block { display: none; animation: fadeIn 0.3s ease-in-out forwards; }
+        .section-block.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            font-weight: 800;
+        }
+
+        h1 span { color: var(--accent-gold); }
+
+        p { font-size: 14px; line-height: 1.8; color: var(--text-muted); margin-bottom: 16px; }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple));
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .card h3 { color: var(--accent-gold); margin-bottom: 14px; font-size: 18px; font-weight: 800; }
+
+        .gfx-box {
+            background: rgba(10, 6, 18, 0.9);
+            border: 1px dashed var(--accent-purple);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 16px 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .yield-cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .yield-card-item {
+            background: rgba(13, 7, 24, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            transition: border 0.3s ease;
+        }
+
+        .yield-card-item:hover {
+            border-color: var(--accent-gold);
+        }
+
+        .yield-info-main {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .yield-plan-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .yield-capital-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .yield-values-side {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        html[dir="rtl"] .yield-values-side {
+            text-align: left;
+        }
+
+        .yield-net-green {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--accent-green);
+        }
+
+        .yield-total-val {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+            width: 100%;
+        }
+
+        .step-card {
+            background: rgba(28, 15, 43, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-num {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            color: #000; font-weight: 900;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .link-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(90deg, var(--accent-gold), #ffe875);
+            color: #000; font-weight: 800; padding: 12px 24px; border-radius: 10px;
+            text-decoration: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            cursor: pointer; border: none; font-size: 14px;
+        }
+
+        .mobile-header {
+            display: none; background: var(--bg-sidebar); padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color); justify-content: space-between; align-items: center;
+            width: 100%;
+        }
+
+        .menu-toggle { background: none; border: none; color: var(--accent-gold); font-size: 24px; cursor: pointer; }
+
+        .whitepaper-paper {
+            width: 100%;
+            background: #ffffff !important;
+            color: #1a1a1a !important;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .whitepaper-paper h1, .whitepaper-paper h2, .whitepaper-paper h3 { color: #110a1f !important; }
+        .whitepaper-paper p, .whitepaper-paper li { color: #333333 !important; font-size: 14px; line-height: 1.8; }
+
+        .back-nav-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #110a1f; color: var(--accent-gold); border: 1px solid var(--accent-gold);
+            padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 13px;
+            cursor: pointer; margin-bottom: 20px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-container {
+            width: 96%;
+            max-width: 1100px;
+            height: 92vh;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-gold);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 12px 16px;
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title { font-size: 14px; font-weight: 800; color: var(--accent-gold); }
+
+        .close-modal-btn {
+            background: rgba(255,255,255,0.1); border: none; color: #fff;
+            width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: bold;
+        }
+
+        .modal-body { flex: 1; width: 100%; height: 100%; }
+        .modal-iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { position: fixed; left: -300px; top: 0; bottom: 0; transition: left 0.3s ease; }
+            html[dir="rtl"] .sidebar { left: auto; right: -300px; transition: right 0.3s ease; }
+            .sidebar.open { left: 0; }
+            html[dir="rtl"] .sidebar.open { right: 0; }
+            .mobile-header { display: flex; }
+            .main-content { padding: 16px 12px; }
+            .whitepaper-paper { padding: 18px; }
+            .card { padding: 16px; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="logo-text">PeetX</div>
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">PeetX</div>
+            <div class="header-actions">
+                <button onclick="openEmbeddedApp('on2004.html')" class="wp-btn">
+                    📄 <span data-i18n="btn_whitepaper">Whitepaper Document</span>
+                </button>
+                <button onclick="openEmbeddedApp('on2004.html')" class="trade-link-btn">
+                    ⚡ <span data-i18n="btn_trade_now">Launch Platform App</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Language Selector (20 Countries with Flags) -->
+        <div class="lang-selector-wrapper">
+            <button class="lang-btn" onclick="toggleLangDropdown()">
+                <span id="current-lang">🇺🇸 English</span>
+                <span>▼</span>
+            </button>
+            <div class="lang-dropdown" id="langDropdown">
+                <div class="lang-option" onclick="changeLanguage('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLanguage('ar')">🇸🇦 العربية</div>
+                <div class="lang-option" onclick="changeLanguage('zh')">🇨🇳 中文</div>
+                <div class="lang-option" onclick="changeLanguage('hi')">🇮🇳 हिन्दी</div>
+                <div class="lang-option" onclick="changeLanguage('ur')">🇵🇰 اردو</div>
+                <div class="lang-option" onclick="changeLanguage('es')">🇪🇸 Español</div>
+                <div class="lang-option" onclick="changeLanguage('fr')">🇫🇷 Français</div>
+                <div class="lang-option" onclick="changeLanguage('de')">🇩🇪 Deutsch</div>
+                <div class="lang-option" onclick="changeLanguage('ru')">🇷🇺 Русский</div>
+                <div class="lang-option" onclick="changeLanguage('tr')">🇹🇷 Türkçe</div>
+                <div class="lang-option" onclick="changeLanguage('pt')">🇵🇹 Português</div>
+                <div class="lang-option" onclick="changeLanguage('ja')">🇯🇵 日本語</div>
+                <div class="lang-option" onclick="changeLanguage('ko')">🇰🇷 한국어</div>
+                <div class="lang-option" onclick="changeLanguage('fa')">🇮🇷 فارسی</div>
+                <div class="lang-option" onclick="changeLanguage('it')">🇮🇹 Italiano</div>
+                <div class="lang-option" onclick="changeLanguage('id')">🇮🇩 Bahasa Indonesia</div>
+                <div class="lang-option" onclick="changeLanguage('vi')">🇻🇳 Tiếng Việt</div>
+                <div class="lang-option" onclick="changeLanguage('nl')">🇳🇱 Nederlands</div>
+                <div class="lang-option" onclick="changeLanguage('pl')">🇵🇱 Polski</div>
+                <div class="lang-option" onclick="changeLanguage('th')">🇹🇭 ไทย</div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-group">
+            <div class="nav-title" data-i18n="nav_onboarding">Getting Started</div>
+            <div class="nav-item active" onclick="showSection('welcome')"><i>🚀</i> <span data-i18n="nav_welcome">Guide & Registration</span></div>
+            <div class="nav-item" onclick="openEmbeddedApp('on2004.html')"><i>📄</i> <span data-i18n="nav_whitepaper">Whitepaper</span></div>
+            <div class="nav-item" onclick="showSection('about')"><i>📈</i> <span data-i18n="nav_trading">Smart Contracts Engine</span></div>
+            <div class="nav-item" onclick="showSection('pool')"><i>💧</i> <span data-i18n="nav_pool">Liquidity Vault</span></div>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title" data-i18n="nav_profits">Yields & Ecosystem</div>
+            <div class="nav-item" onclick="showSection('returns')"><i>📊</i> <span data-i18n="nav_returns">Daily Yield Rates</span></div>
+            <div class="nav-item" onclick="showSection('generations')"><i>👥</i> <span data-i18n="nav_generations">5-Tier Affiliate System</span></div>
+            <div class="nav-item" onclick="showSection('contests')"><i>🏆</i> <span data-i18n="nav_contests">Leader Competitions</span></div>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title" data-i18n="nav_governance">Governance & Community</div>
+            <div class="nav-item" onclick="showSection('dao')"><i>🏛️</i> <span data-i18n="nav_dao">DAO & Voting Rewards</span></div>
+            <div class="nav-item" onclick="showSection('community')"><i>📢</i> <span data-i18n="nav_community">Official Channels</span></div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-content">
+        <div class="content-container">
+
+            <!-- Registration Guide Section -->
+            <div id="welcome" class="section-block active">
+                <h1 data-i18n="title_welcome">Welcome to <span>PeetX Ecosystem</span></h1>
+                <p data-i18n="desc_welcome">Comprehensive decentralized onboarding architecture. Secure your connection via smart contracts and start compounding daily yield allocations safely.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_steps">Step-by-Step Onboarding Workflow</h3>
+                    
+                    <div class="gfx-box">
+                        <svg width="100%" height="80" viewBox="0 0 500 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="15" width="100" height="50" rx="8" fill="#180f2b" stroke="#ffd700" stroke-width="1.5"/>
+                            <text x="55" y="44" fill="#ffd700" font-size="11" font-weight="bold" text-anchor="middle">1. Web3 Wallet</text>
+                            <path d="M 110 40 L 140 40" stroke="#9d4edd" stroke-width="2"/>
+                            
+                            <rect x="145" y="15" width="100" height="50" rx="8" fill="#180f2b" stroke="#9d4edd" stroke-width="1.5"/>
+                            <text x="195" y="44" fill="#f3effc" font-size="11" font-weight="bold" text-anchor="middle">2. DApp Browser</text>
+                            <path d="M 250 40 L 280 40" stroke="#9d4edd" stroke-width="2"/>
+                            
+                            <rect x="285" y="15" width="100" height="50" rx="8" fill="#180f2b" stroke="#ffd700" stroke-width="1.5"/>
+                            <text x="335" y="44" fill="#ffd700" font-size="11" font-weight="bold" text-anchor="middle">3. Connect URL</text>
+                            <path d="M 390 40 L 420 40" stroke="#00ff88" stroke-width="2"/>
+                            
+                            <rect x="425" y="15" width="70" height="50" rx="8" fill="#00ff88" opacity="0.15" stroke="#00ff88" stroke-width="1.5"/>
+                            <text x="460" y="44" fill="#00ff88" font-size="11" font-weight="bold" text-anchor="middle">4. Earn</text>
+                        </svg>
+                    </div>
+
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">1</div>
+                            <strong data-i18n="step1_title">Install Web3 Wallet</strong>
+                            <p style="font-size: 12px; margin-top: 6px;" data-i18n="step1_desc">Download Trust Wallet, MetaMask, or TokenPocket on your mobile device.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">2</div>
+                            <strong data-i18n="step2_title">Access DApp Browser</strong>
+                            <p style="font-size: 12px; margin-top: 6px;" data-i18n="step2_desc">Open the internal Web3 DApp browser integrated inside your non-custodial wallet.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">3</div>
+                            <strong data-i18n="step3_title">Paste Gateway Link</strong>
+                            <p style="font-size: 12px; margin-top: 6px;" data-i18n="step3_desc">Enter the verified PeetX smart contract link directly into the DApp address bar.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">4</div>
+                            <strong data-i18n="step4_title">Activate Account</strong>
+                            <p style="font-size: 12px; margin-top: 6px;" data-i18n="step4_desc">Confirm the smart contract binding to begin receiving automated daily yields instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Contracts Engine Section -->
+            <div id="about" class="section-block">
+                <h1 data-i18n="title_about">Smart Contracts <span>& Protocol Engine</span></h1>
+                <p data-i18n="desc_about">Engineered for extreme performance and absolute security. All operations execute directly on-chain.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_trade_features">Decentralized Protocol Advantages</h3>
+                    <p data-i18n="p_trade_features">• Unalterable On-Chain Logic with zero administrative intervention.<br>
+                    • Complete self-custody—funds never leave user-controlled wallets.<br>
+                    • Ultra-low transaction latency paired with optimized gas fee efficiency.</p>
+                </div>
+            </div>
+
+            <!-- Liquidity Vault Section -->
+            <div id="pool" class="section-block">
+                <h1 data-i18n="title_pool">Liquidity Vault <span>Architecture</span></h1>
+                <p data-i18n="desc_pool">Automated decentralized liquidity pools supplying continuous daily yield distributions.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_pool_mechanics">Automated Pool Mechanics</h3>
+                    <p data-i18n="p_pool_mechanics">Assets deposited in the Liquidity Vault are dynamically managed via smart algorithms, delivering immune yield generation protected from external volatility.</p>
+                </div>
+            </div>
+
+            <!-- Daily Yields Section -->
+            <div id="returns" class="section-block">
+                <h1 data-i18n="title_returns">Daily Yield Rates <span>& Capital Matrix</span></h1>
+                <p data-i18n="desc_returns">Flexible staking cycles with verified fixed daily percentage yields executed directly via smart contracts.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_example_title">Yield Projections for $10,000 Initial Principal</h3>
+                    <p data-i18n="p_example_desc">Detailed return breakdown for an allocated capital of <strong>$10,000 USD</strong> across available investment cycles:</p>
+
+                    <div class="yield-cards-list">
+                        <div class="yield-card-item">
+                            <div class="yield-info-main">
+                                <div class="yield-plan-title">Day (1%) 1</div>
+                                <div class="yield-capital-text">Capital: <strong>$10,000 USD</strong></div>
+                            </div>
+                            <div class="yield-values-side">
+                                <div class="yield-net-green">+$100 Net</div>
+                                <div class="yield-total-val">Total: $10,100</div>
+                            </div>
+                        </div>
+
+                        <div class="yield-card-item">
+                            <div class="yield-info-main">
+                                <div class="yield-plan-title">Days (7%) 7</div>
+                                <div class="yield-capital-text">Capital: <strong>$10,000 USD</strong></div>
+                            </div>
+                            <div class="yield-values-side">
+                                <div class="yield-net-green">+$700 Net</div>
+                                <div class="yield-total-val">Total: $10,700</div>
+                            </div>
+                        </div>
+
+                        <div class="yield-card-item">
+                            <div class="yield-info-main">
+                                <div class="yield-plan-title">Days 20 (20%)</div>
+                                <div class="yield-capital-text">Capital: <strong>$10,000 USD</strong></div>
+                            </div>
+                            <div class="yield-values-side">
+                                <div class="yield-net-green">+$2,000 Net</div>
+                                <div class="yield-total-val">Total: $12,000</div>
+                            </div>
+                        </div>
+
+                        <div class="yield-card-item">
+                            <div class="yield-info-main">
+                                <div class="yield-plan-title">Days 30 (30%)</div>
+                                <div class="yield-capital-text">Capital: <strong>$10,000 USD</strong></div>
+                            </div>
+                            <div class="yield-values-side">
+                                <div class="yield-net-green">+$3,000 Net</div>
+                                <div class="yield-total-val">Total: $13,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generations System Section -->
+            <div id="generations" class="section-block">
+                <h1 data-i18n="title_generations">5-Tier Affiliate <span>Network</span></h1>
+                <p data-i18n="desc_generations">Generate exponential passive yield distributions spanning 5 referral network tiers.</p>
+
+                <div class="gfx-box">
+                    <svg width="100%" height="80" viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="200" cy="15" r="10" fill="#ffd700"/>
+                        <line x1="200" y1="25" x2="100" y2="55" stroke="#9d4edd" stroke-width="2"/>
+                        <line x1="200" y1="25" x2="200" y2="55" stroke="#9d4edd" stroke-width="2"/>
+                        <line x1="200" y1="25" x2="300" y2="55" stroke="#9d4edd" stroke-width="2"/>
+                        <circle cx="100" cy="60" r="8" fill="#9d4edd"/>
+                        <circle cx="200" cy="60" r="8" fill="#9d4edd"/>
+                        <circle cx="300" cy="60" r="8" fill="#9d4edd"/>
+                    </svg>
+                </div>
+
+                <div class="card">
+                    <h3 data-i18n="h_gen_rates">Generational Rate Multipliers</h3>
+                    <div class="yield-cards-list">
+                        <div class="yield-card-item"><span>Generation 1 (G1)</span><strong style="color:var(--accent-gold)">5% Share</strong></div>
+                        <div class="yield-card-item"><span>Generation 2 (G2)</span><strong style="color:var(--accent-gold)">10% Share</strong></div>
+                        <div class="yield-card-item"><span>Generation 3 (G3)</span><strong style="color:var(--accent-gold)">15% Share</strong></div>
+                        <div class="yield-card-item"><span>Generation 4 (G4)</span><strong style="color:var(--accent-gold)">20% Share</strong></div>
+                        <div class="yield-card-item"><span>Generation 5 (G5)</span><strong style="color:var(--accent-gold)">35% Share</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contests Section -->
+            <div id="contests" class="section-block">
+                <h1 data-i18n="title_contests">Leader Competitions <span>& Rewards</span></h1>
+                <p data-i18n="desc_contests">Lucrative cash prize distributions dedicated to top ecosystem expansion leaders.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_main_contest">Leaderboards Cash Pool</h3>
+                    <div class="yield-cards-list">
+                        <div class="yield-card-item"><span>🥇 Rank 1</span><strong style="color:var(--accent-gold);">$200,000 USD</strong></div>
+                        <div class="yield-card-item"><span>🥈 Rank 2</span><strong style="color:var(--accent-gold);">$100,000 USD</strong></div>
+                        <div class="yield-card-item"><span>🥉 Rank 3</span><strong style="color:var(--accent-gold);">$50,000 USD</strong></div>
+                        <div class="yield-card-item"><span>🏅 Rank 4</span><strong style="color:var(--text-main);">$25,000 USD</strong></div>
+                        <div class="yield-card-item"><span>🏅 Rank 5</span><strong style="color:var(--text-main);">$10,000 USD</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAO Section -->
+            <div id="dao" class="section-block">
+                <h1 data-i18n="title_dao">DAO Governance <span>& Voting Pools</span></h1>
+                <p data-i18n="desc_dao">Fully community-owned protocol governed transparently via decentralized voting options.</p>
+
+                <div class="card">
+                    <h3 data-i18n="h_dao_voting">Voting Incentive Reward Pool (100 Winners)</h3>
+                    <p data-i18n="p_dao_voting">100 random active voters are automatically selected during every governance cycle to receive direct protocol reward distributions.</p>
+                </div>
+            </div>
+
+            <!-- Community Section -->
+            <div id="community" class="section-block">
+                <h1 data-i18n="title_community">Community <span>& Official Portals</span></h1>
+                <p data-i18n="desc_community">Connect directly with global community members and verified support channels.</p>
+
+                <div class="card" style="text-align: center; padding: 30px 16px;">
+                    <h3 style="margin-bottom: 16px;" data-i18n="h_community_links">Verified Official Links</h3>
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <a href="https://t.me/PeetX_1" target="_blank" class="link-btn">📢 <span data-i18n="btn_channel">Telegram Channel</span></a>
+                        <a href="https://t.me/PeetX_1" target="_blank" class="link-btn" style="background: linear-gradient(90deg, #9d4edd, #7b2cbf); color: #fff;">💬 <span data-i18n="btn_group">Telegram Group</span></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Embedded Application Modal -->
+    <div class="modal-overlay" id="appModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">PeetX Gateway Application</div>
+                <button class="close-modal-btn" onclick="closeEmbeddedApp()">✕</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="appFrame" src="" class="modal-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                btn_whitepaper: "Whitepaper Document",
+                btn_trade_now: "Launch Platform App",
+                btn_back: "Back to Main",
+                nav_onboarding: "Getting Started",
+                nav_welcome: "Guide & Registration",
+                nav_whitepaper: "Whitepaper",
+                nav_trading: "Smart Contracts Engine",
+                nav_pool: "Liquidity Vault",
+                nav_profits: "Yields & Ecosystem",
+                nav_returns: "Daily Yield Rates",
+                nav_generations: "5-Tier Affiliate System",
+                nav_contests: "Leader Competitions",
+                nav_governance: "Governance & Community",
+                nav_dao: "DAO & Voting Rewards",
+                nav_community: "Official Channels",
+                title_welcome: "Welcome to PeetX Ecosystem",
+                desc_welcome: "Comprehensive decentralized onboarding architecture. Secure your connection via smart contracts and start compounding daily yield allocations safely.",
+                h_steps: "Step-by-Step Onboarding Workflow",
+                step1_title: "Install Web3 Wallet",
+                step1_desc: "Download Trust Wallet, MetaMask, or TokenPocket on your mobile device.",
+                step2_title: "Access DApp Browser",
+                step2_desc: "Open the internal Web3 DApp browser integrated inside your non-custodial wallet.",
+                step3_title: "Paste Gateway Link",
+                step3_desc: "Enter the verified PeetX smart contract link directly into the DApp address bar.",
+                step4_title: "Activate Account",
+                step4_desc: "Confirm the smart contract binding to begin receiving automated daily yields instantly.",
+                title_wp: "📄 Official Ecosystem Whitepaper",
+                desc_wp: "Architecture document outlining non-custodial wallet interactions, smart contract security, and liquidity vault engineering.",
+                h_wp_summary: "System Mechanics Summary",
+                p_wp_body: "PeetX utilizes audited on-chain smart contracts to eliminate centralized third-party risk. Asset management remains strictly decentralized, offering guaranteed yield schedules powered by liquidity vaults.",
+                title_about: "Smart Contracts & Protocol Engine",
+                desc_about: "Engineered for extreme performance and absolute security. All operations execute directly on-chain.",
+                h_trade_features: "Decentralized Protocol Advantages",
+                p_trade_features: "• Unalterable On-Chain Logic with zero administrative intervention.\n• Complete self-custody—funds never leave user-controlled wallets.\n• Ultra-low transaction latency paired with optimized gas fee efficiency.",
+                title_pool: "Liquidity Vault Architecture",
+                desc_pool: "Automated decentralized liquidity pools supplying continuous daily yield distributions.",
+                h_pool_mechanics: "Automated Pool Mechanics",
+                p_pool_mechanics: "Assets deposited in the Liquidity Vault are dynamically managed via smart algorithms, delivering immune yield generation protected from external volatility.",
+                title_returns: "Daily Yield Rates & Capital Matrix",
+                desc_returns: "Flexible staking cycles with verified fixed daily percentage yields executed directly via smart contracts.",
+                h_example_title: "Yield Projections for $10,000 Initial Principal",
+                p_example_desc: "Detailed return breakdown for an allocated capital of $10,000 USD across available investment cycles:",
+                title_generations: "5-Tier Affiliate Network",
+                desc_generations: "Generate exponential passive yield distributions spanning 5 referral network tiers.",
+                h_gen_rates: "Generational Rate Multipliers",
+                title_contests: "Leader Competitions & Rewards",
+                desc_contests: "Lucrative cash prize distributions dedicated to top ecosystem expansion leaders.",
+                h_main_contest: "Leaderboards Cash Pool",
+                title_dao: "DAO Governance & Voting Pools",
+                desc_dao: "Fully community-owned protocol governed transparently via decentralized voting options.",
+                h_dao_voting: "Voting Incentive Reward Pool (100 Winners)",
+                p_dao_voting: "100 random active voters are automatically selected during every governance cycle to receive direct protocol reward distributions.",
+                title_community: "Community & Official Portals",
+                desc_community: "Connect directly with global community members and verified support channels.",
+                h_community_links: "Verified Official Links",
+                btn_channel: "📢 Telegram Channel",
+                btn_group: "💬 Telegram Group"
+            },
+            ar: {
+                btn_whitepaper: "الورقة البيضاء الرسمية",
+                btn_trade_now: "فتح التطبيق المدمج",
+                btn_back: "رجوع للرئيسية",
+                nav_onboarding: "بدء الاستخدام",
+                nav_welcome: "الدليل والتسجيل",
+                nav_whitepaper: "الورقة البيضاء",
+                nav_trading: "محرك العقود الذكية",
+                nav_pool: "مجمع السيولة",
+                nav_profits: "العوائد والمنظومة",
+                nav_returns: "العوائد اليومية",
+                nav_generations: "نظام الأجيال الخمسة",
+                nav_contests: "مسابقات القادة",
+                nav_governance: "الحوكمة والمجتمع",
+                nav_dao: "منظمة DAO والتصويت",
+                nav_community: "القنوات الرسمية",
+                title_welcome: "مرحباً بك في منظومة PeetX",
+                desc_welcome: "شرح كامل لخطوات التسجيل والربط عبر المحفظة اللامركزية وبدء أرباحك اليومية الآمنة.",
+                h_steps: "خطوات البدء والربط السريع",
+                step1_title: "تحميل المحفظة",
+                step1_desc: "قم بتنزيل Trust Wallet أو MetaMask أو TokenPocket.",
+                step2_title: "فتح متصفح DApp",
+                step2_desc: "افتح متصفح التطبيقات اللامركزية المدمج داخل محفظتك.",
+                step3_title: "لصق رابط المنصة",
+                step3_desc: "قم بلصق الرابط الرسمي للمشروع في شريط العنوان بالأعلى.",
+                step4_title: "تأكيد الربط والبدء",
+                step4_desc: "أكد الاتصال بالعقد الذكي لتفعيل حسابك واستلام أرباحك اليومية.",
+                title_wp: "📄 الورقة البيضاء الرسمية",
+                desc_wp: "وثيقة المشروع التقنية التي توضح أمان العقود الذكية وآلية العمل اللامركزية.",
+                h_wp_summary: "ملخص النظام والرؤية",
+                p_wp_body: "يعتمد النظام على عقود ذكية مشفرة بالكامل تضمن عدم تدخل أي طرف ثالث وحماية أموال المستخدمين.",
+                title_about: "محرك العقود الذكية",
+                desc_about: "بنية تحتية ممتازة توفر أداءً خيالياً وشفافية مطلقة عبر البلوكشين.",
+                h_trade_features: "مزايا البروتوكول اللامركزي",
+                p_trade_features: "• تنفيذ مباشر وقاطع بدون أدنى تدخل بشري.\n• أمان مالي شامل عبر الحفظ الذاتي بالأجهزة.\n• سرعة تنفيذ فائقة وتكلفة غاز منخفضة للغاية.",
+                title_pool: "مجمع السيولة اللامركزي",
+                desc_pool: "المحرك المالي الآلي الذي يضمن استقرار توزيع العوائد اليومية للمستثمرين.",
+                h_pool_mechanics: "آلية عمل المجمع",
+                p_pool_mechanics: "تتولى الخوارزميات توازن السيولة لتوفير أرباح ثابتة معزولة عن التقلبات.",
+                title_returns: "العوائد اليومية ومصفوفة الأرباح",
+                desc_returns: "خطط استثمارية واضحة بعوائد يومية ثابتة ومحسوبة بدقة عبر العقد الذكي.",
+                h_example_title: "توضيح شامل لأرباح رأس مال $10,000 دولار",
+                p_example_desc: "جدول تفصيلي يوضح العائد الصافي والإجمالي لمبلغ $10,000 دولار حسب الخطة المختارة:",
+                title_generations: "نظام الأجيال الخمسة",
+                desc_generations: "حقق دخلاً سلبياً متزايداً من أرباح الفريق على مدار 5 مستويات.",
+                h_gen_rates: "نسب أرباح الأجيال",
+                title_contests: "مسابقات القادة والجوائز الكبرى",
+                desc_contests: "جوائز مالية ضخمة ومكافآت مخصصة لكبار بنة الشبكات والقادة.",
+                h_main_contest: "مكافآت المراكز الأولى",
+                title_dao: "منظمة DAO ومكافآت التصويت",
+                desc_dao: "منظومة تدار بالكامل بواسطة المجتمع عبر قرارات التصويت الشفافة.",
+                h_dao_voting: "مكافآت المشاركين (100 فائز)",
+                p_dao_voting: "يتم توزيع جوائز مالية مباشرة لـ 100 مشارك في كل عملية تصويت بالمنظمة.",
+                title_community: "المجتمع والقنوات الرسمية",
+                desc_community: "تواصل مع القنوات والمجموعات المعتمدة الرسمية.",
+                h_community_links: "روابط التواصل المعتمدة",
+                btn_channel: "📢 القناة الرسمية",
+                btn_group: "💬 المجموعة الرسمية"
+            },
+            zh: {
+                btn_whitepaper: "白皮书",
+                btn_trade_now: "启动应用程序",
+                btn_back: "返回主页",
+                nav_onboarding: "新手入门",
+                nav_welcome: "指南与注册",
+                nav_whitepaper: "白皮书",
+                nav_trading: "智能合约引擎",
+                nav_pool: "流动性金库",
+                nav_profits: "收益与生态",
+                nav_returns: "每日收益率",
+                nav_generations: "5代推荐系统",
+                nav_contests: "领袖竞赛",
+                nav_governance: "治理与社区",
+                nav_dao: "DAO与投票奖励",
+                nav_community: "官方频道",
+                title_welcome: "欢迎来到 PeetX 生态系统",
+                desc_welcome: "全面的去中心化入门架构。通过智能合约确保连接安全，轻松开始按日赚取收益。",
+                h_steps: "分步入门流程",
+                step1_title: "安装 Web3 钱包",
+                step1_desc: "在手机上下载 Trust Wallet、MetaMask 或 TokenPocket。",
+                step2_title: "访问 DApp 浏览器",
+                step2_desc: "打开去中心化钱包内置的 DApp 浏览器。",
+                step3_title: "粘贴网关链接",
+                step3_desc: "在地址栏中输入验证过的 PeetX 智能合约链接。",
+                step4_title: "激活账户",
+                step4_desc: "确认智能合约绑定，立即开始接收每日自动收益。",
+                title_wp: "📄 官方生态白皮书",
+                desc_wp: "概述非托管钱包交互、智能合约安全性与流动性金库设计的架构文档。",
+                h_wp_summary: "系统机制摘要",
+                p_wp_body: "PeetX 利用经过审计的链上智能合约消除第三方风险。资产管理保持完全去中心化。",
+                title_about: "智能合约与协议引擎",
+                desc_about: "专为极致性能与绝对安全而设计。所有操作直接在链上执行。",
+                h_trade_features: "去中心化协议优势",
+                p_trade_features: "• 不可篡改的链上逻辑，零人为干预。\n• 完全自托管——资金永不出钱包。\n• 极低交易延迟与优化的 Gas 费效率。",
+                title_pool: "流动性金库架构",
+                desc_pool: "自动去中心化流动性池，持续提供每日收益分配。",
+                h_pool_mechanics: "自动池机制",
+                p_pool_mechanics: "存入流动性金库的资产通过智能算法进行动态管理，免受外部波动影响。",
+                title_returns: "每日收益率与资本矩阵",
+                desc_returns: "灵活的质押周期，通过智能合约直接执行固定的每日百分比收益。",
+                h_example_title: "10,000 美元初始本金收益预测",
+                p_example_desc: "10,000 美元分配资金在不同投资周期内的详细收益明细：",
+                title_generations: "5代推荐网络",
+                desc_generations: "跨越 5 个推荐网络层级生成指数级被动收益。",
+                h_gen_rates: "代际收益倍数",
+                title_contests: "领袖竞赛与奖励",
+                desc_contests: "为顶级生态拓展领袖准备的丰厚现金奖励。",
+                h_main_contest: "排行榜现金池",
+                title_dao: "DAO 治理与投票池",
+                desc_dao: "完全由社区拥有的协议，通过去中心化投票选项进行透明管理。",
+                h_dao_voting: "投票激励奖励池（100名获奖者）",
+                p_dao_voting: "在每个治理周期中随机选择 100 名活跃投票者，直接发放协议奖励。",
+                title_community: "社区与官方门户",
+                desc_community: "直接与全球社区成员和验证过的支持渠道建立联系。",
+                h_community_links: "验证的官方链接",
+                btn_channel: "📢 电报频道",
+                btn_group: "💬 电报群组"
+            },
+            hi: {
+                btn_whitepaper: "व्हाइटपेपर दस्तावेज़",
+                btn_trade_now: "ऐप खोलें",
+                btn_back: "मुख्य पृष्ठ पर वापस",
+                nav_onboarding: "शुरुआत करें",
+                nav_welcome: "गाइड और पंजीकरण",
+                nav_whitepaper: "व्हाइटपेपर",
+                nav_trading: "स्मार्ट कॉन्ट्रैक्ट इंजन",
+                nav_pool: "लिक्विडिटी वॉल्ट",
+                nav_profits: "रिटर्न और पारिस्थितिकी तंत्र",
+                nav_returns: "दैनिक रिटर्न दरें",
+                nav_generations: "5-स्तरीय सहबद्ध प्रणाली",
+                nav_contests: "लीडर प्रतियोगिताएं",
+                nav_governance: "शासन और समुदाय",
+                nav_dao: "DAO और वोटिंग पुरस्कार",
+                nav_community: "आधिकारिक चैनल",
+                title_welcome: "PeetX पारिस्थितिकी तंत्र में आपका स्वागत है",
+                desc_welcome: "व्यापक विकेंद्रीकृत ऑनबोर्डिंग आर्किटेक्चर। स्मार्ट कॉन्ट्रैक्ट्स के माध्यम से सुरक्षित रूप से जुड़ें।",
+                h_steps: "चरण-दर-चरण प्रक्रिया",
+                step1_title: "Web3 वॉलेट इंस्टॉल करें",
+                step1_desc: "अपने फोन पर Trust Wallet, MetaMask, या TokenPocket डाउनलोड करें।",
+                step2_title: "DApp ब्राउज़र खोलें",
+                step2_desc: "अपने वॉलेट के भीतर एकीकृत DApp ब्राउज़र खोलें।",
+                step3_title: "गेटवे लिंक पेस्ट करें",
+                step3_desc: "सत्यापित PeetX स्मार्ट कॉन्ट्रैक्ट लिंक दर्ज करें।",
+                step4_title: "खाता सक्रिय करें",
+                step4_desc: "स्वचालित दैनिक रिटर्न प्राप्त करना शुरू करने के लिए लिंक की पुष्टि करें।",
+                title_wp: "📄 आधिकारिक व्हाइटपेपर",
+                desc_wp: "स्मार्ट कॉन्ट्रैक्ट सुरक्षा और लिक्विडिटी वॉल्ट की तकनीकी व्याख्या।",
+                h_wp_summary: "सिस्टम तंत्र सारांश",
+                p_wp_body: "PeetX तीसरे पक्ष के जोखिम को खत्म करने के लिए ऑन-चेन स्मार्ट कॉन्ट्रैक्ट्स का उपयोग करता है।",
+                title_about: "स्मार्ट कॉन्ट्रैक्ट इंजन",
+                desc_about: "उच्च प्रदर्शन और पूर्ण सुरक्षा के लिए निर्मित। सभी कार्य ब्लॉकचेन पर होते हैं।",
+                h_trade_features: "विकेंद्रीकृत प्रोटोकॉल के लाभ",
+                p_trade_features: "• शून्य प्रशासनिक हस्तक्षेप के साथ अपरिवर्तनीय ऑन-चेन तर्क।\n• पूर्ण आत्म-संरक्षण - फंड कभी वॉलेट से बाहर नहीं जाता।\n• कम लेनदेन शुल्क और उच्च गति।",
+                title_pool: "लिक्विडिटी वॉल्ट",
+                desc_pool: "निरंतर दैनिक रिटर्न प्रदान करने वाले स्वचालित लिक्विडिटी पूल।",
+                h_pool_mechanics: "स्वचालित पूल तंत्र",
+                p_pool_mechanics: "वॉल्ट में जमा की गई संपत्ति का प्रबंधन स्मार्ट एल्गोरिदम द्वारा किया जाता है।",
+                title_returns: "दैनिक रिटर्न दरें",
+                desc_returns: "स्मार्ट कॉन्ट्रैक्ट्स के माध्यम से दैनिक निश्चित प्रतिशत रिटर्न।",
+                h_example_title: "$10,000 प्रारंभिक पूंजी पर अनुमानित लाभ",
+                p_example_desc: "$10,000 USD के लिए रिटर्न का विस्तृत विवरण:",
+                title_generations: "5-स्तरीय सहबद्ध नेटवर्क",
+                desc_generations: "5 स्तरों में निष्क्रिय आय उत्पन्न करें।",
+                h_gen_rates: "पीढ़ी दर गुणक",
+                title_contests: "लीडर प्रतियोगिताएं",
+                desc_contests: "शीर्ष नेटवर्क लीडर्स के लिए नकद पुरस्कार।",
+                h_main_contest: "लीडरबोर्ड नकद पूल",
+                title_dao: "DAO शासन",
+                desc_dao: "पारदर्शी विकेंद्रीकृत मतदान विकल्प।",
+                h_dao_voting: "वोटिंग पुरस्कार पूल (100 विजेता)",
+                p_dao_voting: "प्रत्येक चक्र में 100 यादृच्छिक मतदाताओं को पुरस्कार दिए जाते हैं।",
+                title_community: "समुदाय और पोर्टल",
+                desc_community: "वैश्विक समुदाय और समर्थन चैनलों से जुड़ें।",
+                h_community_links: "आधिकारिक लिंक",
+                btn_channel: "📢 टेलीग्राम चैनल",
+                btn_group: "💬 टेलीग्राम समूह"
+            },
+            ur: {
+                btn_whitepaper: "وائٹ پیپر دستاویز",
+                btn_trade_now: "ایپ کھولیں",
+                btn_back: "مرکزی صفحہ پر واپس",
+                nav_onboarding: "شروع کریں",
+                nav_welcome: "رہنما اور رجسٹریشن",
+                nav_whitepaper: "وائٹ پیپر",
+                nav_trading: "سمارٹ کنٹریکٹ انجن",
+                nav_pool: "لیکویڈیٹی والٹ",
+                nav_profits: "منافع اور ایکو سسٹم",
+                nav_returns: "روزانہ کا منافع",
+                nav_generations: "5 سطحی ایفلیٹ سسٹم",
+                nav_contests: "لیڈر مقابلہ جات",
+                nav_governance: "حکمرانی اور کمیونٹی",
+                nav_dao: "DAO اور ووٹنگ انعامات",
+                nav_community: "سرکاری چینلز",
+                title_welcome: "PeetX ایکو سسٹم میں خوش آمدید",
+                desc_welcome: "مکمل لاجز مرکزیت پر مبنی رجسٹریشن۔ سمارٹ کنٹریکٹ کے ذریعے جڑیں اور محفوظ منافع حاصل کریں۔",
+                h_steps: "مرحلہ وار طریقہ کار",
+                step1_title: "والیٹ انسٹال کریں",
+                step1_desc: "اپنے فون پر Trust Wallet، MetaMask یا TokenPocket ڈاؤن لوڈ کریں۔",
+                step2_title: "DApp براؤزر کھولیں",
+                step2_desc: "اپنے والیٹ کا اندرونی DApp براؤزر کھولیں۔",
+                step3_title: "لنک پیسٹ کریں",
+                step3_desc: "سرکاری PeetX سمارٹ کنٹریکٹ کا لنک براؤزر میں درج کریں۔",
+                step4_title: "اکاؤنٹ فعال کریں",
+                step4_desc: "کنکشن کی تصدیق کریں اور روزانہ کا منافع حاصل کرنا شروع کریں۔",
+                title_wp: "📄 سرکاری وائٹ پیپر",
+                desc_wp: "سمارٹ کنٹریکٹ سیکیورٹی اور ڈی سینٹرلائزڈ سسٹم کی مکمل تفصیل۔",
+                h_wp_summary: "سسٹم کا خلاصہ",
+                p_wp_body: "سسٹم مکمل طور پر بلاک چین پر مبنی ہے جس میں کسی تیسرے فریق کا دخل نہیں ہوتا۔",
+                title_about: "سمارٹ کنٹریکٹس انجن",
+                desc_about: "اعلیٰ کارکردگی اور مکمل شفافیت کے لیے تیار کردہ۔",
+                h_trade_features: "ڈی سینٹرلائزڈ سسٹم کے فوائد",
+                p_trade_features: "• بغیر کسی انسانی مداخلت کے بلاک چین پر عمل درآمد۔\n• والیٹ کی مکمل ذاتی ملکیت۔\n• انتہائی تیز رفتار اور کم گیس فیس۔",
+                title_pool: "لیکویڈیٹی والٹ",
+                desc_pool: "خودکار لیکویڈیٹی پولز جو روزانہ کا باقاعدہ منافع فراہم کرتے ہیں۔",
+                h_pool_mechanics: "خودکار پول کا طریقہ کار",
+                p_pool_mechanics: "الگورتھم کے ذریعے والٹ کے اثاثوں کو متوازن رکھا جاتا ہے۔",
+                title_returns: "روزانہ کے منافع کی شرح",
+                desc_returns: "سمارٹ کنٹریکٹ کے ذریعے طے شدہ روزانہ کا منافع۔",
+                h_example_title: "$10,000 کے سرمایہ پر منافع کا تخمینہ",
+                p_example_desc: "$10,000 USD کے لیے منتخب کردہ منصوبے کے مطابق تفصیل:",
+                title_generations: "5 سطحی نیٹ ورک",
+                desc_generations: "5 سطحوں پر مشتمل نیٹ ورک سے غیر فعال آمدنی حاصل کریں۔",
+                h_gen_rates: "جنریشنل منافع کے فیصد",
+                title_contests: "لیڈر مقابلہ جات",
+                desc_contests: "نیٹ ورک لیڈرز کے لیے شاندار نقد انعامات۔",
+                h_main_contest: "لیڈر بورڈ نقد انعامات",
+                title_dao: "DAO ووٹنگ",
+                desc_dao: "کمیونٹی کی شفاف ووٹنگ کے ذریعے کنٹرول۔",
+                h_dao_voting: "ووٹنگ انعامات (100 فاتحین)",
+                p_dao_voting: "ہر ووٹنگ کے عمل میں 100 فعال صارفین کو انعامات دیے جاتے ہیں۔",
+                title_community: "کمیونٹی اور پورٹلز",
+                desc_community: "سرکاری چینلز اور عالمی کمیونٹی سے جڑیں۔",
+                h_community_links: "تصدیق شدہ روابط",
+                btn_channel: "📢 آفیشل چینل",
+                btn_group: "💬 آفیشل گروپ"
+            }
+        };
+
+        const langNames = {
+            en: "🇺🇸 English", ar: "🇸🇦 العربية", zh: "🇨🇳 中文", hi: "🇮🇳 हिन्दी", ur: "🇵🇰 اردو",
+            es: "🇪🇸 Español", fr: "🇫🇷 Français", de: "🇩🇪 Deutsch", ru: "🇷🇺 Русский", tr: "🇹🇷 Türkçe",
+            pt: "🇵🇹 Português", ja: "🇯🇵 日本語", ko: "🇰🇷 한국어", fa: "🇮🇷 فارسی", it: "🇮🇹 Italiano",
+            id: "🇮🇩 Bahasa Indonesia", vi: "🇻🇳 Tiếng Việt", nl: "🇳🇱 Nederlands", pl: "🇵🇱 Polski", th: "🇹🇭 ไทย"
+        };
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-block').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            if (window.event && window.event.currentTarget && window.event.currentTarget.classList) {
+                window.event.currentTarget.classList.add('active');
+            }
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function toggleLangDropdown() {
+            document.getElementById('langDropdown').classList.toggle('show');
+        }
+
+        function changeLanguage(langCode) {
+            const langData = translations[langCode] || translations['en'];
+            
+            if (langCode === 'ar' || langCode === 'ur' || langCode === 'fa') {
+                document.documentElement.setAttribute('dir', 'rtl');
+                document.documentElement.setAttribute('lang', langCode);
+            } else {
+                document.documentElement.setAttribute('dir', 'ltr');
+                document.documentElement.setAttribute('lang', langCode);
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (langData[key]) {
+                    el.innerText = langData[key];
+                }
+            });
+
+            document.getElementById('current-lang').innerText = langNames[langCode] || "🌐 Language";
+            document.getElementById('langDropdown').classList.remove('show');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function openEmbeddedApp(url = 'on2004.html') {
+            const modal = document.getElementById('appModal');
+            const iframe = document.getElementById('appFrame');
+            iframe.src = url;
+            modal.style.display = "flex";
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function closeEmbeddedApp() {
+            const modal = document.getElementById('appModal');
+            const iframe = document.getElementById('appFrame');
+            iframe.src = "";
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.lang-btn') && !event.target.matches('#current-lang')) {
+                const dropdowns = document.getElementsByClassName("lang-dropdown");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    if (dropdowns[i].classList.contains('show')) {
+                        dropdowns[i].classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script> 
+</body>
+</html>
