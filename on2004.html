@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlTag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX Protocol - Institutional Whitepaper & Infrastructure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-white: #ffffff;
+            --bg-paper: #fcfcfd;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-green: #16a34a;
+            --accent-gold: #d97706;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .global-bar {
+            max-width: 1100px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .global-bar label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .country-select {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            background-color: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .country-select:hover, .country-select:focus {
+            border-color: var(--accent-blue);
+            background-color: #fff;
+        }
+
+        .paper-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            padding: 60px 80px;
+        }
+
+        .wp-header {
+            border-bottom: 2px solid var(--text-dark);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .brand-title {
+            font-size: 44px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            font-size: 12px;
+            background: var(--text-dark);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        html[dir="rtl"] .doc-meta {
+            text-align: left;
+        }
+
+        h1.section-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid var(--accent-blue);
+            padding-left: 16px;
+        }
+
+        html[dir="rtl"] h1.section-title {
+            border-left: none;
+            border-right: 5px solid var(--accent-blue);
+            padding-left: 0;
+            padding-right: 16px;
+        }
+
+        h2.subsection-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 32px;
+            margin-bottom: 14px;
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+            text-align: justify;
+            line-height: 1.95;
+        }
+
+        .highlight-text {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .gfx-card {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 32px 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .gfx-svg-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .grid-card {
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 22px;
+            background: #fff;
+        }
+
+        .grid-card h4 {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .grid-card p {
+            font-size: 13px;
+            margin-bottom: 0;
+            line-height: 1.7;
+        }
+
+        .callout-box {
+            border-left: 5px solid var(--accent-purple);
+            background: #f8f5ff;
+            padding: 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 28px 0;
+        }
+
+        html[dir="rtl"] .callout-box {
+            border-left: none;
+            border-right: 5px solid var(--accent-purple);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .callout-box h4 {
+            color: var(--accent-purple);
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .toc-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .wp-footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .paper-container {
+                padding: 30px 20px;
+            }
+            .brand-title {
+                font-size: 32px;
+            }
+            .wp-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .doc-meta {
+                text-align: left;
+            }
+            .global-bar {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Region Selector -->
+    <div class="global-bar">
+        <label for="countrySelect" id="lblRegion">🌐 Region & Document Language:</label>
+        <select id="countrySelect" class="country-select" onchange="changeRegion(this.value)">
+            <option value="US" selected>🇺🇸 United States (English)</option>
+            <option value="SA">🇸🇦 Saudi Arabia / Arab World (العربية)</option>
+            <option value="CN">🇨🇳 China (中文)</option>
+            <option value="BR">🇧🇷 Brazil (Português)</option>
+            <option value="RU">🇷🇺 Russia (Русский)</option>
+            <option value="IN">🇮🇳 India (English/Hindi)</option>
+            <option value="PK">🇵🇰 Pakistan (اردو / English)</option>
+            <option value="NO">🇳🇴 Norway (Norsk)</option>
+            <option value="DE">🇩🇪 Germany (Deutsch)</option>
+            <option value="ES">🇪🇸 Spain (Español)</option>
+        </select>
+    </div>
+
+    <div class="paper-container">
+        
+        <!-- Header -->
+        <header class="wp-header">
+            <div>
+                <div class="brand-title">
+                    PeetX <span class="brand-badge">Protocol v4.0 Ultimate</span>
+                </div>
+                <div style="font-size: 14px; color: var(--text-muted); margin-top: 6px; font-weight: 600;" id="txtSubHeader">
+                    Enterprise Institutional Whitepaper, 85% Trade Win-Rate Architecture & 5-Tier Incentive Engine
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div><strong id="lblDocVer">Document Version:</strong> 4.0.0 Institutional Release</div>
+                <div><strong id="lblSmartStatus">Smart Contract Status:</strong> Zero-Deduction Non-Custodial Core</div>
+                <div><strong id="lblSelectedRegion">Selected Region:</strong> <span id="activeRegionText">Global (United States)</span></div>
+            </div>
+        </header>
+
+        <!-- Table of Contents -->
+        <div class="toc-box">
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--text-dark);" id="txtTocTitle">System Architecture Table of Contents</h3>
+            <div class="toc-grid">
+                <div id="toc1">1. Executive Summary & Zero-Deduction Model</div>
+                <div id="toc2">2. EVM Blockchain Infrastructure & Security</div>
+                <div id="toc3">3. High-Frequency Arbitrage & 85% Win-Rate Engine</div>
+                <div id="toc4">4. Capital Maturity & Pool Liquidity Routing</div>
+                <div id="toc5">5. 5-Tier Affiliate Multi-Generation Incentive Engine</div>
+                <div id="toc6">6. Decentralized DAO & $500 Proposal Grants</div>
+                <div id="toc7">7. Global Expansion Strategy & 100K Nodes Plan</div>
+                <div id="toc8">8. Mathematical Security Proofs & Audits</div>
+            </div>
+        </div>
+
+        <!-- Section 1 -->
+        <section>
+            <h1 class="section-title" id="sec1Title">1. Executive Summary & Zero-Deduction Model</h1>
+            <p id="sec1P1">
+                The <span class="highlight-text">PeetX Protocol</span> establishes an unprecedented standard in decentralized financial engineering (DeFi). Traditional asset management and yield protocols often levy hidden management surcharges, deposit fees, or gas penalties that erode user equity over time. PeetX completely eliminates all deposit, management, and execution fees: <span class="highlight-text">Zero Deductions</span> are taken from capital during deposit or trade cycles.
+            </p>
+            <p id="sec1P2">
+                Every unit of capital supplied by users enters directly into non-custodial Web3 smart contracts. Funds are utilized strictly within high-probability algorithmic trading cycles with a verified <span class="highlight-text">85% target win-rate</span>. Once the investment plan or trading session completes, 100% of the initial principal along with generated yields are automatically transferred back to the core protocol pool for immediate withdrawal or re-staking.
+            </p>
+
+            <div class="gfx-card">
+                <div style="text-align: center; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;" id="fig1Title">
+                    FIGURE 1: PEETX ZERO-DEDUCTION & 85% WIN-RATE FLOW ARCHITECTURE
+                </div>
+                <div class="gfx-svg-wrapper">
+                    <svg width="100%" height="160" viewBox="0 0 750 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="50" width="130" height="60" rx="10" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+                        <text x="80" y="78" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="middle" id="svgNode1">User Deposit</text>
+                        <text x="80" y="94" fill="#2563eb" font-size="10" font-weight="600" text-anchor="middle" id="svgNode1Sub">0% Deductions</text>
+
+                        <path d="M 145 80 L 195 80" stroke="#0f172a" stroke-width="2" stroke-dasharray="4 4"/>
+                        <polygon points="195,80 187,75 187,85" fill="#0f172a"/>
+
+                        <rect x="200" y="35" width="170" height="90" rx="12" fill="#fff" stroke="#7c3aed" stroke-width="2"/>
+                        <text x="285" y="65" fill="#7c3aed" font-size="12" font-weight="bold" text-anchor="middle" id="svgNode2">EVM Smart Contract</text>
+                        <text x="285" y="83" fill="#0f172a" font-size="10" text-anchor="middle" id="svgNode2Sub1">Non-Custodial Escrow</text>
+                        <text x="285" y="99" fill="#16a34a" font-size="10" font-weight="bold" text-anchor="middle" id="svgNode2Sub2">85% Win-Rate Engine</text>
+
+                        <path d="M 370 80 L 420 80" stroke="#0f172a" stroke-width="2"/>
+                        <polygon points="420,80 412,75 412,85" fill="#0f172a"/>
+
+                        <rect x="425" y="20" width="150" height="50" rx="8" fill="#fff" stroke="#16a34a" stroke-width="2"/>
+                        <text x="500" y="48" fill="#16a34a" font-size="11" font-weight="bold" text-anchor="middle" id="svgNode3">Yield Strategy Execution</text>
+
+                        <rect x="425" y="90" width="150" height="50" rx="8" fill="#fff" stroke="#d97706" stroke-width="2"/>
+                        <text x="500" y="118" fill="#d97706" font-size="11" font-weight="bold" text-anchor="middle" id="svgNode4">5-Tier Incentive Network</text>
+
+                        <path d="M 575 45 L 635 45" stroke="#16a34a" stroke-width="1.5"/>
+                        <circle cx="650" cy="45" r="12" fill="#16a34a"/>
+                        <text x="650" y="49" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">100%</text>
+
+                        <path d="M 575 115 L 635 115" stroke="#d97706" stroke-width="1.5"/>
+                        <circle cx="650" cy="115" r="12" fill="#d97706"/>
+                        <text x="650" y="119" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">POOL</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section>
+            <h1 class="section-title" id="sec2Title">2. EVM Blockchain Infrastructure & Security</h1>
+            <p id="sec2P1">
+                PeetX protocol is built upon multi-chain EVM-compatible networks, utilizing gas-optimized smart contracts. By enforcing strict zero-knowledge security proofs, participant identities remain protected while transactional validity is publicly verifiable on-chain.
+            </p>
+            <h2 class="subsection-title" id="sec2Sub1Title">2.1 Immutable Smart Contract Architecture</h2>
+            <p id="sec2Sub1P">
+                Ownership of the protocol smart contracts is renounced upon deployment to a null address (`0x000...dead`). No administrator, developer, or government body possesses admin keys, emergency stop functions, or authority to alter contract logic or lock liquidity.
+            </p>
+        </section>
+
+        <!-- Section 3 -->
+        <section>
+            <h1 class="section-title" id="sec3Title">3. High-Frequency Arbitrage & 85% Win-Rate Engine</h1>
+            <p id="sec3P1">
+                To yield steady returns without risking principal capital, PeetX deploys capital into automated quantitative trading algorithms across major decentralized exchanges (DEXs). These bots operate under ultra-low latency protocols designed to capture micro-arbitrage opportunities.
+            </p>
+            <h2 class="subsection-title" id="sec3Sub1Title">3.1 85% Win-Rate Algorithmic Probability</h2>
+            <p id="sec3Sub1P">
+                The quantitative engine executes trades only when predictive artificial intelligence models indicate a probability of success exceeding <span class="highlight-text">85%</span>. In the rare event of market variance in the remaining 15%, trades are protected by automated stop-loss mechanisms and protocol liquidity buffers.
+            </p>
+            <h2 class="subsection-title" id="sec3Sub2Title">3.2 Automated Capital Transfer to Pool</h2>
+            <p id="sec3Sub2P">
+                Upon completion of any trading cycle or fixed investment plan, the protocol contract automatically aggregates the total capital along with trading yields and routes them directly back into the core Liquidity Pool. Users retain complete freedom to withdraw 100% of their principal and profit instantly.
+            </p>
+        </section>
+
+        <!-- Section 4 -->
+        <section>
+            <h1 class="section-title" id="sec4Title">4. Structured Investment Framework</h1>
+            <p id="sec4P1">
+                PeetX offers structured investment terms designed for institutional stability and predictable growth. Returns accrue continuously every 24 hours without any capital retention fees.
+            </p>
+
+            <div class="gfx-card">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px;" id="planDemoTitle">
+                    Investment Cycle Performance ($10,000 USD Capital Allocation Example)
+                </h3>
+                <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="grid-card" style="border-top: 3px solid var(--accent-blue);">
+                        <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="p1Title">1-DAY CYCLE (1.0%)</div>
+                        <div style="font-size: 20px; font-weight: 900; color: var(--accent-green); margin: 4px 0;">+$100 Net Yield</div>
+                        <div style="font-size: 12px; color: var(--text-dark); font-weight: 600;" id="p1Payout">Pool Transfer: $10,100 USD</div>
+                    </div>
+                    <div class="grid-card" style="border-top: 3px solid var(--accent-blue);">
+                        <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="p2Title">7-DAY CYCLE (1.0%/Day)</div>
+                        <div style="font-size: 20px; font-weight: 900; color: var(--accent-green); margin: 4px 0;">+$700 Net Yield</div>
+                        <div style="font-size: 12px; color: var(--text-dark); font-weight: 600;" id="p2Payout">Pool Transfer: $10,700 USD</div>
+                    </div>
+                    <div class="grid-card" style="border-top: 3px solid var(--accent-purple);">
+                        <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="p3Title">20-DAY CYCLE (1.0%/Day)</div>
+                        <div style="font-size: 20px; font-weight: 900; color: var(--accent-green); margin: 4px 0;">+$2,000 Net Yield</div>
+                        <div style="font-size: 12px; color: var(--text-dark); font-weight: 600;" id="p3Payout">Pool Transfer: $12,000 USD</div>
+                    </div>
+                    <div class="grid-card" style="border-top: 3px solid var(--accent-purple);">
+                        <div style="font-size: 12px; color: var(--text-muted); font-weight: 700;" id="p4Title">30-DAY CYCLE (1.0%/Day)</div>
+                        <div style="font-size: 20px; font-weight: 900; color: var(--accent-green); margin: 4px 0;">+$3,000 Net Yield</div>
+                        <div style="font-size: 12px; color: var(--text-dark); font-weight: 600;" id="p4Payout">Pool Transfer: $13,000 USD</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section>
+            <h1 class="section-title" id="sec5Title">5. 5-Tier Affiliate Multi-Generation Incentive Engine</h1>
+            <p id="sec5P1">
+                To accelerate organic decentralization and reward network growth, PeetX features a 5-Tier affiliate incentive model calculating bonuses based on user plan amounts: <span class="highlight-text">Gen 1 (10%), Gen 2 (15%), Gen 3 (20%), Gen 4 (25%), and Gen 5 (35%)</span>. All commissions are executed instantly on-chain directly to active wallets.
+            </p>
+            <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="grid-card" style="border-top: 4px solid var(--accent-blue);">
+                    <h4 id="gen1Title">Gen 1: 10%</h4>
+                    <p id="gen1Desc">First generation direct referral bonus based on plan value.</p>
+                </div>
+                <div class="grid-card" style="border-top: 4px solid var(--accent-purple);">
+                    <h4 id="gen2Title">Gen 2: 15%</h4>
+                    <p id="gen2Desc">Second generation tier incentive calculated from direct plan amounts.</p>
+                </div>
+                <div class="grid-card" style="border-top: 4px solid var(--accent-gold);">
+                    <h4 id="gen3Title">Gen 3: 20%</h4>
+                    <p id="gen3Desc">Third generation team reward layer driving deep expansion.</p>
+                </div>
+                <div class="grid-card" style="border-top: 4px solid var(--accent-green);">
+                    <h4 id="gen4Title">Gen 4: 25%</h4>
+                    <p id="gen4Desc">Fourth generation incentive tier providing accelerated rewards.</p>
+                </div>
+                <div class="grid-card" style="border-top: 4px solid #ec4899;">
+                    <h4 id="gen5Title">Gen 5: 35%</h4>
+                    <p id="gen5Desc">Fifth tier maximum bonus rewards completing the multi-generation model.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6 -->
+        <section>
+            <h1 class="section-title" id="sec6Title">6. Decentralized DAO & $500 Proposal Grants</h1>
+            <p id="sec6P1">
+                Governance within PeetX is governed entirely by its decentralized autonomous organization (DAO). Community members submit proposals (PIPs) to upgrade systems, adjust pool parameters, or launch new arbitrage strategies.
+            </p>
+            <div class="callout-box">
+                <h4 id="grantTitle">💡 $500 Approved Proposal Grant (PIP)</h4>
+                <p id="grantDesc">
+                    Any community member who submits a PeetX Improvement Proposal (PIP) that passes a successful DAO vote receives an automated $500 USDT developer grant, transferred instantly by the smart contract.
+                </p>
+            </div>
+            <div class="callout-box" style="border-left-color: var(--accent-green); background: #f0fdf4;">
+                <h4 style="color: var(--accent-green);" id="airdropTitle">🎁 Active Voter AirDrop Pool (100 Winners)</h4>
+                <p style="color: #166534;" id="airdropDesc">
+                    Following each approved DAO voting session, a VRF algorithm selects 100 active community voters to split an automated USDT AirDrop pool as a reward for protocol governance participation.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 7 -->
+        <section>
+            <h1 class="section-title" id="sec7Title">7. Global Expansion Strategy & 100K Nodes Plan</h1>
+            <p id="sec7P1">
+                The protocol is designed for scaling toward 100,000 active nodes worldwide while preserving 100% smart contract liquidity balance and maintaining zero deposit deductions.
+            </p>
+            <div class="info-grid">
+                <div class="grid-card">
+                    <h4 id="r1Title">Phase I: Smart Contract & Security Audits</h4>
+                    <p id="r1Desc">Formal verification, zero-deduction escrow implementation, and Web3 wallet integration.</p>
+                </div>
+                <div class="grid-card">
+                    <h4 id="r2Title">Phase II: Global Node Expansion (50K Nodes)</h4>
+                    <p id="r2Desc">Expanding arbitrage trading bots and activating the 5-Tier referral mechanism globally.</p>
+                </div>
+                <div class="grid-card">
+                    <h4 id="r3Title">Phase III: Autonomous DAO Sovereignty (100K+)</h4>
+                    <p id="r3Desc">Complete migration of system governance to smart contracts with zero human intervention.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8 -->
+        <section>
+            <h1 class="section-title" id="sec8Title">8. Mathematical Security Proofs & Audits</h1>
+            <p id="sec8P1">
+                All protocol functions undergo static mathematical verification. The 85% win-rate arbitrage logic and 5-Tier referral distributions are hardcoded and audited against reentrancy attacks, flash loan exploits, and front-running risks.
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="wp-footer">
+            <p style="text-align: center; font-size: 13px; color: var(--text-muted);" id="txtFooter">
+                © PeetX Protocol Institutional Documentation. Rendered for Web3 Public Presentation. All Rights Reserved.
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        const translations = {
+            'US': {
+                dir: 'ltr',
+                regionName: 'Global (United States)',
+                lblRegion: '🌐 Region & Document Language:',
+                txtSubHeader: 'Enterprise Institutional Whitepaper, 85% Trade Win-Rate Architecture & 5-Tier Incentive Engine',
+                lblDocVer: 'Document Version:', lblSmartStatus: 'Smart Contract Status:', lblSelectedRegion: 'Selected Region:',
+                txtTocTitle: 'System Architecture Table of Contents',
+                toc1: '1. Executive Summary & Zero-Deduction Model',
+                toc2: '2. EVM Blockchain Infrastructure & Security',
+                toc3: '3. High-Frequency Arbitrage & 85% Win-Rate Engine',
+                toc4: '4. Capital Maturity & Pool Liquidity Routing',
+                toc5: '5. 5-Tier Affiliate Multi-Generation Incentive Engine',
+                toc6: '6. Decentralized DAO & $500 Proposal Grants',
+                toc7: '7. Global Expansion Strategy & 100K Nodes Plan',
+                toc8: '8. Mathematical Security Proofs & Audits',
+                sec1Title: '1. Executive Summary & Zero-Deduction Model',
+                sec1P1: 'The PeetX Protocol establishes an unprecedented standard in decentralized financial engineering (DeFi). Traditional asset management systems levy hidden management surcharges or deposit fees. PeetX completely eliminates all fees: Zero Deductions are taken from capital during deposit or trade cycles.',
+                sec1P2: 'Every unit of capital supplied enters non-custodial Web3 smart contracts and is utilized strictly within algorithmic trading cycles with a verified 85% target win-rate. When plans complete, 100% of capital and yields route back to the core liquidity pool.',
+                fig1Title: 'FIGURE 1: PEETX ZERO-DEDUCTION & 85% WIN-RATE FLOW ARCHITECTURE',
+                svgNode1: 'User Deposit', svgNode1Sub: '0% Deductions',
+                svgNode2: 'EVM Smart Contract', svgNode2Sub1: 'Non-Custodial Escrow', svgNode2Sub2: '85% Win-Rate Engine',
+                svgNode3: 'Yield Execution', svgNode4: '5-Tier Incentive Network',
+                sec2Title: '2. EVM Blockchain Infrastructure & Security',
+                sec2P1: 'Built upon multi-chain EVM-compatible networks with gas-optimized smart contracts and zero-knowledge security proofs.',
+                sec2Sub1Title: '2.1 Immutable Smart Contract Architecture',
+                sec2Sub1P: 'Ownership is renounced to null (0x000...dead). No administrator has authority to alter contract logic or lock funds.',
+                sec3Title: '3. High-Frequency Arbitrage & 85% Win-Rate Engine',
+                sec3P1: 'PeetX deploys capital into quantitative trading algorithms across major DEXs under ultra-low latency protocols.',
+                sec3Sub1Title: '3.1 85% Win-Rate Algorithmic Probability',
+                sec3Sub1P: 'Trades execute only when predictive models indicate a win probability exceeding 85%, protected by automated stop-loss mechanisms.',
+                sec3Sub2Title: '3.2 Automated Capital Transfer to Pool',
+                sec3Sub2P: 'Upon plan or trade completion, funds along with yields are automatically transferred back to the core pool for instant withdrawal.',
+                sec4Title: '4. Structured Investment Framework',
+                sec4P1: 'Returns accrue continuously every 24 hours without any capital retention fees.',
+                planDemoTitle: 'Investment Cycle Performance ($10,000 USD Capital Allocation Example)',
+                p1Title: '1-DAY CYCLE (1.0%)', p1Payout: 'Pool Transfer: $10,100 USD',
+                p2Title: '7-DAY CYCLE (1.0%/Day)', p2Payout: 'Pool Transfer: $10,700 USD',
+                p3Title: '20-DAY CYCLE (1.0%/Day)', p3Payout: 'Pool Transfer: $12,000 USD',
+                p4Title: '30-DAY CYCLE (1.0%/Day)', p4Payout: 'Pool Transfer: $13,000 USD',
+                sec5Title: '5. 5-Tier Affiliate Multi-Generation Incentive Engine',
+                sec5P1: 'A 5-Tier affiliate referral system built into the contract distributing bonuses calculated from user plan amounts: 10% Gen 1, 15% Gen 2, 20% Gen 3, 25% Gen 4, and 35% Gen 5. Instant on-chain payouts.',
+                gen1Title: 'Gen 1: 10%', gen1Desc: 'Direct team referrals with instant wallet payouts.',
+                gen2Title: 'Gen 2: 15%', gen2Desc: 'Second generation tier incentive calculated from direct plan amounts.',
+                gen3Title: 'Gen 3: 20%', gen3Desc: 'Third generation team reward layer driving deep expansion.',
+                gen4Title: 'Gen 4: 25%', gen4Desc: 'Fourth generation incentive tier providing accelerated rewards.',
+                gen5Title: 'Gen 5: 35%', gen5Desc: 'Fifth tier maximum bonus rewards completing the multi-generation model.',
+                sec6Title: '6. Decentralized DAO & $500 Proposal Grants',
+                sec6P1: 'Governance is directed by DAO members through voting on protocol proposals.',
+                grantTitle: '💡 $500 Approved Proposal Grant (PIP)', grantDesc: 'Passed PIP proposals trigger an automated $500 USDT developer grant direct to the author wallet.',
+                airdropTitle: '🎁 Active Voter AirDrop Pool (100 Winners)', airdropDesc: 'VRF randomly selects 100 active voters each voting epoch to split an automated USDT AirDrop pool.',
+                sec7Title: '7. Global Expansion Strategy & 100K Nodes Plan',
+                sec7P1: 'Engineered for worldwide scaling to 100,000 nodes while maintaining 100% liquidity solvency.',
+                r1Title: 'Phase I: Audits & Escrow', r1Desc: 'Formal security verification and zero-deduction integration.',
+                r2Title: 'Phase II: 50K Nodes Expansion', r2Desc: 'Deploying high-frequency bots and activating 5-Tier referrals globally.',
+                r3Title: 'Phase III: 100K Node DAO Sovereignty', r3Desc: '100% autonomous operation managed solely by smart contracts.',
+                sec8Title: '8. Mathematical Security Proofs & Audits',
+                sec8P1: 'Audited against reentrancy, flash loan attacks, and front-running with mathematical formal verification.',
+                txtFooter: '© PeetX Protocol Institutional Documentation. Rendered for Web3 Public Presentation. All Rights Reserved.'
+            },
+            'SA': {
+                dir: 'rtl',
+                regionName: 'المملكة العربية السعودية / العالم العربي (العربية)',
+                lblRegion: '🌐 المنطقة ولغة الوثيقة:',
+                txtSubHeader: 'الورقة البيضاء المؤسسية، معمارية تداول بنسبة نجاح 85% ومواصفات المحرك التحفيزي خماسي الأجيال',
+                lblDocVer: 'إصدار الوثيقة:', lblSmartStatus: 'حالة العقد الذكي:', lblSelectedRegion: 'المنطقة المختارة:',
+                txtTocTitle: 'جدول محتويات معمارية النظام',
+                toc1: '1. الملخص التنفيذي ونموذج انعدام الخصومات',
+                toc2: '2. البنية التحتية للبلوكشين وأمان EVM',
+                toc3: '3. التداول الخوارزمي ومحرك صفقات 85% نجاح',
+                toc4: '4. استحقاق رأس المال وتوجيه سيولة المجمع',
+                toc5: '5. محرك الإحالة التحفيزي خماسي الأجيال (10%، 15%، 20%، 25%، 35%)',
+                toc6: '6. حوكمة DAO ومنح المقترحات بقيمة $500',
+                toc7: '7. خطة التوسع العالمي للوصول لـ 100 ألف عقدة',
+                toc8: '8. البراهين الرياضية والتدقيق الأمني',
+                sec1Title: '1. الملخص التنفيذي ونموذج انعدام الخصومات',
+                sec1P1: 'يؤسس بروتوكول PeetX معيارًا غير مسبوق في التمويل اللامركزي (DeFi). على عكس الأنظمة التقليدية التي تفرض رسوم إدارة أو خصومات عند الإيداع، يلغي PeetX جميع الرسوم نهائياً: صفر خصومات (0%) من رأس المال أثناء عمليات الإيداع أو صفقات التداول.',
+                sec1P2: 'يدخل كل دولار يقدمه المستخدم مباشرة إلى عقود Web3 الذكية غير الحضانة. تُستثمر الأموال في صفقات خوارزمية عالية الأمان بنسبة نجاح مستهدفة تبلغ 85%. وبمجرد انتهاء خطة الاستثمار أو صفقة التداول، يتم تحويل 100% من رأس المال مع الأرباح مباشرة إلى مجمع السيولة الرئيسي للحساب.',
+                fig1Title: 'شكل 1: معمارية تدفق الأموال في PEETX بدون خصومات وبنسبة نجاح 85%',
+                svgNode1: 'إيداع المستخدم', svgNode1Sub: 'خصم 0% من المبلغ',
+                svgNode2: 'عقد EVM الذكي', svgNode2Sub1: 'حضانة ذاتية مؤتمتة', svgNode2Sub2: 'محرك صفقات 85% نجاح',
+                svgNode3: 'تنفيذ استراتيجية العائد', svgNode4: 'محرك الأجيال التحفيزي',
+                sec2Title: '2. البنية التحتية للبلوكشين وأمان EVM',
+                sec2P1: 'تم بناء البروتوكول على شبكات متوافقة مع EVM مع عقود ذكية محسّنة للغاية لرسوم الغاز وتطبيق إثباتات المعرفة الصفرية.',
+                sec2Sub1Title: '2.1 عدم إمكانية تعديل العقد الذكي',
+                sec2Sub1P: 'تم حرق ملكية العقد الذكي وإرسالها إلى العنوان الميت (0x000...dead). لا يملك أي مطور أو مدير صلاحية تعديل الشروط أو تجميد الأموال.',
+                sec3Title: '3. التداول الخوارزمي ومحرك صفقات 85% نجاح',
+                sec3P1: 'لتوليد عوائد مستقرة دون المخاطرة برأس المال، يتم توجيه السيولة إلى روبوتات تداول كمي خوارزمية فائقة السرعة بين المنصات اللامركزية.',
+                sec3Sub1Title: '3.1 احتمالية خوارزمية بنسبة نجاح 85%',
+                sec3Sub1P: 'تدخل الروبوتات الصفقات فقط عندما تشير النماذج الذكية إلى نسبة نجاح تتجاوز 85%. وفي حالة تقلب السوق بنسبة 15% المتبقية، توفر خوارزميات وقف الخسارة الحماية الكاملة.',
+                sec3Sub2Title: '3.2 التحويل الآلي للأموال إلى المجمع',
+                sec3Sub2P: 'عند انتهاء صفقة التداول أو الدورة الاستثمارية، يقوم العقد الذكي تلقائياً بتحويل كامل رأس المال بالإضافة إلى الأرباح إلى مجمع السيولة الرئيسي للمستخدم فوراً.',
+                sec4Title: '4. إطار الاستثمار الهيكلي',
+                sec4P1: 'تتحقق العوائد وتتراكم كل 24 ساعة دون اقتطاع أي رسوم احتجاز أو إدارة.',
+                planDemoTitle: 'عرض أداء الدورات الاستثمارية (نموذج إيداع 10,000 دولار)',
+                p1Title: 'دورة يوم واحد (1.0%)', p1Payout: 'التحويل للمجمع: 10,100 دولار',
+                p2Title: 'دورة 7 أيام (1.0%/يوم)', p2Payout: 'التحويل للمجمع: 10,700 دولار',
+                p3Title: 'دورة 20 يوم (1.0%/يوم)', p3Payout: 'التحويل للمجمع: 12,000 دولار',
+                p4Title: 'دورة 30 يوم (1.0%/يوم)', p4Payout: 'التحويل للمجمع: 13,000 دولار',
+                sec5Title: '5. محرك الإحالة التحفيزي خماسي الأجيال',
+                sec5P1: 'يحتوي العقد الذكي على نظام تحفيزي متطور يعتمد على نسبة مئوية من مبلغ خطة الشخص كتحفيز عبر 5 أجيال متتالية: الجيل الأول (10%)، الجيل الثاني (15%)، الجيل الثالث (20%)، الجيل الرابع (25%)، والجيل الخامس (35%). وتدفع المكافآت فوراً على المحفظة.',
+                gen1Title: 'الجيل الأول: 10%', gen1Desc: 'تحفيز الجيل الأول المباشر حسَب مبلغ الخطة.',
+                gen2Title: 'الجيل الثاني: 15%', gen2Desc: 'تحفيز الجيل الثاني بناءً على مبلغ خطة العضو.',
+                gen3Title: 'الجيل الثالث: 20%', gen3Desc: 'مكافأة الجيل الثالث لدعم التوسع الشبكي العميق.',
+                gen4Title: 'الجيل الرابع: 25%', gen4Desc: 'تحفيز الجيل الرابع لمضاعفة النمو والانتشار.',
+                gen5Title: 'الجيل الخامس: 35%', gen5Desc: 'النسبة الأعلى كتحفيز للجيل الخامس لإكمال الهيكل التحفيزي.',
+                sec6Title: '6. حوكمة DAO ومنح المقترحات بقيمة $500',
+                sec6P1: 'تتم إدارة النظام بالكامل عبر المنظمة اللامركزية DAO من خلال تصويت الأعضاء على المقترحات التطويرية.',
+                grantTitle: '💡 منحة المقترحات المقبولة بقيمة $500 (PIP)', grantDesc: 'عند تصويت المجتمع بالقبول على أي مقترح تطويري، يدفع العقد الذكي مكافأة 500 USDT فوراً إلى محفظة صاحب المقترح.',
+                airdropTitle: '🎁 مكافأة المشاركين بالتصويت (100 فائز)', airdropDesc: 'يختار نظام VRF العشوائي 100 مصوت نشط عقب كل تصويت لتقاسم صندوق مكافآت USDT.',
+                sec7Title: '7. خطة التوسع العالمي للوصول لـ 100 ألف عقدة',
+                sec7P1: 'تم التخطيط للوصول إلى 100,000 عقدة حول العالم مع الحفاظ على سلامة وملاءة سيولة العقود الذكية 100%.',
+                r1Title: 'المرحلة الأولى: التدقيق ونظام انعدام الخصم', r1Desc: 'الفحص البرمجي الكامل وتفعيل نظام عدم اقتطاع أي رسوم.',
+                r2Title: 'المرحلة الثانية: التوسع لـ 50 ألف عقدة', r2Desc: 'تفعيل روبوتات التداول ونظام الإحالة خماسي الأجيال على مستوى العالم.',
+                r3Title: 'المرحلة الثالثة: السيادة الكاملة لـ DAO', r3Desc: 'إدارة النظام بذاتية كاملة 100% دون أي تدخل بشري.',
+                sec8Title: '8. البراهين الرياضية والتدقيق الأمني',
+                sec8P1: 'خضع العقد الذكي لفحوصات رياضية ودراسات لغلق جميع ثغرات إعادة الدخول (Reentrancy) والقروض الخاطفة لضمان حماية رؤوس الأموال.',
+                txtFooter: '© وثيقة PeetX المؤسسية الرسمية. تم إعدادها للعرض العام. جميع الحقوق محفوظة.'
+            },
+            'CN': {
+                dir: 'ltr',
+                regionName: 'China (中国)',
+                lblRegion: '🌐 区域与文档语言:',
+                txtSubHeader: '企业级机构白皮书、85%胜率交易架构与5代激励网络规范',
+                lblDocVer: '文档版本:', lblSmartStatus: '智能合约状态:', lblSelectedRegion: '所选区域:',
+                txtTocTitle: '系统架构目录',
+                toc1: '1. 执行摘要与零扣费模型',
+                toc2: '2. EVM区块链基础设施与安全',
+                toc3: '3. 高频套利与85%胜率引擎',
+                toc4: '4. 资金到期与资金池路由',
+                toc5: '5. 5代推荐激励网络引擎',
+                toc6: '6. 去中心化DAO与500美元提案 Grant',
+                toc7: '7. 全球扩展战略与10万节点计划',
+                toc8: '8. 数学安全证明与审计',
+                sec1Title: '1. 执行摘要与零扣费模型',
+                sec1P1: 'PeetX 协议树立了去中心化金融 (DeFi) 的新标准。传统的管理系统会收取隐藏的手续费或充值扣费。PeetX 完全消除了所有费用：在充值或交易过程中零扣费 (0% Deductions)。',
+                sec1P2: '用户提供的每一单位资金都直接进入 Web3 智能合约，并在 85% 目标胜率的量化交易周期中运行。周期结束时，100% 的本金及收益将自动划转回核心资金池。',
+                fig1Title: '图 1：PEETX 零扣费与 85% 胜率资金流向架构',
+                svgNode1: '用户充值', svgNode1Sub: '0% 扣费',
+                svgNode2: 'EVM 智能合约', svgNode2Sub1: '非托管托管', svgNode2Sub2: '85% 胜率引擎',
+                svgNode3: '收益策略执行', svgNode4: '5代推荐激励网络',
+                sec2Title: '2. EVM区块链基础设施与安全',
+                sec2P1: '基于兼容 EVM 的多链网络构建，采用优化 Gas 费用的智能合约与零知识证明技术。',
+                sec2Sub1Title: '2.1 不可变智能合约架构',
+                sec2Sub1P: '合约所有权在部署后即转入黑洞地址 (0x000...dead)，无任何管理员可篡改规则。',
+                sec3Title: '3. 高频套利与85%胜率引擎',
+                sec3P1: 'PeetX 将资金部署在 DEX 间的量化套利算法中，利用极低延迟捕获价格差额。',
+                sec3Sub1Title: '3.1 85% 胜率算法概率',
+                sec3Sub1P: '预测模型显示胜率超过 85% 时才会触发交易，其余 15% 波动由自动止损与储备资金池保障。',
+                sec3Sub2Title: '3.2 资金自动划转至资金池',
+                sec3Sub2P: '交易或周期结束时，本金及收益会自动划转回主资金池，随时可无缝提取。',
+                sec4Title: '4. 结构化投资框架',
+                sec4P1: '收益每 24 小时计算并累加一次，没有任何资金留存费用。',
+                planDemoTitle: '投资周期收益演示 (10,000 美元资金模型)',
+                p1Title: '1 天周期 (1.0%)', p1Payout: '资金池划转: $10,100 美元',
+                p2Title: '7 天周期 (1.0%/天)', p2Payout: '资金池划转: $10,700 美元',
+                p3Title: '20 天周期 (1.0%/天)', p3Payout: '资金池划转: $12,000 美元',
+                p4Title: '30 天周期 (1.0%/天)', p4Payout: '资金池划转: $13,000 美元',
+                sec5Title: '5. 5代推荐激励网络引擎',
+                sec5P1: '智能合约内置 5 代推荐激励机制，根据用户方案金额比例计算：第 1 代 10%、第 2 代 15%、第 3 代 20%、第 4 代 25%、第 5 代 35%，链上实时发放。',
+                gen1Title: '第 1 代: 10%', gen1Desc: '一代直推团队激励，根据方案金额即时打入钱包。',
+                gen2Title: '第 2 代: 15%', gen2Desc: '二代推荐激励，按方案金额比例计算。',
+                gen3Title: '第 3 代: 20%', gen3Desc: '三代团队拓展深度奖励。',
+                gen4Title: '第 4 代: 25%', gen4Desc: '四代加速增长激励。',
+                gen5Title: '第 5 代: 35%', gen5Desc: '五代最高额度奖励完成整体激励架构。',
+                sec6Title: '6. 去中心化DAO与500美元提案 Grant',
+                sec6P1: '治理完全由 DAO 成员通过提案投票决定。',
+                grantTitle: '💡 $500 提案通过奖金 (PIP)', grantDesc: '通过的提案将由智能合约自动向作者发放 500 USDT 奖金。',
+                airdropTitle: '🎁 活跃投票者空投池 (100 名赢家)', airdropDesc: 'VRF 算法随机抽取 100 名参与投票者平分 USDT 空投奖励池。',
+                sec7Title: '7. 全球扩展战略与10万节点计划',
+                sec7P1: '旨在扩展至全球 100,000 个节点，同时保持 100% 的资金池偿付能力。',
+                r1Title: '第一阶段: 审计与零扣费', r1Desc: '形式化安全验证与零扣费机制上线。',
+                r2Title: '第二阶段: 5万节点扩展', r2Desc: '在全球部署高频套利机器人并激活 5 代推荐。',
+                r3Title: '第三阶段: 10万节点 DAO 完全自治', r3Desc: '系统 100% 由智能合约自主运行。',
+                sec8Title: '8. 数学安全证明与审计',
+                sec8P1: '防重入攻击与闪电贷风险已通过严密的数学形式化验证。',
+                txtFooter: '© PeetX Protocol 企业级白皮书。保留所有权利。'
+            },
+            'BR': {
+                dir: 'ltr',
+                regionName: 'Brazil (Português)',
+                lblRegion: '🌐 Região e Idioma:',
+                txtSubHeader: 'Whitepaper Institucional, Arquitetura com 85% de Taxa de Vitória e Rede de Incentivo em 5 Níveis',
+                lblDocVer: 'Versão do Documento:', lblSmartStatus: 'Status do Contrato Inteligente:', lblSelectedRegion: 'Região Selecionada:',
+                txtTocTitle: 'Índice da Arquitetura do Sistema',
+                toc1: '1. Resumo Executivo e Modelo Zero Dedução',
+                toc2: '2. Infraestrutura EVM Blockchain e Segurança',
+                toc3: '3. Arbitragem de Alta Frequência e 85% Win-Rate',
+                toc4: '4. Maturidade do Capital e Roteamento do Pool',
+                toc5: '5. Rede de Incentivo aos Afiliados em 5 Níveis',
+                toc6: '6. Governança DAO e Subsídios de $500',
+                toc7: '7. Estratégia de Expansão Global para 100K Nós',
+                toc8: '8. Provas Matemáticas de Segurança e Auditorias',
+                sec1Title: '1. Resumo Executivo e Modelo Zero Dedução',
+                sec1P1: 'O PeetX Protocol estabelece um padrão sem precedentes em DeFi. Ao contrário dos sistemas tradicionais com taxas ocultas, o PeetX elimina todas as taxas: Zero Deduções (0%) são retiradas do seu capital.',
+                sec1P2: 'Todo capital entra em contratos inteligentes Web3 com taxa de vitória de 85%. Ao final do ciclo, 100% do capital e lucros retornam ao pool principal.',
+                fig1Title: 'FIGURA 1: ARQUITETURA PEETX ZERO DEDUÇÃO E 85% WIN-RATE',
+                svgNode1: 'Depósito do Usuário', svgNode1Sub: '0% Deduções',
+                svgNode2: 'Contrato EVM', svgNode2Sub1: 'Custódia Própria', svgNode2Sub2: 'Motor 85% Win-Rate',
+                svgNode3: 'Execução de Rendimento', svgNode4: 'Rede de Incentivo 5 Níveis',
+                sec2Title: '2. Infraestrutura EVM Blockchain e Segurança',
+                sec2P1: 'Construído em redes compatíveis com EVM, otimizado para custos de gas e provas de conhecimento zero.',
+                sec2Sub1Title: '2.1 Contrato Inteligente Inmutável',
+                sec2Sub1P: 'A propriedade foi renunciada para o endereço zero (0x000...dead), impedindo qualquer alteração.',
+                sec3Title: '3. Arbitragem de Alta Frequência e 85% Win-Rate',
+                sec3P1: 'O capital é alocado em robôs quantitativos de alta frequência entre as principais DEXs.',
+                sec3Sub1Title: '3.1 Probabilidade Algorítmica de 85%',
+                sec3Sub1P: 'As operações só ocorrem quando a IA indica probabilidade de vitória superior a 85%.',
+                sec3Sub2Title: '3.2 Transferência Automática para o Pool',
+                sec3Sub2P: 'Ao final do ciclo, o capital e os lucros são transferidos automaticamente de volta para o pool principal.',
+                sec4Title: '4. Estrutura de Investimento',
+                sec4P1: 'Rendimentos creditados a cada 24 horas sem nenhuma taxa de retenção.',
+                planDemoTitle: 'Desempenho dos Ciclos (Exemplo de $10.000 USD)',
+                p1Title: 'Ciclo 1 Dia (1.0%)', p1Payout: 'Transferência Pool: $10.100 USD',
+                p2Title: 'Ciclo 7 Dias (1.0%/Dia)', p2Payout: 'Transferência Pool: $10.700 USD',
+                p3Title: 'Ciclo 20 Dias (1.0%/Dia)', p3Payout: 'Transferência Pool: $12.000 USD',
+                p4Title: 'Ciclo 30 Dias (1.0%/Dia)', p4Payout: 'Transferência Pool: $13.000 USD',
+                sec5Title: '5. Rede de Incentivo aos Afiliados em 5 Níveis',
+                sec5P1: 'Sistema de incentivo em 5 níveis no contrato inteligente com base no valor do plano: Geração 1 (10%), Geração 2 (15%), Geração 3 (20%), Geração 4 (25%) e Geração 5 (35%).',
+                gen1Title: 'Nível 1: 10%', gen1Desc: 'Indicações diretas com base no valor do plano.',
+                gen2Title: 'Nível 2: 15%', gen2Desc: 'Incentivo do segundo nível proporcional ao plano.',
+                gen3Title: 'Nível 3: 20%', gen3Desc: 'Recompensa do terceiro nível para expansão da rede.',
+                gen4Title: 'Nível 4: 25%', gen4Desc: 'Incentivos de quarto nível para aceleração de equipe.',
+                gen5Title: 'Nível 5: 35%', gen5Desc: 'Bônus máximo do quinto nível completando a estrutura.',
+                sec6Title: '6. Governança DAO e Subsídios de $500',
+                sec6P1: 'A governança é exercida pelos membros da DAO por meio de votações.',
+                grantTitle: '💡 Subsídio de $500 para Propostas Aprovadas (PIP)', grantDesc: 'Propostas aprovadas recebem automaticamente $500 USDT no contrato inteligente.',
+                airdropTitle: '🎁 Pool AirDrop para Votantes (100 Ganhadores)', airdropDesc: '100 votantes são escolhidos aleatoriamente para dividir o pool de AirDrop.',
+                sec7Title: '7. Estratégia de Expansão Global para 100K Nós',
+                sec7P1: 'Projetado para alcançar 100.000 nós mantendo a solvência de 100%.',
+                r1Title: 'Fase I: Auditorias e Contrato', r1Desc: 'Verificação formal e integração zero deduções.',
+                r2Title: 'Fase II: Expansão 50K Nós', r2Desc: 'Implantação de robôs e ativação da rede de 5 níveis.',
+                r3Title: 'Fase III: Soberania DAO 100K', r3Desc: 'Operação 100% autônoma via smart contract.',
+                sec8Title: '8. Provas Matemáticas de Segurança e Auditorias',
+                sec8P1: 'Verificação matemática contra ataques de reentrada e empréstimos relâmpago.',
+                txtFooter: '© PeetX Protocol Institutional. Todos os direitos reservados.'
+            },
+            'RU': {
+                dir: 'ltr',
+                regionName: 'Russia (Россия)',
+                lblRegion: '🌐 Регион и язык документа:',
+                txtSubHeader: 'Институциональный документ, архитектура 85% Win-Rate и 5-уровневая стимулирующая сеть',
+                lblDocVer: 'Версия документа:', lblSmartStatus: 'Статус смарт-контракта:', lblSelectedRegion: 'Регион:',
+                txtTocTitle: 'Содержание архитектуры системы',
+                toc1: '1. Executive Summary и модель без комиссий',
+                toc2: '2. Блокчейн-инфраструктура EVM и безопасность',
+                toc3: '3. Высокочастотный арбитраж и движок 85% Win-Rate',
+                toc4: '4. Исполнение планов и маршрутизация в пул',
+                toc5: '5. 5-уровневая партнерская система мотивации',
+                toc6: '6. Управление DAO и гранты $500 за предложения',
+                toc7: '7. Стратегия масштабирования до 100K узлов',
+                toc8: '8. Математические доказательства безопасности',
+                sec1Title: '1. Executive Summary и модель без комиссий',
+                sec1P1: 'Протокол PeetX устанавливает новый стандарт в DeFi. В отличие от традиционных систем с скрытыми комиссиями, PeetX полностью отменяет все сборы: Ноль удержаний (0%) с капитала.',
+                sec1P2: 'Средства поступают в смарт-контракты Web3 и участвуют в сделках с целенаправленной вероятностью успеха 85%. По завершении плана 100% капитала и прибыли возвращаются в главный пул.',
+                fig1Title: 'РИСУНОК 1: АРХИТЕКТУРА PEETX БЕЗ КОМИССИЙ И С WIN-RATE 85%',
+                svgNode1: 'Депозит пользователя', svgNode1Sub: 'Комиссия 0%',
+                svgNode2: 'Смарт-контракт EVM', svgNode2Sub1: 'Non-Custodial', svgNode2Sub2: 'Движок 85% Win-Rate',
+                svgNode3: 'Исполнение стратегии', svgNode4: '5-уровневая система мотивации',
+                sec2Title: '2. Блокчейн-инфраструктура EVM и безопасность',
+                sec2P1: 'Построен на EVM-совместимых сетях с оптимизацией газа и доказательствами с нулевым разглашением.',
+                sec2Sub1Title: '2.1 Неизменяемая архитектура смарт-контракта',
+                sec2Sub1P: 'Права владения сожжены (переданы на 0x000...dead). Никто не может изменить логику или заблокировать средства.',
+                sec3Title: '3. Высокочастотный арбитраж и движок 85% Win-Rate',
+                sec3P1: 'Капитал направляется в арбитражные боты между DEX платформами.',
+                sec3Sub1Title: '3.1 Алгоритмическая вероятность победы 85%',
+                sec3Sub1P: 'Сделки открываются только при вероятности успеха выше 85%, под защитой авто-стоп-лоссов.',
+                sec3Sub2Title: '3.2 Автоматический перевод в пул',
+                sec3Sub2P: 'По завершении сделки капитал и прибыль автоматически переводятся обратно в пул пользователя.',
+                sec4Title: '4. Структурированная инвестиционная модель',
+                sec4P1: 'Начисление дохода каждые 24 часа без удержаний.',
+                planDemoTitle: 'Доходность циклов (Пример на $10,000 USD)',
+                p1Title: '1 День (1.0%)', p1Payout: 'Перевод в пул: $10,100 USD',
+                p2Title: '7 Дней (1.0%/День)', p2Payout: 'Перевод в пул: $10,700 USD',
+                p3Title: '20 Дней (1.0%/День)', p3Payout: 'Перевод в пул: $12,000 USD',
+                p4Title: '30 Дней (1.0%/День)', p4Payout: 'Перевод в пул: $13,000 USD',
+                sec5Title: '5. 5-уровневая партнерская система мотивации',
+                sec5P1: 'Партнерская программа в смарт-контракте с расчетом бонусов от стоимости плана пользователя: 1-е поколение (10%), 2-е (15%), 3-е (20%), 4-е (25%), 5-е (35%).',
+                gen1Title: 'Уровень 1: 10%', gen1Desc: 'Прямые рефералы с расчетом от суммы плана.',
+                gen2Title: 'Уровень 2: 15%', gen2Desc: 'Бонусы второго уровня от стоимости планов.',
+                gen3Title: 'Уровень 3: 20%', gen3Desc: 'Вознаграждение третьего уровня за рост команды.',
+                gen4Title: 'Уровень 4: 25%', gen4Desc: 'Ускоренная мотивация четвертого уровня.',
+                gen5Title: 'Уровень 5: 35%', gen5Desc: 'Максимальный бонус 5-го уровня в завершение структуры.',
+                sec6Title: '6. Управление DAO и гранты $500 за предложения',
+                sec6P1: 'Управление осуществляется держателями путем голосования.',
+                grantTitle: '💡 Грант $500 за одобренное PIP предложение', grantDesc: 'При принятии предложения контракт автоматически выплачивает 500 USDT прямо на кошелек автора.',
+                airdropTitle: '🎁 AirDrop для голосующих (100 победителей)', airdropDesc: 'VRF выбирает 100 участников для распределения призового пула.',
+                sec7Title: '7. Стратегия масштабирования до 100K узлов',
+                sec7P1: 'План развития до 100 000 узлов со 100% ликвидностью.',
+                r1Title: 'Фаза I: Аудиты и протокол', r1Desc: 'Формальная верификация и модель 0% комиссий.',
+                r2Title: 'Фаза II: Рост до 50K узлов', r2Desc: 'Запуск ботов и 5-уровневой сети по всему миру.',
+                r3Title: 'Фаза III: Полная автономия DAO', r3Desc: 'Управление на 100% через смарт-контракты.',
+                sec8Title: '8. Математические доказательства безопасности',
+                sec8P1: 'Математическая верификация от Reentrancy атак и флэш-займов.',
+                txtFooter: '© PeetX Protocol Institutional Documentation. Все права защищены.'
+            },
+            'IN': {
+                dir: 'ltr',
+                regionName: 'India (भारत / English)',
+                lblRegion: '🌐 Region & Document Language:',
+                txtSubHeader: 'Institutional Whitepaper, 85% Win-Rate Trading Architecture & 5-Tier Incentive Network',
+                lblDocVer: 'Document Version:', lblSmartStatus: 'Smart Contract Status:', lblSelectedRegion: 'Selected Region:',
+                txtTocTitle: 'System Architecture Table of Contents',
+                toc1: '1. Executive Summary & Zero-Deduction Model',
+                toc2: '2. EVM Blockchain Infrastructure & Security',
+                toc3: '3. High-Frequency Arbitrage & 85% Win-Rate Engine',
+                toc4: '4. Capital Maturity & Pool Liquidity Routing',
+                toc5: '5. 5-Tier Affiliate Multi-Generation Incentive Engine',
+                toc6: '6. Decentralized DAO & $500 Proposal Grants',
+                toc7: '7. Global Expansion Strategy & 100K Nodes Plan',
+                toc8: '8. Mathematical Security Proofs & Audits',
+                sec1Title: '1. Executive Summary & Zero-Deduction Model',
+                sec1P1: 'The PeetX Protocol sets a revolutionary standard in DeFi. Unlike traditional platforms charging deposit or management fees, PeetX operates with Zero Deductions (0%) on capital.',
+                sec1P2: 'Capital is allocated to non-custodial smart contracts operating on an 85% targeted win-rate algorithmic trading engine. 100% of capital and yields transfer automatically back to the core pool.',
+                fig1Title: 'FIGURE 1: PEETX ZERO-DEDUCTION & 85% WIN-RATE FLOW ARCHITECTURE',
+                svgNode1: 'User Deposit', svgNode1Sub: '0% Deductions',
+                svgNode2: 'EVM Smart Contract', svgNode2Sub1: 'Non-Custodial', svgNode2Sub2: '85% Win-Rate Engine',
+                svgNode3: 'Yield Execution', svgNode4: '5-Tier Incentive Network',
+                sec2Title: '2. EVM Blockchain Infrastructure & Security',
+                sec2P1: 'Deployed on EVM multi-chain infrastructure optimized for low gas fees and zero-knowledge privacy.',
+                sec2Sub1Title: '2.1 Immutable Smart Contract Architecture',
+                sec2Sub1P: 'Contract ownership is burned to null address (0x000...dead), ensuring zero developer intervention.',
+                sec3Title: '3. High-Frequency Arbitrage & 85% Win-Rate Engine',
+                sec3P1: 'Algorithmic bots capture DEX price differences with microsecond execution.',
+                sec3Sub1Title: '3.1 85% Win-Rate Algorithmic Probability',
+                sec3Sub1P: 'Trades execute only when AI models calculate a >85% win-rate, backed by auto stop-loss protocols.',
+                sec3Sub2Title: '3.2 Automated Capital Transfer to Pool',
+                sec3Sub2P: 'Upon trade completion, 100% of capital and profits route straight back into the user pool.',
+                sec4Title: '4. Structured Investment Framework',
+                sec4P1: 'Yields calculated daily every 24 hours with zero retention penalties.',
+                planDemoTitle: 'Investment Performance ($10,000 USD Capital Allocation Example)',
+                p1Title: '1-DAY CYCLE (1.0%)', p1Payout: 'Pool Transfer: $10,100 USD',
+                p2Title: '7-DAY CYCLE (1.0%/Day)', p2Payout: 'Pool Transfer: $10,700 USD',
+                p3Title: '20-DAY CYCLE (1.0%/Day)', p3Payout: 'Pool Transfer: $12,000 USD',
+                p4Title: '30-DAY CYCLE (1.0%/Day)', p4Payout: 'Pool Transfer: $13,000 USD',
+                sec5Title: '5. 5-Tier Affiliate Multi-Generation Incentive Engine',
+                sec5P1: '5-Tier on-chain incentive program based on user plan amounts: 10% Gen 1, 15% Gen 2, 20% Gen 3, 25% Gen 4, and 35% Gen 5.',
+                gen1Title: 'Gen 1: 10%', gen1Desc: 'Direct referrals calculated on plan value.',
+                gen2Title: 'Gen 2: 15%', gen2Desc: 'Secondary network plan incentive tier.',
+                gen3Title: 'Gen 3: 20%', gen3Desc: 'Deep node expansion reward.',
+                gen4Title: 'Gen 4: 25%', gen4Desc: 'Compound team expansion tier.',
+                gen5Title: 'Gen 5: 35%', gen5Desc: 'Maximum generation tier incentive.',
+                sec6Title: '6. Decentralized DAO & $500 Proposal Grants',
+                sec6P1: 'Governed autonomously by community DAO voting.',
+                grantTitle: '💡 $500 Approved Proposal Grant (PIP)', grantDesc: 'Passing a PIP proposal awards an automated $500 USDT grant direct to the author wallet.',
+                airdropTitle: '🎁 Active Voter AirDrop Pool (100 Winners)', airdropDesc: '100 active voters are randomly picked to split a USDT AirDrop pool.',
+                sec7Title: '7. Global Expansion Strategy & 100K Nodes Plan',
+                sec7P1: 'Roadmap to scale to 100,000 active global nodes.',
+                r1Title: 'Phase I: Audits & Escrow', r1Desc: 'Zero-deduction logic deployment.',
+                r2Title: 'Phase II: 50K Nodes Expansion', r2Desc: 'Activating 5-tier network worldwide.',
+                r3Title: 'Phase III: 100K DAO Sovereignty', r3Desc: 'Complete smart contract self-governance.',
+                sec8Title: '8. Mathematical Security Proofs & Audits',
+                sec8P1: 'Formally verified against reentrancy and exploit vectors.',
+                txtFooter: '© PeetX Protocol Institutional Documentation. All Rights Reserved.'
+            },
+            'PK': {
+                dir: 'rtl',
+                regionName: 'Pakistan (پاکستان / Urdu)',
+                lblRegion: '🌐 علاقہ اور دستاویز کی زبان:',
+                txtSubHeader: 'ادارتی وائٹ پیپر، 85٪ ون ریٹ الگورتھم اور 5 جنریشنز تحریصی انجن',
+                lblDocVer: 'ورژن:', lblSmartStatus: 'اسمارٹ کانٹریکٹ حالت:', lblSelectedRegion: 'منتخب کردہ علاقہ:',
+                txtTocTitle: 'سسٹم آرکیٹیکچر کی فہرست',
+                toc1: '1. ایگزیکٹو خلاصہ اور زیرو کٹوتی ماڈل',
+                toc2: '2. EVM بلاک چین انفراسٹرکچر اور سیکیورٹی',
+                toc3: '3. ہائی فریکوئنسی آربیٹریج اور 85٪ ون ریٹ انجن',
+                toc4: '4. کیپیٹل کی تکمیل اور پول پرافٹ ٹرانسفر',
+                toc5: '5. 5 ملٹی جنریشن تحریصی انجن (10٪، 15٪، 20٪، 25٪، 35٪)',
+                toc6: '6. ڈی سینٹرلائزڈ DAO اور 500$ پروپوزل گرانٹس',
+                toc7: '7. عالمی توسیع اور 100,000 نوڈس پلان',
+                toc8: '8. ریاضیاتی سیکیورٹی ثبوت اور آڈٹ',
+                sec1Title: '1. ایگزیکٹو خلاصہ اور زیرو کٹوتی ماڈل',
+                sec1P1: 'پیٹ ایکس (PeetX) پروٹوکول ڈی فائی (DeFi) میں ایک نیا معیار قائم کرتا ہے۔ روایتی پلیٹ فارمز کے برعکس جو فیس کاٹتے ہیں، پیٹ ایکس تمام کٹوتیوں کو ختم کرتا ہے: ڈپازٹ یا ٹریڈ کے دوران صفر فیصد کٹوتی (0% Deductions) ہوتی ہے۔',
+                sec1P2: 'تمام رقم Web3 اسمارٹ کانٹریکٹس میں جاتی ہے جو 85٪ کامیا بی کے ہدف کے ساتھ کام کرتے ہیں۔ پلان کی تکمیل پر 100٪ رقم اور منافع واپس مرکزی پول میں ٹرانسفر ہو جاتا ہے۔',
+                fig1Title: 'شکل 1: پیٹ ایکس زیرو کٹوتی اور 85٪ ون ریٹ کا فلو آرکیٹیکچر',
+                svgNode1: 'صارف کا ڈپازٹ', svgNode1Sub: '0٪ کٹوتی',
+                svgNode2: 'EVM اسمارٹ کانٹریکٹ', svgNode2Sub1: 'غیر حراستی سیکیورٹی', svgNode2Sub2: '85٪ ون ریٹ انجن',
+                svgNode3: 'منافع کی ادائیگی', svgNode4: '5 جنریشنز تحریصی نیٹ ورک',
+                sec2Title: '2. EVM بلاک چین انفراسٹرکچر اور سیکیورٹی',
+                sec2P1: 'EVM نیٹ ورکس پر تیار کیا گیا ہے جو انتہائی کم گیس فیس اور اعلیٰ ترین سیکیورٹی فراہم کرتا ہے۔',
+                sec2Sub1Title: '2.1 غیر قابل تبدیلی اسمارٹ کانٹریکٹ',
+                sec2Sub1P: 'کانٹریکٹ کی ملکیت کو ختم کر کے (0x000...dead) پر بھیج دیا گیا ہے تاکہ کوئی بھی اس میں ترمیم نہ کر سکے۔',
+                sec3Title: '3. ہائی فریکوئنسی آربیٹریج اور 85٪ ون ریٹ انجن',
+                sec3P1: 'رقم کو الگورتھمک ٹریڈنگ بوٹس کے ذریعے DEXs کے درمیان استعمال کیا جاتا ہے۔',
+                sec3Sub1Title: '3.1 85٪ کامیا بی کی الگورتھمک بھیج',
+                sec3Sub1P: 'ٹریڈ صرف اس وقت ہوتی ہے جب 85٪ سے زیادہ کامیابی کا امکان ہو، اور نقصان سے بچاؤ کا خودکار نظام فعال ہو۔',
+                sec3Sub2Title: '3.2 پول میں رقم کی خودکار منتقلی',
+                sec3Sub2P: 'پلان مکمل ہونے پر اصل رقم اور منافع خود بخود مین پول میں آجاتے ہیں جسے فوری نکالا جا سکتا ہے۔',
+                sec4Title: '4. اسٹرکچرڈ انویسٹمنٹ فریم ورک',
+                sec4P1: 'ہر 24 گھنٹے بعد منافع کا حساب کیا جاتا ہے اور صفر فیس کاٹی جاتی ہے۔',
+                planDemoTitle: 'سرمایہ کاری کے چکر کا مظاہرہ ($10,000 ڈالر ماڈل)',
+                p1Title: '1 دن کا سائیکل (1.0%)', p1Payout: 'پول ٹرانسفر: $10,100 USD',
+                p2Title: '7 دن کا سائیکل (1.0%/دن)', p2Payout: 'پول ٹرانسفر: $10,700 USD',
+                p3Title: '20 دن کا سائیکل (1.0%/دن)', p3Payout: 'پول ٹرانسفر: $12,000 USD',
+                p4Title: '30 دن کا سائیکل (1.0%/دن)', p4Payout: 'پول ٹرانسفر: $13,000 USD',
+                sec5Title: '5. 5 ملٹی جنریشن تحریصی انجن',
+                sec5P1: 'صارف کے پلان کی رقم سے 5 جنریشنز پر تحریصی بونس: جنریشن 1 (10٪)، جنریشن 2 (15٪)، جنریشن 3 (20٪)، جنریشن 4 (25٪)، اور جنریشن 5 (35٪)۔',
+                gen1Title: 'جنریشن 1: 10٪', gen1Desc: 'ڈائریکٹ ممبرز کا پلان کی رقم پر تحریض۔',
+                gen2Title: 'جنریشن 2: 15٪', gen2Desc: 'دوسری جنریشن کا پلان کی رقم پر بونس۔',
+                gen3Title: 'جنریشن 3: 20٪', gen3Desc: 'نیٹ ورک کی گہرائی کا منافع۔',
+                gen4Title: 'جنریشن 4: 25٪', gen4Desc: 'چوتھی جنریشن کا بڑا تحریض۔',
+                gen5Title: 'جنریشن 5: 35٪', gen5Desc: 'پانچویں جنریشن کا سب سے بڑا تحریصی بونس۔',
+                sec6Title: '6. ڈی سینٹرلائزڈ DAO اور 500$ پروپوزل گرانٹس',
+                sec6P1: 'سسٹم کا کنٹرول کمیونٹی کے ووٹنگ کے ذریعے ہوتا ہے۔',
+                grantTitle: '💡 500$ منظور شدہ پروپوزل گرانٹ (PIP)', grantDesc: 'پروپوزل پاس ہونے پر 500 USDT کا انعام فوری طور پر بھیجا جاتا ہے۔',
+                airdropTitle: '🎁 ووٹرز ایئر ڈراپ پول (100 فاتحین)', airdropDesc: '100 ووٹرز کو ہر ووٹنگ سیشن کے بعد ایئر ڈراپ میں سے حصہ دیا جاتا ہے۔',
+                sec7Title: '7. عالمی توسیع اور 100,000 نوڈس پلان',
+                sec7P1: '100,000 فعال عالمی نوڈس تک پہنچنے کا منصوبہ۔',
+                r1Title: 'مرحلہ I: آڈٹ اور سیکیورٹی', r1Desc: 'زیرو ڈیڈکشن سیکیورٹی کی تصدیق۔',
+                r2Title: 'مرحلہ II: 50K نوڈس کی توسیع', r2Desc: 'عالمی سطح پر 5 جنریشنز سسٹم کا آغاز۔',
+                r3Title: 'مرحلہ III: 100K خودکار DAO', r3Desc: 'اسمارٹ کانٹریکٹ کے ذریعے 100٪ خودکار کنٹرول۔',
+                sec8Title: '8. ریاضیاتی سیکیورٹی ثبوت اور آڈٹ',
+                sec8P1: 'حفاظتی نظام کی مکمل ریاضیاتی تصدیق کی گئی ہے۔',
+                txtFooter: '© PeetX Protocol ادارتی دستاویزات۔ تمام حقوق محفوظ ہیں۔'
+            },
+            'NO': {
+                dir: 'ltr',
+                regionName: 'Norway (Norsk)',
+                lblRegion: '🌐 Region og dokument-språk:',
+                txtSubHeader: 'Institusjonell Whitepaper, 85% Suksessrate-arkitektur og 5-Nivåers Incitament-Engine',
+                lblDocVer: 'Dokumentversjon:', lblSmartStatus: 'Smartkontrakt-status:', lblSelectedRegion: 'Valgt Region:',
+                txtTocTitle: 'Systemarkitektur Innholdsfortegnelse',
+                toc1: '1. Sammendrag og Null-Fradragsmodell',
+                toc2: '2. EVM Blokkjedeinfrastruktur og Sikkerhet',
+                toc3: '3. Høyfrekvent Arbitrasje & 85% Suksessrate Engine',
+                toc4: '4. Kapitalforfall og Likviditetsruting til Pool',
+                toc5: '5. 5-Nivåers Incitament-Engine for Partnernettverk',
+                toc6: '6. Desentralisert DAO og $500 Forslag-Stønader',
+                toc7: '7. Global Ekspansjonsstrategi og 100K Noder-plan',
+                toc8: '8. Matematiske Sikkerhetsbevis og Revisjoner',
+                sec1Title: '1. Sammendrag og Null-Fradragsmodell',
+                sec1P1: 'PeetX-protokollen setter en ny standard i DeFi. PeetX fjerner alle gebyrer fullstendig: Null Fradrag (0%) tas fra kapitalen under innskudd eller handels-sykluser.',
+                sec1P2: 'Kapital går direkte inn i Web3-smartkontrakter med 85% mål-suksessrate. Når syklusen avsluttes, overføres 100% av kapitalen og avkastningen automatisk tilbake til hoved-poolen.',
+                fig1Title: 'FIGUR 1: PEETX NULL-FRADRAG OG 85% SUKSESSRATE ARKITEKTUR',
+                svgNode1: 'Brukerinnskudd', svgNode1Sub: '0% Fradrag',
+                svgNode2: 'EVM Smartkontrakt', svgNode2Sub1: 'Non-Custodial', svgNode2Sub2: '85% Suksessrate Engine',
+                svgNode3: 'Avkastningskjøring', svgNode4: '5-Nivåers Incitament-Nettverk',
+                sec2Title: '2. EVM Blokkjedeinfrastruktur og Sikkerhet',
+                sec2P1: 'Bygget på EVM-kompatible nettverk med gass-optimaliserte kontrakter og Zero-Knowledge sikkerhetsbevis.',
+                sec2Sub1Title: '2.1 Uforanderlig Smartkontrakt-arkitektur',
+                sec2Sub1P: 'Eierskapet er overført til null-adressen (0x000...dead), slik at ingen kan endre logikken.',
+                sec3Title: '3. Høyfrekvent Arbitrasje & 85% Suksessrate Engine',
+                sec3P1: 'Kapital plasseres i kvantitative arbitrasje-robottområder på tvers av ledende DEX-er.',
+                sec3Sub1Title: '3.1 85% Suksessrate Algoritme-Sannsynlighet',
+                sec3Sub1P: 'Handler utføres kun når modeller indikerer over 85% sannsynlighet for gevinst.',
+                sec3Sub2Title: '3.2 Automatisk Overføring til Pool',
+                sec3Sub2P: 'Når planen avsluttes, overføres kapital og profitt automatisk tilbake til brukerens hoved-pool.',
+                sec4Title: '4. Strukturert Investeringsrammeverk',
+                sec4P1: 'Avkastning beregnes hver 24. time uten oppbevaringsgebyrer.',
+                planDemoTitle: 'Ytelseseksempel ($10,000 USD Kapitalsammensetning)',
+                p1Title: '1-Dags Syklus (1.0%)', p1Payout: 'Pool Overføring: $10,100 USD',
+                p2Title: '7-Dagers Syklus (1.0%/Dag)', p2Payout: 'Pool Overføring: $10,700 USD',
+                p3Title: '20-Dagers Syklus (1.0%/Dag)', p3Payout: 'Pool Overføring: $12,000 USD',
+                p4Title: '30-Dagers Syklus (1.0%/Dag)', p4Payout: 'Pool Overføring: $13,000 USD',
+                sec5Title: '5. 5-Nivåers Incitament-Engine for Partnernettverk',
+                sec5P1: 'Et 5-nivåers incitamentsystem i smartkontrakten ut fra planbeløpet: Gen 1 (10%), Gen 2 (15%), Gen 3 (20%), Gen 4 (25%), og Gen 5 (35%).',
+                gen1Title: 'Nivå 1: 10%', gen1Desc: 'Direkte henvisninger beregnet ut fra planverdi.',
+                gen2Title: 'Nivå 2: 15%', gen2Desc: 'Sekundært incitament ut fra planstørrelse.',
+                gen3Title: 'Nivå 3: 20%', gen3Desc: 'Tredjenivå for dyp vekst.',
+                gen4Title: 'Nivå 4: 25%', gen4Desc: 'Fjerde nivå for akselerert vekst.',
+                gen5Title: 'Nivå 5: 35%', gen5Desc: 'Maksimal bonus på femte nivå.',
+                sec6Title: '6. Desentralisert DAO og $500 Forslag-Stønader',
+                sec6P1: 'Styres av DAO-medlemmer gjennom stemmegivning på protokollforslag.',
+                grantTitle: '💡 $500 Godkjent Forslag-stønad (PIP)', grantDesc: 'Godkjente PIP-forslag utbetaler automatisk 500 USDT direkte til forfatterens lommebok.',
+                airdropTitle: '🎁 Voter AirDrop Pool (100 Vinnere)', airdropDesc: '100 aktive velgere trekkes ut til å dele en AirDrop-pool.',
+                sec7Title: '7. Global Ekspansjonsstrategi og 100K Noder-plan',
+                sec7P1: 'Skaleringsplan for å nå 100 000 aktive globale noder.',
+                r1Title: 'Fase I: Revisjoner og Kontrakt', r1Desc: 'Formell sikkerhetsverifisering og null-fradrag.',
+                r2Title: 'Fase II: 50K Noder Ekspansjon', r2Desc: 'Aktivering av 5-nivåers nettverk globalt.',
+                r3Title: 'Fase III: 100K DAO Suverenitet', r3Desc: '100% autonom drift via smartkontrakter.',
+                sec8Title: '8. Matematiske Sikkerhetsbevis og Revisjoner',
+                sec8P1: 'Verifisert mot reentrancy-angrep og flash-lån sårbarheter.',
+                txtFooter: '© PeetX Protocol Institutional Documentation. Med enerett.'
+            },
+            'DE': {
+                dir: 'ltr',
+                regionName: 'Germany (Deutsch)',
+                lblRegion: '🌐 Region & Dokument-Sprache:',
+                txtSubHeader: 'Institutionelles Whitepaper, 85% Win-Rate-Architektur & 5-Stufen-Incentive-Engine',
+                lblDocVer: 'Dokumentversion:', lblSmartStatus: 'Smart Contract Status:', lblSelectedRegion: 'Region:',
+                txtTocTitle: 'Inhaltsverzeichnis der Systemarchitektur',
+                toc1: '1. Zusammenfassung & Null-Abzug-Modell',
+                toc2: '2. EVM Blockchain-Infrastruktur & Sicherheit',
+                toc3: '3. Hochfrequenz-Arbitrage & 85% Win-Rate Engine',
+                toc4: '4. Kapitalfälligkeit & Pool-Routing',
+                toc5: '5. 5-Stufen-Incentive-Engine für Empfehlungen',
+                toc6: '6. Dezentrale DAO & $500 Vorschlags-Grants',
+                toc7: '7. Skalierungs-Roadmap & 100K Knoten-Plan',
+                toc8: '8. Mathematische Sicherheitsnachweise',
+                sec1Title: '1. Zusammenfassung & Null-Abzug-Modell',
+                sec1P1: 'Das PeetX-Protokoll setzt einen neuen Standard im DeFi-Bereich. PeetX eliminiert alle Gebühren vollständig: Null Abzüge (0%) vom Kapital bei Einzahlungen oder Handelszyklen.',
+                sec1P2: 'Das Kapital fließt direkt in Web3 Smart Contracts mit einer Ziel-Gewinnrate von 85%. Nach Ablauf des Plans fließen 100% des Kapitals und der Gewinne automatisch in den Haupt-Pool zurück.',
+                fig1Title: 'ABBILDUNG 1: PEETX NULL-ABZUG UND 85% WIN-RATE ARCHITEKTUR',
+                svgNode1: 'Einzahlung', svgNode1Sub: '0% Abzug',
+                svgNode2: 'EVM Smart Contract', svgNode2Sub1: 'Non-Custodial Escrow', svgNode2Sub2: '85% Win-Rate Engine',
+                svgNode3: 'Ertrags-Ausführung', svgNode4: '5-Stufen Incentive-Netzwerk',
+                sec2Title: '2. EVM Blockchain-Infrastruktur & Sicherheit',
+                sec2P1: 'EVM-kompatibel, gas-optimiert und mit Zero-Knowledge-Sicherheitsnachweisen ausgestattet.',
+                sec2Sub1Title: '2.1 Unveränderliche Smart Contract Architektur',
+                sec2Sub1P: 'Eigentum wurde an 0x000...dead übertragen. Niemand kann die Logik ändern oder Gelder sperren.',
+                sec3Title: '3. Hochfrequenz-Arbitrage & 85% Win-Rate Engine',
+                sec3P1: 'Kapital wird in quantitative Arbitrage-Tradingbots auf DEXs eingesetzt.',
+                sec3Sub1Title: '3.1 85% Win-Rate Algorithmus-Wahrscheinlichkeit',
+                sec3Sub1P: 'Trades werden nur bei einer Erfolgswahrscheinlichkeit von über 85% ausgeführt.',
+                sec3Sub2Title: '3.2 Automatische Überweisung in den Pool',
+                sec3Sub2P: 'Nach Ablauf des Trades fließen Kapital und Gewinne sofort zurück in den Haupt-Pool des Nutzers.',
+                sec4Title: '4. Strukturierter Investitionsrahmen',
+                sec4P1: 'Erträge werden alle 24 Stunden ohne Einbehaltungsgebühren gutgeschrieben.',
+                planDemoTitle: 'Leistung der Staking-Zyklen ($10.000 USD Modell)',
+                p1Title: '1-Tag-Zyklus (1,0%)', p1Payout: 'Pool-Überweisung: 10.100 USD',
+                p2Title: '7-Tage-Zyklus (1,0%/Tag)', p2Payout: 'Pool-Überweisung: 10.700 USD',
+                p3Title: '20-Tage-Zyklus (1,0%/Tag)', p3Payout: 'Pool-Überweisung: 12.000 USD',
+                p4Title: '30-Tage-Zyklus (1,0%/Tag)', p4Payout: 'Pool-Überweisung: 13.000 USD',
+                sec5Title: '5. 5-Stufen-Incentive-Engine für Empfehlungen',
+                sec5P1: 'Ein 5-Stufen-Empfehlungssystem im Smart Contract basierend auf der Plan-Summe: Gen 1 (10%), Gen 2 (15%), Gen 3 (20%), Gen 4 (25%), und Gen 5 (35%).',
+                gen1Title: 'Stufe 1: 10%', gen1Desc: 'Direkte Empfehlungen basierend auf der Plan-Summe.',
+                gen2Title: 'Stufe 2: 15%', gen2Desc: 'Empfehlung der 2. Generation bezogen auf den Plan.',
+                gen3Title: 'Stufe 3: 20%', gen3Desc: 'Netzwerk-Belohnung der 3. Generation.',
+                gen4Title: 'Stufe 4: 25%', gen4Desc: 'Vierte Generation Incentive.',
+                gen5Title: 'Stufe 5: 35%', gen5Desc: 'Höchster Incentive-Bonus der 5. Generation.',
+                sec6Title: '6. Dezentrale DAO & $500 Vorschlags-Grants',
+                sec6P1: 'Steuerung erfolgt autonom durch Abstimmung der DAO-Mitglieder.',
+                grantTitle: '💡 500$ PIP-Förderung', grantDesc: 'Angenommene Vorschläge zahlen automatisch 500 USDT an die Wallet des Autors aus.',
+                airdropTitle: '🎁 Wähler-AirDrop (100 Gewinner)', airdropDesc: '100 aktive Wähler teilen sich nach jeder Abstimmung den AirDrop-Pool.',
+                sec7Title: '7. Skalierungs-Roadmap & 100K Knoten-Plan',
+                sec7P1: 'Ziel: Skalierung auf 100.000 Knoten bei 100% Solvenz.',
+                r1Title: 'Phase I: Audits & Escrow', r1Desc: 'Formale Sicherheitsprüfung und Null-Abzug-Integration.',
+                r2Title: 'Phase II: 50K Knoten Erweiterung', r2Desc: 'Globale Aktivierung des 5-Stufen-Systems.',
+                r3Title: 'Phase III: 100K DAO Autonomie', r3Desc: '100% autonome Steuerung über Smart Contracts.',
+                sec8Title: '8. Mathematische Sicherheitsnachweise',
+                sec8P1: 'Formell verifiziert gegen Reentrancy-Angriffe und Flash-Loans.',
+                txtFooter: '© PeetX Protocol Institutional. Alle Rechte vorbehalten.'
+            },
+            'ES': {
+                dir: 'ltr',
+                regionName: 'Spain (Español)',
+                lblRegion: '🌐 Región e idioma:',
+                txtSubHeader: 'Whitepaper Institucional, Arquitectura 85% Win-Rate y Motor de Incentivos de 5 Niveles',
+                lblDocVer: 'Versión del documento:', lblSmartStatus: 'Estado del contrato inteligente:', lblSelectedRegion: 'Región:',
+                txtTocTitle: 'Tabla de Contenidos de la Arquitectura del Sistema',
+                toc1: '1. Resumen Ejecutivo y Modelo Cero Deducible',
+                toc2: '2. Infraestructura EVM Blockchain y Seguridad',
+                toc3: '3. Arbitraje de Alta Frecuencia y 85% Win-Rate',
+                toc4: '4. Madurez de Capital y Enrutamiento al Pool',
+                toc5: '5. Motor de Incentivos de Afiliados en 5 Niveles',
+                toc6: '6. Gobernanza DAO y Subvenciones de $500',
+                toc7: '7. Estrategia de Expansión para 100K Nodos',
+                toc8: '8. Pruebas Matemáticas de Seguridad',
+                sec1Title: '1. Resumen Ejecutivo y Modelo Cero Deducible',
+                sec1P1: 'El Protocolo PeetX establece un estándar sin precedentes en DeFi. A diferencia de los sistemas tradicionales con tarifas ocultas, PeetX elimina todas las tarifas: Cero Deducciones (0%) del capital.',
+                sec1P2: 'El capital entra directamente en contratos inteligentes Web3 operando a una tasa de victoria objetivo del 85%. Al finalizar el plan, el 100% del capital y las ganancias regresan automáticamente al pool principal.',
+                fig1Title: 'FIGURA 1: ARQUITECTURA PEETX CERO DEDUCCIONES Y WIN-RATE DEL 85%',
+                svgNode1: 'Depósito del Usuario', svgNode1Sub: '0% Deducciones',
+                svgNode2: 'Contrato EVM', svgNode2Sub1: 'Custodia Propia', svgNode2Sub2: 'Motor 85% Win-Rate',
+                svgNode3: 'Ejecución de Rendimiento', svgNode4: 'Red de Incentivos de 5 Niveles',
+                sec2Title: '2. Infraestructura EVM Blockchain y Seguridad',
+                sec2P1: 'Construido sobre redes EVM con contratos optimizados para gas y pruebas de conocimiento cero.',
+                sec2Sub1Title: '2.1 Arquitectura Inmutable',
+                sec2Sub1P: 'La propiedad fue renunciada a la dirección nula (0x000...dead). Nadie puede modificar la lógica del contrato.',
+                sec3Title: '3. Arbitraje de Alta Frecuencia y 85% Win-Rate',
+                sec3P1: 'El capital se despliega en bots cuantitativos entre los principales DEX.',
+                sec3Sub1Title: '3.1 Probabilidad Algorítmica del 85%',
+                sec3Sub1P: 'Las operaciones solo se ejecutan cuando la IA indica una probabilidad superior al 85%.',
+                sec3Sub2Title: '3.2 Transferencia Automática al Pool',
+                sec3Sub2P: 'Al finalizar la operación, el capital y las ganancias se transfieren de nuevo al pool principal.',
+                sec4Title: '4. Marco de Inversión Estructurado',
+                sec4P1: 'Los rendimientos se acumulan cada 24 horas sin comisiones de retención.',
+                planDemoTitle: 'Rendimiento de Ciclos (Ejemplo $10.000 USD)',
+                p1Title: 'Ciclo 1 Día (1.0%)', p1Payout: 'Transferencia al Pool: $10.100 USD',
+                p2Title: 'Ciclo 7 Días (1.0%/Día)', p2Payout: 'Transferencia al Pool: $10.700 USD',
+                p3Title: 'Ciclo 20 Días (1.0%/Día)', p3Payout: 'Transferencia al Pool: $12.000 USD',
+                p4Title: 'Ciclo 30 Días (1.0%/Día)', p4Payout: 'Transferencia al Pool: $13.000 USD',
+                sec5Title: '5. Motor de Incentivos de Afiliados en 5 Niveles',
+                sec5P1: 'Sistema de incentivos en 5 niveles basado en el monto del plan del usuario: Gen 1 (10%), Gen 2 (15%), Gen 3 (20%), Gen 4 (25%) y Gen 5 (35%).',
+                gen1Title: 'Gen 1: 10%', gen1Desc: 'Incentivo de primera generación sobre el plan.',
+                gen2Title: 'Gen 2: 15%', gen2Desc: 'Incentivo de segunda generación calculado del monto del plan.',
+                gen3Title: 'Gen 3: 20%', gen3Desc: 'Recompensa de tercera generación para expansión.',
+                gen4Title: 'Gen 4: 25%', gen4Desc: 'Cuarta generación de incentivo acelerado.',
+                gen5Title: 'Gen 5: 35%', gen5Desc: 'Máximo incentivo de quinta generación.',
+                sec6Title: '6. Gobernanza DAO y Subvenciones de $500',
+                sec6P1: 'La gobernanza se ejerce mediante votaciones de los miembros de la DAO.',
+                grantTitle: '💡 Subvención de $500 por Propuesta Aprobada', grantDesc: 'Las propuestas aprobadas reciben automáticamente $500 USDT en su billetera.',
+                airdropTitle: '🎁 Pool AirDrop para Votantes (100 Ganadores)', airdropDesc: '100 votantes activos son seleccionados al azar para repartir un pool de USDT.',
+                sec7Title: '7. Estrategia de Expansión para 100K Nodos',
+                sec7P1: 'Plan para escalar a 100.000 nodos manteniendo el 100% de solvencia.',
+                r1Title: 'Fase I: Auditorías y Contrato', r1Desc: 'Verificación formal e integración cero deducciones.',
+                r2Title: 'Fase II: Expansión a 50K Nodos', r2Desc: 'Despliegue de bots y activación del sistema de 5 niveles.',
+                r3Title: 'Fase III: Soberanía DAO 100K', r3Desc: 'Operación 100% autónoma por contrato inteligente.',
+                sec8Title: '8. Pruebas Matemáticas de Seguridad',
+                sec8P1: 'Verificado formalmente contra ataques de reentrada y préstamos relámpago.',
+                txtFooter: '© PeetX Protocol Institutional. Todos los derechos reservados.'
+            }
+        };
+
+        function changeRegion(code) {
+            const data = translations[code] || translations['US'];
+            const htmlTag = document.getElementById('htmlTag');
+            
+            htmlTag.setAttribute('dir', data.dir);
+            htmlTag.setAttribute('lang', code.toLowerCase());
+
+            document.getElementById('activeRegionText').innerText = data.regionName;
+
+            for (let key in data) {
+                if (key !== 'dir' && key !== 'regionName') {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        el.innerText = data[key];
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
