@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PEETX Coin - Official Protocol 2034</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #07030a;
+            --bg-card: #120720;
+            --bg-card-hover: #1c0b33;
+            --bg-input: #18092d;
+            --purple-main: #7e22ce;
+            --purple-light: #a855f7;
+            --purple-glow: rgba(168, 85, 247, 0.35);
+            --gold-main: #d97706;
+            --gold-light: #fbbf24;
+            --gold-gradient: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #b45309 100%);
+            --purple-gradient: linear-gradient(135deg, #6b21a8 0%, #1e1b4b 100%);
+            --glass-bg: rgba(18, 7, 32, 0.75);
+            --glass-border: rgba(251, 191, 36, 0.2);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --green-buy: #10b981;
+            --red-sell: #ef4444;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            overflow-x: hidden !important;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        *, *:before, *:after { box-sizing: border-box; }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            font-size: 0.88rem;
+        }
+
+        .btn-gold {
+            background: var(--gold-gradient);
+            color: #0b0512;
+            box-shadow: 0 4px 18px rgba(245, 158, 11, 0.28);
+        }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(245, 158, 11, 0.4); }
+        .btn-gold:active { transform: scale(0.97); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--purple-light);
+            color: var(--text-main);
+        }
+        .btn-outline:hover { background: rgba(168, 85, 247, 0.15); border-color: var(--gold-light); }
+
+        /* Header Navigation */
+        header {
+            background: rgba(7, 3, 10, 0.92);
+            backdrop-filter: blur(15px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold-light);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 15px var(--purple-glow);
+        }
+
+        .sidebar-btn {
+            font-size: 1.6rem;
+            color: var(--gold-light);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: 0.2s;
+        }
+        .sidebar-btn:hover { transform: scale(1.1); }
+
+        /* Sidebar Navigation Options */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -310px;
+            width: 290px;
+            height: 100%;
+            background: var(--bg-card);
+            z-index: 1000;
+            box-shadow: 8px 0 30px rgba(0,0,0,0.9);
+            transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 22px 16px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--glass-border);
+            overflow-y: auto;
+        }
+
+        .sidebar.active { left: 0; }
+
+        .close-sidebar {
+            align-self: flex-end;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: 0.2s;
+        }
+        .close-sidebar:hover { color: var(--gold-light); }
+
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .sidebar-links li a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-links li a:hover, .sidebar-links li a.active-link {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--gold-light);
+            border-color: rgba(251, 191, 36, 0.3);
+            border-left: 4px solid var(--gold-light);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+        }
+        .overlay.active { display: block; }
+
+        /* Banner Disclaimer */
+        .disclaimer-bar {
+            background: linear-gradient(90deg, rgba(126, 34, 206, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
+            border: 1px solid var(--glass-border);
+            color: #f3e8ff;
+            padding: 12px 16px;
+            text-align: center;
+            border-radius: 14px;
+            margin-top: 85px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Contract Address Box */
+        .contract-box {
+            background: var(--bg-card);
+            border: 1px dashed var(--gold-light);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contract-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            overflow: hidden;
+        }
+
+        .contract-code {
+            font-family: monospace;
+            color: var(--gold-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 220px;
+        }
+
+        /* Section Block Styling */
+        .section-block {
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+
+        .section-block.active-section {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            margin-top: 0;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+        }
+
+        /* Countdown 2034 Box */
+        .countdown-container {
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(20, 8, 36, 0.9) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            margin: 18px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .time-box {
+            background: rgba(7, 3, 10, 0.7);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 68px;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold-light);
+        }
+
+        .time-box label { font-size: 0.72rem; color: var(--text-muted); }
+
+        /* --- MINING SECTION CIRCULAR STYLES --- */
+        .mining-card-box {
+            background: linear-gradient(145deg, #160829 0%, #0c0418 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 16px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mining-circle-container {
+            position: relative;
+            width: 210px;
+            height: 210px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mining-circle-btn {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #2e1065 0%, #0f051d 100%);
+            border: 3px solid var(--gold-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 30px var(--purple-glow), inset 0 0 20px rgba(251, 191, 36, 0.2);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mining-circle-btn:hover {
+            transform: scale(1.04);
+            border-color: #fef08a;
+            box-shadow: 0 0 45px rgba(245, 158, 11, 0.5), inset 0 0 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .mining-circle-btn:active {
+            transform: scale(0.96);
+        }
+
+        .mining-circle-btn.active-mining {
+            border-color: var(--purple-light);
+            box-shadow: 0 0 40px var(--purple-glow), inset 0 0 20px rgba(168, 85, 247, 0.5);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 25px var(--purple-glow), inset 0 0 15px rgba(168, 85, 247, 0.3); }
+            100% { box-shadow: 0 0 50px rgba(168, 85, 247, 0.7), inset 0 0 30px rgba(251, 191, 36, 0.4); }
+        }
+
+        .mining-circle-icon {
+            font-size: 2.8rem;
+            color: var(--gold-light);
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+            transition: 0.3s;
+        }
+
+        .mining-circle-btn:hover .mining-circle-icon {
+            transform: scale(1.1);
+        }
+
+        .mining-circle-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .mining-airdrop-info {
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px dashed var(--purple-light);
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 0.85rem;
+            color: var(--gold-light);
+            margin: 16px 0;
+            line-height: 1.5;
+            width: 100%;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        .history-table th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--gold-light);
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+        }
+
+        /* Cards Grid */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .card {
+            background: rgba(24, 9, 45, 0.6);
+            border: 1px solid rgba(168, 85, 247, 0.18);
+            border-radius: 16px;
+            padding: 18px;
+            transition: 0.3s;
+        }
+        .card:hover { border-color: var(--gold-light); transform: translateY(-3px); }
+
+        /* Chart Canvas Container */
+        .chart-box {
+            position: relative;
+            background: #090312;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 15px;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 200px !important;
+        }
+
+        /* Order Book UI */
+        .trade-ui-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .trade-input-box {
+            background: var(--bg-input);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px;
+        }
+        .trade-input-box input, .trade-input-box select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            margin-top: 4px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .trade-input-box select option {
+            background-color: var(--bg-card);
+            color: white;
+        }
+
+        /* Swap Styles */
+        .swap-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .swap-box {
+            background: var(--bg-input);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .swap-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .swap-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            width: 50%;
+            outline: none;
+        }
+        .swap-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--purple-light);
+            border-radius: 10px;
+            color: white;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+        .swap-select option {
+            background: var(--bg-card);
+            color: white;
+        }
+        .swap-switch-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--gold-light);
+            color: var(--gold-light);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -18px auto -18px auto;
+            cursor: pointer;
+            position: relative;
+            z-index: 5;
+            transition: 0.25s;
+        }
+        .swap-switch-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+            background: var(--purple-main);
+        }
+        .percentage-btns {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .pct-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 4px 0;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pct-btn:hover {
+            background: var(--purple-light);
+            color: white;
+            border-color: var(--gold-light);
+        }
+
+        /* Telegram Links Box */
+        .telegram-btn {
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            padding: 14px 18px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            transition: 0.25s;
+        }
+        .telegram-btn:hover { background: #0099e6; transform: translateY(-2px); }
+
+        /* Modal Screen */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 16px;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--gold-light);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 0 35px rgba(126, 34, 206, 0.4);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Ludo Board Mini UI */
+        .ludo-mini-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 210px;
+            height: 210px;
+            margin: 15px auto;
+            background: #07030a;
+            padding: 6px;
+            border-radius: 12px;
+            border: 2px solid var(--gold-light);
+        }
+        .ludo-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.75rem;
+            border-radius: 6px;
+        }
+        .zone-red { background: #ef4444; color: white; }
+        .zone-green { background: #10b981; color: white; }
+        .zone-yellow { background: #fbbf24; color: black; }
+        .zone-blue { background: #3b82f6; color: white; }
+        .zone-center { background: #7e22ce; color: white; }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 24px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay & Sidebar -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <i class="fa-solid fa-xmark close-sidebar" id="closeSidebar"></i>
+        <div class="logo-box" style="margin-bottom: 22px;">
+            <img src="uuu.png" alt="PEETX Coin" class="logo-img">
+            <div>
+                <span class="gold-text" style="font-weight: 900; font-size: 1.1rem; display: block;">PEETX COIN</span>
+                <span style="font-size: 0.65rem; color: var(--purple-light); font-weight: 700;">Protocol Network 2034</span>
+            </div>
+        </div>
+        <ul class="sidebar-links">
+            <li><a onclick="showSection('sec-main', this)" class="active-link"><i class="fa-solid fa-house"></i> Main Interface & Timer (2034)</a></li>
+            <li><a onclick="showSection('sec-swap', this)"><i class="fa-solid fa-right-left"></i> Token Swap (PEETX Swap)</a></li>
+            <li><a onclick="showSection('sec-loans', this)"><i class="fa-solid fa-hand-holding-dollar"></i> Decentralized Loans & Staking</a></li>
+            <li><a onclick="showSection('sec-mining', this)"><i class="fa-solid fa-microchip"></i> Coin Mining & Direct Distribution</a></li>
+            <li><a onclick="showSection('sec-games', this)"><i class="fa-solid fa-gamepad"></i> Games, Challenges & Prizes</a></li>
+            <li><a onclick="showSection('sec-bridges', this)"><i class="fa-solid fa-link"></i> Cross-Chain Network Bridges</a></li>
+            <li><a onclick="showSection('sec-burn-ops', this)"><i class="fa-solid fa-fire"></i> Burn Operations & Details (21M)</a></li>
+            <li><a onclick="showSection('sec-decentralization', this)"><i class="fa-solid fa-network-wired"></i> Decentralization Architecture</a></li>
+            <li><a onclick="showSection('sec-trading', this)"><i class="fa-solid fa-chart-candlestick"></i> Live Trading & Binance Chart</a></li>
+            <li><a onclick="showSection('sec-nft', this)"><i class="fa-solid fa-trophy"></i> NFT Competitions & Tokens</a></li>
+            <li><a onclick="showSection('sec-prizes', this)"><i class="fa-solid fa-gift"></i> Win Financial Rewards</a></li>
+            <li><a onclick="showSection('sec-social', this)"><i class="fa-solid fa-paper-plane"></i> Coin Forces & Core Project</a></li>
+            <li><a onclick="showSection('sec-burn-system', this)"><i class="fa-solid fa-fire-burner"></i> Smart Token Burn System</a></li>
+            <li><a onclick="showSection('sec-community', this)"><i class="fa-solid fa-users"></i> Community & Collaboration System</a></li>
+            <li><a onclick="showSection('sec-live-chat', this)"><i class="fa-solid fa-comments"></i> Live Trading & User Chat</a></li>
+            <li><a onclick="showSection('sec-staking', this)"><i class="fa-solid fa-vault"></i> Token Staking & Yield System</a></li>
+            <li><a onclick="showSection('sec-whitepaper', this)"><i class="fa-solid fa-file-contract"></i> Official Approved Whitepaper</a></li>
+        </ul>
+    </div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="container nav-container">
+            <div class="logo-box">
+                <img src="uuu.png" alt="PEETX Coin" class="logo-img">
+                <div>
+                    <span class="gold-text" style="font-weight: 900; font-size: 1.25rem; display: block;">PEETX COIN</span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: -3px;">Global Ecosystem 2034</span>
+                </div>
+            </div>
+            <button class="sidebar-btn" id="openSidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Official Disclaimer Bar -->
+        <div class="disclaimer-bar">
+            <i class="fa-solid fa-shield-halved gold-text"></i>
+            <strong>Official Announcement:</strong> Autonomous Decentralized Ecosystem for <strong>PEETX Coin</strong>. 
+            <span class="gold-text" style="font-weight: 800;">Total Max Supply: 21 Million Tokens with continuous burn mechanisms to diminish supply</span>.
+        </div>
+
+        <!-- Contract Address Box -->
+        <div class="contract-box">
+            <div class="contract-info">
+                <img src="uuu.png" style="width: 22px; height: 22px; border-radius: 50%;">
+                <span style="font-size:0.78rem;">Official Smart Contract:</span>
+                <span class="contract-code">0x0000000000000000000000000000000000000000</span>
+            </div>
+            <button class="btn btn-outline" onclick="copyContractZeros()" style="padding: 6px 12px; font-size: 0.78rem;" id="copyBtn">
+                <i class="fa-solid fa-copy"></i> Copy Contract
+            </button>
+        </div>
+
+        <!-- 1. Main Interface & Timer -->
+        <div id="sec-main" class="section-block active-section">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-house"></i> Main Interface & Countdown (2034)</h2>
+            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">The PEETX Coin ecosystem relies on an integrated futuristic technical architecture that guarantees absolute security and value preservation at the highest levels through rigorous protocols and autonomous mechanisms.</p>
+
+            <div class="grid-cards" style="margin-bottom: 15px;">
+                <div class="card" style="text-align: center;">
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Total Maximum Supply:</span>
+                    <h3 class="gold-text" style="margin: 4px 0 0 0;">21,000,000 PEETX</h3>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Supply Reduction Mechanism:</span>
+                    <h3 style="margin: 4px 0 0 0; color: var(--purple-light);">Automatic Smart Burn 🔥</h3>
+                </div>
+            </div>
+            
+            <div class="countdown-container">
+                <div style="font-size: 0.9rem; color: var(--gold-light); font-weight: 700;">
+                    <i class="fa-solid fa-hourglass-half"></i> Live Countdown to Official Launch (Year 2034)
+                </div>
+                <div class="timer">
+                    <div class="time-box"><span id="days">00</span><label>Days</label></div>
+                    <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+                    <div class="time-box"><span id="minutes">00</span><label>Minutes</label></div>
+                    <div class="time-box"><span id="seconds">00</span><label>Seconds</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Token Swap Section -->
+        <div id="sec-swap" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-right-left"></i> Token Swap (PEETX Swap)</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">An instant decentralized exchange platform allowing you to seamlessly buy and sell <strong>PEETX Coin</strong> against popular cryptocurrencies with top-tier security.</p>
+
+            <div class="swap-card">
+                <!-- Top Token (Pay/From) -->
+                <div class="swap-box">
+                    <div class="swap-row" style="margin-bottom: 6px;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="swapFromLabel">You Pay (From)</span>
+                        <span style="font-size: 0.75rem; color: var(--gold-light);" id="swapFromBal">Balance: 0.00</span>
+                    </div>
+                    <div class="swap-row">
+                        <input type="number" class="swap-input" id="swapFromAmount" placeholder="0.0" oninput="calculateSwap()">
+                        <select class="swap-select" id="swapFromToken" onchange="switchSwapSelection()">
+                            <option value="USDT">USDT</option>
+                            <option value="USDC">USDC</option>
+                            <option value="BNB">BNB</option>
+                            <option value="BTC">BTC (Bitcoin)</option>
+                            <option value="DAI">DAI</option>
+                            <option value="ETH">ETH (Ethereum)</option>
+                            <option value="PEETX">PEETX Coin</option>
+                        </select>
+                    </div>
+                    <div class="percentage-btns">
+                        <button class="pct-btn" onclick="setSwapPercentage(25)">25%</button>
+                        <button class="pct-btn" onclick="setSwapPercentage(50)">50%</button>
+                        <button class="pct-btn" onclick="setSwapPercentage(75)">75%</button>
+                        <button class="pct-btn" onclick="setSwapPercentage(100)">100% MAX</button>
+                    </div>
+                </div>
+
+                <!-- Switch Direction Button -->
+                <button class="swap-switch-btn" onclick="toggleSwapDirection()" title="Reverse Swap Direction">
+                    <i class="fa-solid fa-arrow-down-up-lock"></i>
+                </button>
+
+                <!-- Bottom Token (Receive/To) -->
+                <div class="swap-box">
+                    <div class="swap-row" style="margin-bottom: 6px;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="swapToLabel">You Receive (To)</span>
+                        <span style="font-size: 0.75rem; color: var(--gold-light);" id="swapToBal">Balance: 0.00</span>
+                    </div>
+                    <div class="swap-row">
+                        <input type="number" class="swap-input" id="swapToAmount" placeholder="0.0" readonly>
+                        <select class="swap-select" id="swapToToken" onchange="switchSwapSelection()">
+                            <option value="PEETX">PEETX Coin</option>
+                            <option value="USDT">USDT</option>
+                            <option value="USDC">USDC</option>
+                            <option value="BNB">BNB</option>
+                            <option value="BTC">BTC (Bitcoin)</option>
+                            <option value="DAI">DAI</option>
+                            <option value="ETH">ETH (Ethereum)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Swap Info Table -->
+                <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 10px 14px; margin: 12px 0; font-size: 0.78rem;">
+                    <div class="swap-row" style="margin-bottom: 4px;">
+                        <span style="color: var(--text-muted);">Estimated Rate:</span>
+                        <span style="color: var(--gold-light);" id="swapRateInfo">1 PEETX ≈ 10.00 USDT</span>
+                    </div>
+                    <div class="swap-row">
+                        <span style="color: var(--text-muted);">Auto-Burn Fee:</span>
+                        <span style="color: var(--purple-light);">2% Supply Deflation 🔥</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="executeSwapAction()">
+                    <i class="fa-solid fa-right-left"></i> Execute Swap (Coming Soon)
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Decentralized Loans & Staking -->
+        <div id="sec-loans" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-hand-holding-dollar"></i> Decentralized Loans & Staking (DeFi Lending Pool)</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                An autonomous decentralized loan protocol operating via Smart Liquidity Pools. Collateralize your crypto assets to acquire instant stablecoin loans without intermediaries or credit checks.
+            </p>
+
+            <!-- Explanation Banner -->
+            <div style="background: linear-gradient(135deg, rgba(126, 34, 206, 0.2) 0%, rgba(18, 7, 32, 0.8) 100%); border: 1px solid var(--purple-light); border-radius: 16px; padding: 16px; margin-bottom: 20px;">
+                <h4 class="gold-text" style="margin-top: 0; margin-bottom: 8px;"><i class="fa-solid fa-circle-info"></i> How Does the DeFi Lending Protocol Work?</h4>
+                <ul style="font-size: 0.82rem; color: var(--text-muted); padding-left: 20px; margin: 0; line-height: 1.7;">
+                    <li><strong>Collateral Vault:</strong> Lock crypto assets such as Bitcoin (BTC), Ethereum (ETH), or native <strong>PEETX Coin</strong> into smart contract pools.</li>
+                    <li><strong>Liquidity Provision:</strong> Loans are disbursed directly from decentralized network pools with zero human intervention.</li>
+                    <li><strong>Loan Limits:</strong> Available borrowing limits range from <strong>$10</strong> up to <strong>$200,000</strong> (USDT / USDC).</li>
+                    <li><strong>Collateral Release:</strong> Upon full loan repayment, collateralized assets are unlocked and returned directly to your wallet.</li>
+                </ul>
+            </div>
+
+            <div class="grid-cards">
+                <!-- Loan Calculator Card -->
+                <div class="card" style="grid-column: span 1 / -1;">
+                    <h3 class="gold-text" style="margin-top: 0; font-size: 1.1rem;"><i class="fa-solid fa-calculator"></i> DeFi Loan Request Calculator</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 15px;">
+                        <div class="trade-input-box">
+                            <label style="font-size: 0.78rem; color: var(--gold-light);">1. Select Collateral Token</label>
+                            <select id="loanCollateralToken">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="PEETX">PEETX Coin</option>
+                            </select>
+                        </div>
+
+                        <div class="trade-input-box">
+                            <label style="font-size: 0.78rem; color: var(--gold-light);">2. Select Loan Payout Token</label>
+                            <select id="loanReceiveToken">
+                                <option value="USDT">USDT (Tether)</option>
+                                <option value="USDC">USD Coin (USDC)</option>
+                            </select>
+                        </div>
+
+                        <div class="trade-input-box" style="grid-column: span 1 / -1;">
+                            <label style="font-size: 0.78rem; color: var(--gold-light);">3. Set Desired Loan Amount ($10 - $200,000)</label>
+                            <input type="number" id="loanAmountInput" min="10" max="200000" placeholder="Enter amount in USD (e.g., 5000)" oninput="updateLoanCalculation()">
+                        </div>
+                    </div>
+
+                    <!-- Calculated Details -->
+                    <div style="background: rgba(7, 3, 10, 0.6); border: 1px dashed var(--glass-border); border-radius: 12px; padding: 14px; margin-top: 15px;">
+                        <div class="swap-row" style="margin-bottom: 6px; font-size: 0.82rem;">
+                            <span style="color: var(--text-muted);">Estimated Required Collateral:</span>
+                            <span style="color: var(--gold-light); font-weight: 700;" id="loanRequiredCollateral">0.00 BTC</span>
+                        </div>
+                        <div class="swap-row" style="margin-bottom: 6px; font-size: 0.82rem;">
+                            <span style="color: var(--text-muted);">Pool LTV Ratio:</span>
+                            <span style="color: var(--green-buy); font-weight: 700;">75% High Security</span>
+                        </div>
+                        <div class="swap-row" style="font-size: 0.82rem;">
+                            <span style="color: var(--text-muted);">Permitted Borrow Limits:</span>
+                            <span style="color: var(--purple-light); font-weight: 700;">From $10 to $200,000 USD</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-gold" style="width: 100%; margin-top: 15px; padding: 12px;" onclick="requestDeFiLoan()">
+                        <i class="fa-solid fa-file-signature"></i> Submit Loan Application (Coming Soon)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Coin Mining & Direct Distribution -->
+        <div id="sec-mining" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-microchip"></i> Coin Mining & Direct Distribution</h2>
+            
+            <div class="mining-card-box">
+                <!-- Circular Mining Button -->
+                <div class="mining-circle-container">
+                    <button class="mining-circle-btn" id="miningCircleBtn" onclick="triggerMiningStart()">
+                        <i class="fa-solid fa-power-off mining-circle-icon" id="miningCircleIcon"></i>
+                        <span class="mining-circle-text" id="miningBtnText">Start Mining</span>
+                    </button>
+                </div>
+
+                <div class="mining-airdrop-info">
+                    <i class="fa-solid fa-gift"></i> <strong>Reward System:</strong> Free randomized Airdrop distribution calculated dynamically based on supply/demand and network engagement.
+                </div>
+
+                <!-- Daily Mining Countdown -->
+                <div class="countdown-container" style="margin: 15px auto; width: 100%; max-width: 400px; padding: 12px;">
+                    <div style="font-size: 0.8rem; color: var(--gold-light); font-weight: 700;">
+                        <i class="fa-solid fa-clock"></i> Active Mining Session Countdown (24 Hours)
+                    </div>
+                    <div class="timer" style="margin-top: 8px;">
+                        <div class="time-box" style="min-width: 55px; padding: 6px;"><span id="mine-hours" style="font-size:1.1rem;">24</span><label>Hours</label></div>
+                        <div class="time-box" style="min-width: 55px; padding: 6px;"><span id="mine-minutes" style="font-size:1.1rem;">00</span><label>Mins</label></div>
+                        <div class="time-box" style="min-width: 55px; padding: 6px;"><span id="mine-seconds" style="font-size:1.1rem;">00</span><label>Secs</label></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mining History -->
+            <div class="card" style="margin-top: 15px;">
+                <h4 class="gold-text" style="margin-top:0; margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> Active & Historical Mining Logs</h4>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Session</th>
+                            <th>Status</th>
+                            <th>Airdrop Reward</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="miningHistoryBody">
+                        <tr>
+                            <td>Live Session</td>
+                            <td><span style="color: var(--gold-light);">Standby...</span></td>
+                            <td>Random Airdrop</td>
+                            <td>Today</td>
+                        </tr>
+                        <tr>
+                            <td>Session #102</td>
+                            <td><span style="color: var(--green-buy);">Completed</span></td>
+                            <td>0.00045 PEETX</td>
+                            <td>Yesterday</td>
+                        </tr>
+                        <tr>
+                            <td>Session #101</td>
+                            <td><span style="color: var(--green-buy);">Completed</span></td>
+                            <td>0.00082 PEETX</td>
+                            <td>2 Days Ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. Interactive Games & Challenges -->
+        <div id="sec-games" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-gamepad"></i> Interactive Games & Challenges</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Dedicated arena for entertainment and peer-to-peer competition. Currently featuring social rank contests and community leaderboards.</p>
+
+            <div class="grid-cards">
+                <!-- Ludo Game Card -->
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-chess-board gold-text" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                    <h4>PEETX Ludo Challenge</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Challenge peers in competitive Ludo. Roll the dice, move your tokens to the home zone, and dominate!</p>
+
+                    <button class="btn btn-gold" style="width: 100%; margin-top: 10px;" onclick="openLudoGame()">
+                        <i class="fa-solid fa-dice"></i> Play Ludo Now
+                    </button>
+                </div>
+
+                <!-- Dice Rolling Challenge -->
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-dice-five gold-text" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                    <h4>Dice & Prize Challenge</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Fast-paced dice rolling arena testing competitive high rolls across network users.</p>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="openDiceGame()">
+                        <i class="fa-solid fa-play"></i> Launch Dice
+                    </button>
+                </div>
+
+                <!-- Memory Challenge -->
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-brain gold-text" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                    <h4>Memory Matrix</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Match identical NFT cards against the clock to prove cognitive sharpness.</p>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="openMemoryGame()">
+                        <i class="fa-solid fa-puzzle-piece"></i> Start Puzzle
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Cross-Chain Bridges -->
+        <div id="sec-bridges" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-link"></i> Decentralized Cross-Chain Bridges</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Smart cross-chain protocols enabling frictionless and secure PEETX token transfers across major decentralized networks globally.</p>
+            <div class="grid-cards">
+                <div class="card" style="text-align: center;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px;">
+                        <i class="fa-brands fa-ethereum gold-text" style="font-size: 2.2rem;"></i>
+                        <i class="fa-solid fa-arrow-right-arrow-left" style="color: var(--purple-light);"></i>
+                        <i class="fa-solid fa-cubes gold-text" style="font-size: 2.2rem;"></i>
+                    </div>
+                    <h4>Ethereum & BSC Bridge</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Interlink liquidity seamlessly between Ethereum Mainnet and Binance Smart Chain.</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px;">
+                        <i class="fa-solid fa-bolt gold-text" style="font-size: 2.2rem;"></i>
+                        <i class="fa-solid fa-arrow-right-arrow-left" style="color: var(--purple-light);"></i>
+                        <i class="fa-solid fa-layer-group gold-text" style="font-size: 2.2rem;"></i>
+                    </div>
+                    <h4>Solana & Polygon Bridge</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Ultra-high execution speed with negligible transaction gas overhead.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Burn Operations -->
+        <div id="sec-burn-ops" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-fire"></i> Token Burn & Deflation Mechanisms</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">With a hard cap of 21 million tokens, the network mandates strict burn dynamics to boost long-term scarcity.</p>
+            <div class="grid-cards">
+                <div class="card">
+                    <h4 class="gold-text"><i class="fa-solid fa-fire-flame-curved"></i> On-Chain Transaction Tax</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Automated 2% burn tax applied to every network transaction, routing tokens to unspendable dead addresses.</p>
+                </div>
+                <div class="card">
+                    <h4 class="gold-text"><i class="fa-solid fa-chart-line"></i> Periodic Mega Burns</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Scheduled quarterly supply reduction events designed to continuously diminish circulating volume.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Decentralization Architecture -->
+        <div id="sec-decentralization" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-network-wired"></i> Decentralization Architecture</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Autonomous execution running exclusively on smart contracts, detached from centralized servers or human interference.</p>
+            <div class="grid-cards">
+                <div class="card">
+                    <h4><i class="fa-solid fa-user-shield gold-text"></i> DAO Governance</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Voting rights and code upgrade proposals are controlled entirely by PEETX token holders.</p>
+                </div>
+                <div class="card">
+                    <h4><i class="fa-solid fa-lock gold-text"></i> Time-Locked Liquidity</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">100% of liquidity pool tokens are locked inside immutably verified smart contract vaults.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Live Trading & Binance Chart -->
+        <div id="sec-trading" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-chart-candlestick"></i> Live Trading & Binance-Style Chart</h2>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">Professional trading interface - Live charts and order execution are paused until official mainnet launch.</p>
+            
+            <div class="chart-box">
+                <div style="font-size: 0.85rem; color: var(--gold-light); margin-bottom: 8px; font-weight: 700;">
+                    <i class="fa-solid fa-chart-line"></i> PEETX COIN / USDT - Live Trading Chart
+                </div>
+                <canvas id="liveChartCanvas"></canvas>
+                <div style="position: absolute; background: rgba(0,0,0,0.85); padding: 10px 20px; border-radius: 10px; border: 1px solid var(--gold-light); font-size: 0.85rem; text-align: center;" class="gold-text">
+                    <i class="fa-solid fa-lock"></i> Live Trading Chart Paused / Unlocks at Mainnet Launch
+                </div>
+            </div>
+
+            <!-- Binance Style Input Controls -->
+            <div class="trade-ui-box">
+                <div class="trade-input-box">
+                    <span style="font-size: 0.75rem; color: var(--green-buy); font-weight: 700;">Order Buy (BUY PEETX)</span>
+                    <input type="number" placeholder="Amount (USDT)">
+                    <button class="btn" style="background: var(--green-buy); color: white; width: 100%; margin-top: 8px;" onclick="showComingSoonModal()">Buy / Coming Soon</button>
+                </div>
+
+                <div class="trade-input-box">
+                    <span style="font-size: 0.75rem; color: var(--red-sell); font-weight: 700;">Order Sell (SELL PEETX)</span>
+                    <input type="number" placeholder="Quantity (PEETX)">
+                    <button class="btn" style="background: var(--red-sell); color: white; width: 100%; margin-top: 8px;" onclick="showComingSoonModal()">Sell / Coming Soon</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. NFT Competitions -->
+        <div id="sec-nft" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-trophy"></i> NFT Competitions & Collectibles</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Exclusive marketplace and contests for rare NFTs granting boosted ecosystem privileges.</p>
+            <div class="grid-cards">
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-gem gold-text" style="font-size: 2.4rem; margin-bottom: 8px;"></i>
+                    <h4>PEETX Elite NFT Pass</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Collect rare passes to unlock multi-tier multipliers on airdrops and staking yields.</p>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 8px;" onclick="showComingSoonModal()">Explore Gallery / Coming Soon</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. Win Prizes -->
+        <div id="sec-prizes" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-gift"></i> Financial Prize Pools</h2>
+            <div class="card" style="text-align: center;">
+                <i class="fa-solid fa-sack-dollar gold-text" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                <h3>Grand Sweepstakes & Rewards</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Participate in community milestones to qualify for direct stablecoin giveaways and token allocations.</p>
+                <button class="btn btn-gold" style="width: 100%; margin-top: 10px;" onclick="showComingSoonModal()">Enter Raffle / Coming Soon</button>
+            </div>
+        </div>
+
+        <!-- 12. Community Channels -->
+        <div id="sec-social" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-paper-plane"></i> Coin Forces & Official Channels</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Click below to join our verified communication hubs and official Telegram portals:</p>
+            
+            <div class="grid-cards">
+                <a href="https://t.me/PeetX_1" target="_blank" class="telegram-btn">
+                    <i class="fa-brands fa-telegram" style="font-size: 1.6rem;"></i>
+                    <span>Official Telegram Channel (@PeetX_1)</span>
+                </a>
+
+                <a href="https://t.me/PeetX_2" target="_blank" class="telegram-btn" style="background: #006699;">
+                    <i class="fa-brands fa-telegram" style="font-size: 1.6rem;"></i>
+                    <span>Community Group (@PeetX_2)</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 13. Smart Token Burn System -->
+        <div id="sec-burn-system" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-fire-burner"></i> Smart Token Burn Protocol</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">A dynamic burning algorithm that ramps up deflation proportionally with trading volume fluctuations.</p>
+            <div class="card">
+                <h4 class="gold-text"><i class="fa-solid fa-gears"></i> Balanced Burn Algorithm</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Automatically adjusts transaction tax parameters dynamically to shield token value during volatility.</p>
+            </div>
+        </div>
+
+        <!-- 14. Community & Collaboration -->
+        <div id="sec-community" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-users"></i> Community & Open Collaboration</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">A collective growth framework powering ambassadors, developers, and global advocates.</p>
+            <div class="grid-cards">
+                <div class="card">
+                    <h4><i class="fa-solid fa-handshake gold-text"></i> Ambassador Program</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Incentivized grants for community contributors driving ecosystem adoption.</p>
+                </div>
+                <div class="card">
+                    <h4><i class="fa-solid fa-code-branch gold-text"></i> Open-Source DApps</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Open SDKs enabling third-party developers to build decentralized applications on PEETX network.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15. Live Trading Chat -->
+        <div id="sec-live-chat" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-comments"></i> Live Peer Chat & Trading Room</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time messaging hub integrated directly into the trading terminal for seamless peer interaction.</p>
+            
+            <div style="background: var(--bg-input); border-radius: 14px; padding: 20px; text-align: center; border: 1px dashed rgba(251, 191, 36, 0.3);">
+                <i class="fa-solid fa-comment-slash gold-text" style="font-size: 2.4rem; margin-bottom: 10px;"></i>
+                <h4 class="gold-text" style="margin: 0 0 6px 0;">Live Chat Terminal</h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 15px;">Peer-to-peer live chat and order discussions are temporarily suspended and will launch alongside the live chart.</p>
+                <button class="btn btn-gold" onclick="showComingSoonModal()"><i class="fa-solid fa-lock"></i> Enter Chat Room / Coming Soon</button>
+            </div>
+        </div>
+
+        <!-- 16. Staking & Yield -->
+        <div id="sec-staking" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-vault"></i> Token Staking & Yield Vaults</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Lock your PEETX Coin holdings inside smart vaults to generate sustainable passive rewards.</p>
+            <div class="grid-cards">
+                <div class="card">
+                    <h4 class="gold-text">Flexible Short-Term Vaults</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Estimated ~15% APY with flexible un-staking terms and zero penalties.</p>
+                </div>
+                <div class="card">
+                    <h4 class="gold-text">2034 Sovereign Vault</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Up to ~35% APY multi-year vault tailored for long-term project supporters.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17. Official Whitepaper -->
+        <div id="sec-whitepaper" class="section-block">
+            <h2 class="section-title gold-text"><i class="fa-solid fa-file-contract"></i> Official Whitepaper Protocol</h2>
+            
+            <div style="background: rgba(10, 4, 20, 0.85); border: 1px solid var(--glass-border); border-radius: 14px; padding: 20px; line-height: 1.7; font-size: 0.85rem;">
+                <div style="background: rgba(217, 119, 6, 0.15); border-left: 4px solid var(--gold-light); padding: 12px 14px; margin-bottom: 16px; border-radius: 6px;">
+                    <strong class="gold-text"><i class="fa-solid fa-triangle-exclamation"></i> Important Notice:</strong> 
+                    This official whitepaper document will undergo final smart contract audit updates upon mainnet launch in 2034.
+                </div>
+
+                <h3 class="gold-text" style="margin-top: 0;">1. Executive Summary & Vision</h3>
+                <p style="color: var(--text-muted);">PEETX Coin pioneers an autonomous digital economy eliminating financial intermediaries, delivering a hyper-secure ecosystem restricted strictly to 21 Million tokens.</p>
+
+                <h3 class="gold-text">2. Smart Contract Features</h3>
+                <ul style="color: var(--text-muted); padding-left: 20px;">
+                    <li><strong>Full Decentralization:</strong> Self-executing code operating entirely without central servers.</li>
+                    <li><strong>Cross-Chain Efficiency:</strong> Ultra-fast bridging technology moving assets at minimal cost.</li>
+                    <li><strong>Peer-to-Peer Architecture:</strong> Direct wallet-to-wallet trading without custody risks.</li>
+                    <li><strong>Deflationary Dynamics:</strong> Continuous supply reduction driving organic scarcity.</li>
+                </ul>
+
+                <h3 class="gold-text">3. Strategic Roadmap to 2034</h3>
+                <p style="color: var(--text-muted);">Phased execution focusing on community building, bridge deployments, decentralized liquidity rollout, culminating in full public listing in 2034.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Interactive Window -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content" id="modalContainer">
+            <!-- Dynamic Content Engine -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>All Rights Reserved &copy; <strong>PEETX Coin Ecosystem</strong> (Official Protocol Launch 2034)</p>
+            <p style="margin-top: 4px; color: var(--text-muted);">100% Autonomous Decentralized Protocol.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // Tab Navigation System
+        function showSection(sectionId, element) {
+            const sections = document.querySelectorAll('.section-block');
+            sections.forEach(sec => sec.classList.remove('active-section'));
+
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active-section');
+                if (sectionId === 'sec-trading') {
+                    renderMockChart();
+                }
+            }
+
+            const links = document.querySelectorAll('.sidebar-links a');
+            links.forEach(link => link.classList.remove('active-link'));
+            if (element) {
+                element.classList.add('active-link');
+            }
+
+            hideSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Sidebar Control Engine
+        const openSidebar = document.getElementById('openSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        openSidebar.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        function hideSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        closeSidebar.addEventListener('click', hideSidebar);
+        overlay.addEventListener('click', hideSidebar);
+
+        // Copy Contract Address
+        function copyContractZeros() {
+            const zeros = "0x0000000000000000000000000000000000000000";
+            navigator.clipboard.writeText(zeros);
+            
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<i class="fa-solid fa-check gold-text"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Contract';
+            }, 2000);
+        }
+
+        // Modal Utility
+        function showModalHTML(htmlContent) {
+            document.getElementById('modalContainer').innerHTML = htmlContent;
+            document.getElementById('gameModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('gameModal').style.display = 'none';
+        }
+
+        function showComingSoonModal() {
+            showModalHTML(`
+                <div style="text-align:center;">
+                    <i class="fa-solid fa-clock-rotate-left gold-text" style="font-size: 3rem; margin-bottom: 12px;"></i>
+                    <h3 style="margin-bottom: 8px;" class="gold-text">Coming Soon</h3>
+                    <p style="font-size:0.88rem; color: var(--text-muted); line-height: 1.5;">This feature is currently under active development and will be released officially at mainnet launch.</p>
+                    <button class="btn btn-gold" style="width:100%; margin-top:18px;" onclick="closeModal()">Acknowledge</button>
+                </div>
+            `);
+        }
+
+        // --- SWAP ENGINE ---
+        function switchSwapSelection() {
+            const from = document.getElementById('swapFromToken').value;
+            const to = document.getElementById('swapToToken').value;
+            if (from === to) {
+                document.getElementById('swapToToken').value = (from === 'PEETX') ? 'USDT' : 'PEETX';
+            }
+            calculateSwap();
+        }
+
+        function toggleSwapDirection() {
+            const fromSelect = document.getElementById('swapFromToken');
+            const toSelect = document.getElementById('swapToToken');
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            calculateSwap();
+        }
+
+        function calculateSwap() {
+            const amount = parseFloat(document.getElementById('swapFromAmount').value) || 0;
+            const from = document.getElementById('swapFromToken').value;
+            const to = document.getElementById('swapToToken').value;
+            const rateInfo = document.getElementById('swapRateInfo');
+            const toInput = document.getElementById('swapToAmount');
+
+            let peetxPriceUsd = 10; // Estimated PeetX Price
+
+            if (from === 'PEETX') {
+                toInput.value = (amount * peetxPriceUsd).toFixed(2);
+                rateInfo.innerText = `1 PEETX ≈ ${peetxPriceUsd}.00 ${to}`;
+            } else if (to === 'PEETX') {
+                toInput.value = (amount / peetxPriceUsd).toFixed(4);
+                rateInfo.innerText = `1 ${from} ≈ ${(1/peetxPriceUsd).toFixed(2)} PEETX`;
+            } else {
+                toInput.value = (amount * 1.0).toFixed(2);
+                rateInfo.innerText = `1 ${from} ≈ 1.00 ${to}`;
+            }
+        }
+
+        function setSwapPercentage(pct) {
+            let mockBalance = 1000;
+            let calcVal = (mockBalance * (pct / 100)).toFixed(2);
+            document.getElementById('swapFromAmount').value = calcVal;
+            calculateSwap();
+        }
+
+        function executeSwapAction() {
+            const amt = document.getElementById('swapFromAmount').value;
+            if (!amt || amt <= 0) {
+                showModalHTML(`
+                    <div style="text-align:center;">
+                        <i class="fa-solid fa-triangle-exclamation gold-text" style="font-size: 3rem; margin-bottom: 12px;"></i>
+                        <h3 class="gold-text">Notice</h3>
+                        <p style="font-size:0.88rem; color: var(--text-muted);">Please specify a valid swap amount.</p>
+                        <button class="btn btn-gold" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
+                    </div>
+                `);
+            } else {
+                showComingSoonModal();
+            }
+        }
+
+        // --- LOANS DEFI ENGINE ---
+        function updateLoanCalculation() {
+            const loanAmt = parseFloat(document.getElementById('loanAmountInput').value) || 0;
+            const collateralType = document.getElementById('loanCollateralToken').value;
+            const collateralBox = document.getElementById('loanRequiredCollateral');
+
+            let requiredVal = 0;
+            if (collateralType === 'BTC') {
+                requiredVal = (loanAmt / 65000 / 0.75).toFixed(5) + " BTC";
+            } else if (collateralType === 'ETH') {
+                requiredVal = (loanAmt / 3500 / 0.75).toFixed(4) + " ETH";
+            } else {
+                requiredVal = (loanAmt / 10 / 0.75).toFixed(2) + " PEETX";
+            }
+            collateralBox.innerText = requiredVal;
+        }
+
+        function requestDeFiLoan() {
+            const amt = parseFloat(document.getElementById('loanAmountInput').value);
+            if (!amt || amt < 10 || amt > 200000) {
+                showModalHTML(`
+                    <div style="text-align:center;">
+                        <i class="fa-solid fa-circle-exclamation gold-text" style="font-size: 3rem; margin-bottom: 12px;"></i>
+                        <h3 class="gold-text">Value Limit Error</h3>
+                        <p style="font-size:0.88rem; color: var(--text-muted);">Loan amounts must range between $10 and $200,000 USD.</p>
+                        <button class="btn btn-gold" style="width:100%; margin-top:15px;" onclick="closeModal()">Acknowledge</button>
+                    </div>
+                `);
+            } else {
+                showComingSoonModal();
+            }
+        }
+
+        // --- Mining Trigger & Timer ---
+        let isMiningActive = false;
+        function triggerMiningStart() {
+            const btnText = document.getElementById('miningBtnText');
+            const circleBtn = document.getElementById('miningCircleBtn');
+            const circleIcon = document.getElementById('miningCircleIcon');
+
+            if(!isMiningActive) {
+                isMiningActive = true;
+                btnText.innerText = "Mining Active...";
+                circleBtn.classList.add('active-mining');
+                circleIcon.style.color = "#a855f7";
+                
+                showModalHTML(`
+                    <div style="text-align:center;">
+                        <i class="fa-solid fa-circle-check gold-text" style="font-size: 3.2rem; margin-bottom: 12px;"></i>
+                        <h3 class="gold-text" style="margin-top:0;">Mining Session Activated!</h3>
+                        <p style="font-size:0.85rem; color: var(--text-muted); line-height: 1.5;">24-hour mining timer enabled. Random Airdrop rewards will be automatically computed and distributed at session completion.</p>
+                        <button class="btn btn-gold" style="width:100%; margin-top:15px;" onclick="closeModal()">Great</button>
+                    </div>
+                `);
+            } else {
+                showModalHTML(`
+                    <div style="text-align:center;">
+                        <i class="fa-solid fa-spinner gold-text" style="font-size: 3rem; margin-bottom: 12px;"></i>
+                        <h3 class="gold-text" style="margin-top:0;">Mining Already Running</h3>
+                        <p style="font-size:0.85rem; color: var(--text-muted);">Please wait for the current 24-hour countdown session to conclude.</p>
+                        <button class="btn btn-gold" style="width:100%; margin-top:15px;" onclick="closeModal()">Understood</button>
+                    </div>
+                `);
+            }
+        }
+
+        function initMiningTimer() {
+            let duration = 24 * 3600;
+            setInterval(() => {
+                let h = Math.floor(duration / 3600);
+                let m = Math.floor((duration % 3600) / 60);
+                let s = duration % 60;
+
+                document.getElementById('mine-hours').innerText = h < 10 ? '0' + h : h;
+                document.getElementById('mine-minutes').innerText = m < 10 ? '0' + m : m;
+                document.getElementById('mine-seconds').innerText = s < 10 ? '0' + s : s;
+
+                if (duration > 0) {
+                    duration--;
+                } else {
+                    duration = 24 * 3600;
+                }
+            }, 1000);
+        }
+
+        // --- Ludo Game Interactive Engine ---
+        let ludoPositions = { player: 0, bot: 0 };
+        function openLudoGame() {
+            ludoPositions = { player: 0, bot: 0 };
+            renderLudoBoard("Click Roll Dice to start the match!");
+        }
+
+        function rollLudoDice() {
+            const diceVal = Math.floor(Math.random() * 6) + 1;
+            ludoPositions.player += diceVal;
+            if (ludoPositions.player >= 15) {
+                renderLudoBoard(`🎉 Victory! You won the game with a roll of (${diceVal}).`);
+                return;
+            }
+
+            const botDice = Math.floor(Math.random() * 6) + 1;
+            ludoPositions.bot += botDice;
+            if (ludoPositions.bot >= 15) {
+                renderLudoBoard(`💔 Defeat! Opponent reached home first. Your roll was: ${diceVal}`);
+                return;
+            }
+
+            renderLudoBoard(`You rolled: 🎲 <strong>${diceVal}</strong> | Opponent rolled: 🎲 <strong>${botDice}</strong>`);
+        }
+
+        function renderLudoBoard(statusMessage) {
+            showModalHTML(`
+                <div style="text-align:center;">
+                    <h3 class="gold-text" style="margin-top:0;"><i class="fa-solid fa-chess-board"></i> PEETX Ludo Challenge</h3>
+                    <p style="font-size:0.75rem; color: var(--text-muted); margin-bottom: 5px;">
+                        Compete against the AI opponent in a quick-play Ludo grid.
+                    </p>
+                    
+                    <div class="ludo-mini-board">
+                        <div class="ludo-zone zone-red">Red</div>
+                        <div class="ludo-zone zone-yellow">Home</div>
+                        <div class="ludo-zone zone-green">Green</div>
+                        <div class="ludo-zone zone-blue">Track</div>
+                        <div class="ludo-zone zone-center">PEETX</div>
+                        <div class="ludo-zone zone-red">Track</div>
+                        <div class="ludo-zone zone-yellow">Yellow</div>
+                        <div class="ludo-zone zone-blue">Blue</div>
+                        <div class="ludo-zone zone-green">Finish</div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 12px;">
+                        <div>Your Position: 📍 <strong>Step ${ludoPositions.player} / 15</strong></div>
+                        <div>Opponent Position: 🤖 <strong>Step ${ludoPositions.bot} / 15</strong></div>
+                    </div>
+
+                    <p style="font-size: 0.85rem; color: var(--gold-light);" id="ludoStatus">${statusMessage}</p>
+
+                    ${ludoPositions.player < 15 && ludoPositions.bot < 15 ? 
+                        `<button class="btn btn-gold" style="width:100%; margin-top:8px;" onclick="rollLudoDice()"><i class="fa-solid fa-dice"></i> Roll Dice</button>` :
+                        `<button class="btn btn-gold" style="width:100%; margin-top:8px;" onclick="openLudoGame()"><i class="fa-solid fa-rotate-right"></i> Play Again</button>`
+                    }
+                    <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModal()">Close</button>
+                </div>
+            `);
+        }
+
+        // --- Dice Game Engine ---
+        function openDiceGame() {
+            showModalHTML(`
+                <div style="text-align:center;">
+                    <h3 class="gold-text" style="margin-top:0;"><i class="fa-solid fa-dice-five"></i> Quick Dice Roll</h3>
+                    <p style="font-size:0.8rem; color: var(--text-muted);">Roll a 6 to top the weekly leaderboard!</p>
+                    <div id="diceBox" style="font-size: 4rem; margin: 15px 0;">🎲</div>
+                    <button class="btn btn-gold" style="width:100%;" onclick="playDiceRoll()">Roll Now</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModal()">Close</button>
+                </div>
+            `);
+        }
+
+        function playDiceRoll() {
+            const val = Math.floor(Math.random() * 6) + 1;
+            const diceIcons = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+            document.getElementById('diceBox').innerHTML = diceIcons[val - 1];
+        }
+
+        // --- Memory Game Engine ---
+        function openMemoryGame() {
+            showModalHTML(`
+                <div style="text-align:center;">
+                    <h3 class="gold-text" style="margin-top:0;"><i class="fa-solid fa-brain"></i> Memory Challenge</h3>
+                    <p style="font-size:0.8rem; color: var(--text-muted);">Match identical cards to clear the stage!</p>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0;">
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='💎'">❓</button>
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='🚀'">❓</button>
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='💎'">❓</button>
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='🔥'">❓</button>
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='🚀'">❓</button>
+                        <button class="btn btn-outline" style="height:60px; font-size:1.4rem;" onclick="this.innerText='🔥'">❓</button>
+                    </div>
+                    <button class="btn btn-gold" style="width:100%;" onclick="openMemoryGame()">Reset Cards</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModal()">Close</button>
+                </div>
+            `);
+        }
+
+        // Render Trading Canvas Chart
+        function renderMockChart() {
+            const canvas = document.getElementById('liveChartCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 180;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for(let i = 0; i < canvas.height; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#a855f7';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, 120);
+            ctx.lineTo(60, 100);
+            ctx.lineTo(120, 130);
+            ctx.lineTo(180, 80);
+            ctx.lineTo(240, 95);
+            ctx.lineTo(300, 40);
+            ctx.lineTo(canvas.width, 60);
+            ctx.stroke();
+        }
+
+        // Countdown Timer Engine (Target 2034)
+        function initCountdown2034() {
+            let launchTime = localStorage.getItem("peetx_launch_2034");
+
+            if (!launchTime) {
+                launchTime = new Date("Jan 1, 2034 00:00:00").getTime();
+                localStorage.setItem("peetx_launch_2034", launchTime);
+            }
+
+            setInterval(function() {
+                const now = new Date().getTime();
+                const distance = launchTime - now;
+
+                if (distance > 0) {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+                    document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+                    document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+                    document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+                } else {
+                    document.getElementById("days").innerText = "00";
+                    document.getElementById("hours").innerText = "00";
+                    document.getElementById("minutes").innerText = "00";
+                    document.getElementById("seconds").innerText = "00";
+                }
+            }, 1000);
+        }
+
+        // Initialize Everything
+        window.addEventListener('DOMContentLoaded', () => {
+            initCountdown2034();
+            initMiningTimer();
+        });
+    </script>
+</body>
+</html>
