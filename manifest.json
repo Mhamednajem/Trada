@@ -1,0 +1,30 @@
+{
+  "short_name": "PeetX",
+  "name": "PeetX.app Web3",
+  "description": "PeetX Web3 Decentralized Platform & Trading App",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050811",
+  "theme_color": "#050811",
+  "icons": [
+    {
+      "src": "favicon-32x32.png",
+      "sizes": "16x16 32x32 48x48 64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "72x72 96x96 128x128 144x144 152x152 180x180 192x192 256x256 384x384 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
