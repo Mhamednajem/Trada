@@ -1,0 +1,23 @@
+{
+  "short_name": "PeetX",
+  "name": "PeetX.app Web3 Trading Platform",
+  "icons": [
+    {
+      "src": "https://mhamednajem.github.io/Trada/icon-512x512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://mhamednajem.github.io/Trada/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#050811",
+  "theme_color": "#00f0ff",
+  "display": "standalone",
+  "orientation": "portrait"
+}
