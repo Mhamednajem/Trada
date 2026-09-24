@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeetX</title>
+    <style>
+        body { background: #050508; margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; }
+    </style>
+    <script>
+        (function() {
+            var l = window.location;
+            var path = l.pathname;
+            var search = l.search;
+            var hash = l.hash;
+            var segs = path.split('/');
+            var refIdx = segs.indexOf('ref');
+            if (refIdx !== -1 && segs.length > refIdx + 1) {
+                var refAddr = segs[refIdx + 1];
+                if (refAddr && refAddr.startsWith('0x') && refAddr.length === 42) {
+                    try { localStorage.setItem('peetx_referrer', refAddr); } catch (e) {}
+                }
+            }
+            if (!path.includes('invest.html')) {
+                window.location.replace('/invest.html' + search + hash);
+            } else {
+                window.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(function() {
+                        window.location.replace('https://peetx.app/');
+                    }, 5000);
+                });
+            }
+        })();
+    </script>
+</head>
+<body>
+</body>
+</html>
