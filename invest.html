@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coming Soon - Investment Department</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0d0614 0%, #1a0b2e 50%, #2a0845 100%);
+      --gold-primary: #f39c12;
+      --gold-gradient: linear-gradient(135deg, #ffe066 0%, #f39c12 50%, #d35400 100%);
+      --purple-card: rgba(35, 15, 55, 0.65);
+      --purple-border: rgba(212, 175, 55, 0.3);
+      --text-color: #f8f9fa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient background glow */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      background: rgba(243, 156, 18, 0.15);
+      filter: blur(120px);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 650px;
+      background: var(--purple-card);
+      border: 1px solid var(--purple-border);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      padding: 40px 25px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+                  0 0 20px rgba(243, 156, 18, 0.1);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      background: rgba(243, 156, 18, 0.1);
+      border: 1px solid var(--gold-primary);
+      border-radius: 50px;
+      color: var(--gold-primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--gold-primary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--gold-primary);
+      animation: pulse 1.5s infinite;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.3;
+    }
+
+    p.subtitle {
+      font-size: 1.05rem;
+      color: #d1c4e9;
+      margin-bottom: 35px;
+      opacity: 0.9;
+    }
+
+    /* Countdown Grid */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .time-box {
+      background: rgba(18, 7, 30, 0.8);
+      border: 1px solid rgba(243, 156, 18, 0.2);
+      border-radius: 16px;
+      padding: 15px;
+      min-width: 90px;
+      flex: 1;
+      max-width: 110px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .time-box:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold-primary);
+    }
+
+    .number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      display: block;
+      line-height: 1;
+      margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      color: var(--gold-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Pulse Animation */
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.7rem; }
+      .countdown { gap: 10px; }
+      .time-box { min-width: 70px; padding: 12px 8px; }
+      .number { font-size: 1.6rem; }
+      .label { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Processing
+    </div>
+
+    <h1>Investment Department Launching Soon</h1>
+    <p class="subtitle">We are preparing a comprehensive investment platform tailored to your expectations.</p>
+
+    <div class="countdown">
+      <div class="time-box">
+        <span class="number" id="days">00</span>
+        <span class="label">Days</span>
+      </div>
+      <div class="time-box">
+        <span class="number" id="hours">00</span>
+        <span class="label">Hours</span>
+      </div>
+      <div class="time-box">
+        <span class="number" id="minutes">00</span>
+        <span class="label">Minutes</span>
+      </div>
+      <div class="time-box">
+        <span class="number" id="seconds">00</span>
+        <span class="label">Seconds</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global Fixed Launch Date (October 26, 2026 at 01:00:00 AM UTC)
+    // Any user visiting will see the exact remaining time until this target date
+    const launchDate = new Date("2026-10-26T01:00:00Z").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const difference = launchDate - now;
+
+      if (difference <= 0) {
+        document.getElementById('days').innerText = '00';
+        document.getElementById('hours').innerText = '00';
+        document.getElementById('minutes').innerText = '00';
+        document.getElementById('seconds').innerText = '00';
+        document.querySelector('h1').innerText = 'Investment Department Launched!';
+        document.querySelector('.badge').innerHTML = '<span class="badge-dot"></span> Available Now';
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      document.getElementById('days').innerText = String(days).padStart(2, '0');
+      document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+    }
+
+    // Execute immediately and set interval
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+</html>
