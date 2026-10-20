@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FLUX COIN (FX) Web3 Mining</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Ethers.js CDN for Web3 Smart Contract Integration -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(180deg, #18092c 0%, #291147 50%, #120522 100%);
+            --purple-card: rgba(43, 20, 71, 0.88);
+            --gold-primary: #ffd700;
+            --gold-gradient: linear-gradient(135deg, #ffe066 0%, #f39c12 100%);
+            --text-light: #f8f9fa;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: #0f051d;
+        }
+
+        body {
+            background-image: radial-gradient(circle at 50% 20%, #3b1768 0%, #0f051d 80%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--text-light);
+        }
+
+        .app-container {
+            width: 100vw;
+            min-height: 100vh;
+            max-width: 500px;
+            background: var(--bg-gradient);
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: none;
+            padding-bottom: 30px;
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px 10px 20px;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.08);
+            background: rgba(255, 215, 0, 0.15);
+            border-color: var(--gold-primary);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 8px #e74c3c;
+        }
+
+        .brand-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);
+        }
+
+        /* Balance Card */
+        .balance-card {
+            margin: 5px 15px;
+            background: var(--purple-card);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(15px);
+            box-shadow: var(--shadow);
+        }
+
+        .balance-box {
+            text-align: center;
+        }
+
+        .balance-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .pts-val {
+            color: var(--gold-primary);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+
+        .usd-val {
+            color: #ffffff;
+        }
+
+        .usdt-logo {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 255, 150, 0.4);
+        }
+
+        .brand-logo-center {
+            width: 44px;
+            height: 44px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .brand-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Central Mining Section */
+        .mining-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .wheel-outer {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 12px solid var(--gold-primary);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            background: rgba(15, 5, 29, 0.9);
+        }
+
+        .wheel-inner {
+            width: 205px;
+            height: 205px;
+            border-radius: 50%;
+            background: #080211;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(142, 68, 173, 0.5);
+        }
+
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        .daily-reward-pill {
+            position: relative;
+            z-index: 2;
+            background: rgba(25, 10, 45, 0.88);
+            border: 1px solid var(--gold-primary);
+            padding: 8px 18px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .daily-reward-pill span {
+            color: var(--gold-primary);
+            font-weight: 700;
+        }
+
+        /* Combined Mining Button & Integrated Butterfly */
+        .action-container {
+            margin-top: 18px;
+            width: 88%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mining-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: 30px;
+            color: #18092c;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 20px;
+            padding-right: 18px;
+            transition: all 0.3s;
+        }
+
+        .btn-left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        .mining-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .mining-btn:disabled {
+            background: linear-gradient(135deg, #4a2c6d, #2b1447);
+            color: #a093b5;
+            box-shadow: none;
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .timer-display {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .butterfly-icon {
+            font-size: 1.25rem;
+            color: var(--gold-primary);
+            transition: all 0.3s ease;
+        }
+
+        .mining-btn:not(:disabled) .butterfly-icon {
+            color: #18092c;
+        }
+
+        .butterfly-icon.active-flap {
+            animation: butterflyFlap 1.2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes butterflyFlap {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.35) rotate(15deg); }
+        }
+
+        /* 3-Image Slider Banner Section */
+        .slider-section {
+            margin: 15px 0 0 0;
+            height: 180px;
+            width: 100%;
+            position: relative;
+            background: #150827;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .slider-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .slide-img.active {
+            opacity: 1;
+        }
+
+        /* Smart Contract Card */
+        .contract-card {
+            margin: 18px 15px 10px 15px;
+            background: rgba(30, 11, 52, 0.9);
+            border: 1.5px dashed var(--gold-primary);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: left;
+            direction: ltr;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .contract-card:hover {
+            background: rgba(43, 20, 71, 1);
+            transform: translateY(-2px);
+            border-style: solid;
+        }
+
+        .contract-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .contract-header strong {
+            color: var(--gold-primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bsc-badge {
+            background: #f3ba2f;
+            color: #000;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .contract-address {
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: #00ffcc;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Social Links Cards */
+        .social-section {
+            margin: 10px 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-card {
+            flex: 1;
+            background: rgba(30, 11, 52, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            direction: ltr;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .social-card:hover {
+            background: rgba(43, 20, 71, 1);
+            transform: translateY(-2px);
+            border-color: var(--gold-primary);
+        }
+
+        .social-card i {
+            color: var(--gold-primary);
+            font-size: 1.3rem;
+        }
+
+        .social-card span {
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+        }
+
+        .faq-card {
+            background: var(--purple-card);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 18px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .faq-card i {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .faq-card p {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #e0d7f0;
+        }
+
+        /* Tokenomics Section */
+        .tokenomics-section {
+            margin: 10px 15px;
+            background: linear-gradient(135deg, rgba(63, 22, 102, 0.95), rgba(24, 9, 44, 0.95));
+            border: 1px solid var(--gold-primary);
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            direction: ltr;
+            text-align: left;
+        }
+
+        .tokenomics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .token-badge {
+            background: var(--gold-gradient);
+            color: #18092c;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .tokenomics-body p {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #f1e9ff;
+            margin-bottom: 10px;
+        }
+
+        .mining-pool-highlight {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold-primary);
+            padding: 12px 14px;
+            border-radius: 14px;
+            color: #fff3cc;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .burn-highlight {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            padding: 12px 14px;
+            border-radius: 14px;
+            color: #ff9f93;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Standard Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 3, 20, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: #1f0b38;
+            border: 2px solid var(--gold-primary);
+            border-radius: 25px;
+            padding: 22px;
+            width: 94%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            color: #fff;
+            position: relative;
+        }
+
+        .modal-box h3 {
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+        }
+
+        .notification-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+            direction: ltr;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item.unread {
+            border-left: 4px solid var(--gold-primary);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .modal-close-btn {
+            background: var(--gold-gradient);
+            color: #18092c;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Full-Screen Support Overlay */
+        .support-full-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0f051d;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .support-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: #18092c;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            gap: 15px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--gold-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .support-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+
+        .support-iframe-wrapper {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .support-iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header-nav">
+            <div class="nav-btn" id="supportBtn" title="Bot Support">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <div class="brand-title">FLUX COIN</div>
+            <div class="nav-btn" id="notifyBtn" title="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge-count" id="notifyBadge">0</span>
+            </div>
+        </header>
+
+        <!-- Balance Card -->
+        <section class="balance-card">
+            <div class="balance-box">
+                <div class="balance-title">Total Points (FX)</div>
+                <div class="balance-value pts-val">
+                    <span id="totalPoints">0.00</span> <small style="font-size: 0.8rem; margin-left:2px;">FX</small>
+                </div>
+            </div>
+
+            <div class="brand-logo-center">
+                <img src="uuu.png" alt="Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/44?text=FX';">
+            </div>
+
+            <div class="balance-box">
+                <div class="balance-title">Balance USD</div>
+                <div class="balance-value usd-val">
+                    <img src="usdt.png" alt="USDT" class="usdt-logo" onerror="this.style.display='none'">
+                    $<span id="usdBalance">0.00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Central Mining Circle Section -->
+        <section class="mining-section">
+            <div class="wheel-outer">
+                <div class="wheel-inner">
+                    <!-- Matrix Digital Rain Canvas -->
+                    <canvas id="matrixCanvas"></canvas>
+                    
+                    <div class="daily-reward-pill">
+                        Live Rate: <br><span id="dailyRate">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Area -->
+            <div class="action-container">
+                <button class="mining-btn" id="startMiningBtn" disabled>
+                    <div class="btn-left-content">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span id="btnText">Connecting Wallet...</span>
+                    </div>
+                    <i class="fa-solid fa-butterfly butterfly-icon" id="butterflyIcon"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3-Image Slider Banner Section -->
+        <section class="slider-section">
+            <div class="slider-wrapper">
+                <img src="oo1.png" class="slide-img active" alt="Banner 1" onerror="this.src='https://via.placeholder.com/500x180/291147/ffd700?text=FLUX+COIN+Node+1'">
+                <img src="oo2.png" class="slide-img" alt="Banner 2" onerror="this.src='https://via.placeholder.com/500x180/3b1768/ffd700?text=FLUX+COIN+Node+2'">
+                <img src="oo3.png" class="slide-img" alt="Banner 3" onerror="this.src='https://via.placeholder.com/500x180/1f0b38/ffd700?text=FLUX+COIN+Node+3'">
+            </div>
+        </section>
+
+        <!-- Smart Contract Card -->
+        <div class="contract-card" onclick="window.open('https://bscscan.com/address/0x0019D48343eCB80341C83e29fef394370E152806', '_blank')">
+            <div class="contract-header">
+                <strong><i class="fa-solid fa-file-contract"></i> Smart Contract</strong>
+                <span class="bsc-badge"><i class="fa-solid fa-link"></i> BscScan</span>
+            </div>
+            <p style="font-size: 0.8rem; color: #ccc;">Click here to directly verify the contract on BSC network:</p>
+            <div class="contract-address">
+                <span>0x0019D48343eCB80341C83e29fef394370E152806</span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.85rem; color: var(--gold-primary);"></i>
+            </div>
+        </div>
+
+        <!-- Social Community Links -->
+        <div class="social-section">
+            <a href="https://t.me/FluxCoin21" target="_blank" class="social-card">
+                <i class="fa-brands fa-telegram"></i>
+                <span>Official Group</span>
+            </a>
+            <a href="https://t.me/FluxCoin20" target="_blank" class="social-card">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Official Channel</span>
+            </a>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="section-title">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>Frequently Asked Questions (FAQ)</span>
+            </div>
+
+            <div class="faq-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <p>Coins are pre-mined prior to launch to ensure a fair distribution for all users.</p>
+            </div>
+
+            <div class="faq-card">
+                <i class="fa-solid fa-clock"></i>
+                <p>You must claim your mining reward every 24 hours to maintain smart contract connectivity and accumulate rewards.</p>
+            </div>
+        </section>
+
+        <!-- Tokenomics Section -->
+        <section class="tokenomics-section">
+            <div class="tokenomics-header">
+                <h3 style="font-size: 1.1rem; color: var(--gold-primary);">Flux Coin (FX) Future</h3>
+                <span class="token-badge">FX TOKEN</span>
+            </div>
+
+            <div class="tokenomics-body">
+                <p>
+                    <strong>Flux Coin (FX)</strong> aims to become the <strong>"New Bitcoin"</strong> in the decentralized Web3 ecosystem, powered by a fair mining system and a continuous burn mechanism.
+                </p>
+
+                <div class="mining-pool-highlight">
+                    <strong><i class="fa-solid fa-vault"></i> Smart Contract Mining Pool:</strong>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: var(--gold-primary); margin-top: 4px;">
+                        20,850,000 FX allocated for mining and fair distribution!
+                    </div>
+                </div>
+
+                <p style="font-size: 0.85rem; color: #e0d7f0;">
+                    • <strong>Max Total Supply:</strong> 21,000,000 FX tokens only.<br>
+                    • <strong>Distribution Mechanism:</strong> The amount above is securely locked inside the smart contract to be distributed through daily mining and community airdrops.
+                </p>
+
+                <div class="burn-highlight">
+                    <i class="fa-solid fa-fire-flame-curved" style="font-size: 1.4rem;"></i>
+                    <div>
+                        <strong>Continuous Burn Mechanism</strong>
+                        <div style="font-size: 0.78rem; margin-top: 3px;">
+                            Automated periodic burning protocols continuously reduce supply to enhance long-term digital scarcity.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Standard Notification Modal Overlay -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-box" id="modalBox">
+                <h3 id="modalTitle">Header</h3>
+                <div id="modalBody">Body Content</div>
+                <button class="modal-close-btn" id="modalCloseBtn">Close</button>
+            </div>
+        </div>
+
+        <!-- Full Screen Support Page Overlay -->
+        <div class="support-full-overlay" id="supportFullOverlay">
+            <div class="support-header">
+                <div class="back-btn" id="supportBackBtn" title="Back to App">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </div>
+                <div class="support-title">Live Support</div>
+            </div>
+            <div class="support-iframe-wrapper">
+                <iframe src="bot.html" title="Support Bot"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const contractAddress = "0x0019D48343eCB80341C83e29fef394370E152806";
+        const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"miner","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"MiningClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"CLAIM_INTERVAL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"ownerAddr","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"claimDailyReward","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"lastClaimTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}];
+
+        let provider, signer, contract;
+        let userAccount = "";
+        let notificationsList = JSON.parse(localStorage.getItem('fx_notifications')) || [];
+
+        /* سعر صرف 1 FX مقابل الـ USD/USDT */
+        const fxToUsdRate = 1; 
+
+        const totalPointsEl = document.getElementById('totalPoints');
+        const usdBalanceEl = document.getElementById('usdBalance');
+        const startMiningBtn = document.getElementById('startMiningBtn');
+        const btnTextEl = document.getElementById('btnText');
+        const notifyBadge = document.getElementById('notifyBadge');
+        const butterflyIcon = document.getElementById('butterflyIcon');
+        const dailyRateEl = document.getElementById('dailyRate');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const supportFullOverlay = document.getElementById('supportFullOverlay');
+        const supportBackBtn = document.getElementById('supportBackBtn');
+
+        let countdownInterval = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                if (window.ethereum) {
+                    provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    if (accounts && accounts.length > 0) {
+                        userAccount = accounts[0];
+                        signer = provider.getSigner();
+                        contract = new ethers.Contract(contractAddress, contractABI, signer);
+                        
+                        await loadContractData();
+                    } else {
+                        btnTextEl.innerText = "Wallet Locked";
+                    }
+                } else {
+                    provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+                    contract = new ethers.Contract(contractAddress, contractABI, provider);
+                    btnTextEl.innerText = "No Web3 Browser";
+                }
+            } catch (err) {
+                console.error("Auto connection error:", err);
+                btnTextEl.innerText = "Connection Failed";
+            }
+        });
+
+        async function loadContractData() {
+            if (!contract || !userAccount) return;
+            try {
+                /* قراءة الرصيد الفعلي والحقيقي المباشر من المحفظة */
+                const rawBalance = await contract.balanceOf(userAccount);
+                const decimals = await contract.decimals();
+                let actualFxBalance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
+
+                /* عرض رصيد العملة المحصلة بالمحفظة */
+                totalPointsEl.innerText = actualFxBalance.toFixed(2);
+                
+                /* عرض الرصيد المقابل بالـ USDT بضرب الرصيد المباشر بسعر الصرف */
+                usdBalanceEl.innerText = (actualFxBalance * fxToUsdRate).toFixed(2);
+
+                const lastClaim = await contract.lastClaimTime(userAccount);
+                const claimInterval = await contract.CLAIM_INTERVAL();
+
+                const now = Math.floor(Date.now() / 1000);
+                const lastClaimTimeNum = parseInt(lastClaim.toString());
+                const intervalNum = parseInt(claimInterval.toString()) || 86400;
+
+                const nextAvailableTime = lastClaimTimeNum + intervalNum;
+
+                if (lastClaimTimeNum === 0 || now >= nextAvailableTime) {
+                    stopMatrixRain();
+                    butterflyIcon.classList.remove('active-flap');
+                    startMiningBtn.disabled = false;
+                    dailyRateEl.innerText = `Ready to Claim`;
+                    btnTextEl.innerHTML = `<span style="color: #18092c; font-weight:800;"><i class="fa-solid fa-gift"></i> Claim Reward</span>`;
+                    startMiningBtn.dataset.action = "claim";
+                } else {
+                    startMatrixRain();
+                    butterflyIcon.classList.add('active-flap');
+                    startMiningBtn.disabled = true;
+                    dailyRateEl.innerText = `Mining Active`;
+                    runBlockchainCountdown((nextAvailableTime - now) * 1000);
+                }
+            } catch (error) {
+                console.error("Error reading contract data:", error);
+                dailyRateEl.innerText = "Error Loading";
+            }
+        }
+
+        function runBlockchainCountdown(durationMs) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            let timeLeft = Math.floor(durationMs / 1000);
+
+            countdownInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    loadContractData();
+                    return;
+                }
+
+                const h = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+                const m = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+                const s = String(timeLeft % 60).padStart(2, '0');
+
+                btnTextEl.innerHTML = `<span class="timer-display"><i class="fa-solid fa-clock"></i> ${h}:${m}:${s}</span>`;
+                timeLeft--;
+            }, 1000);
+        }
+
+        startMiningBtn.addEventListener('click', async () => {
+            if (startMiningBtn.dataset.action !== "claim") return;
+
+            try {
+                startMiningBtn.disabled = true;
+                btnTextEl.innerText = "Processing Claim...";
+
+                const tx = await contract.claimDailyReward();
+                addSmartNotification(`⏳ Claim transaction submitted. Waiting for confirmation...`);
+                
+                await tx.wait();
+                addSmartNotification(`🎉 Successfully claimed reward via smart contract!`);
+                
+                await loadContractData();
+            } catch (err) {
+                console.error("Claim failed:", err);
+                addSmartNotification(`❌ Transaction failed or cancelled.`);
+                startMiningBtn.disabled = false;
+                btnTextEl.innerHTML = `<span style="color: #18092c; font-weight:800;"><i class="fa-solid fa-gift"></i> Claim Reward</span>`;
+            }
+        });
+
+        function updateNotificationBadge() {
+            const unreadCount = notificationsList.filter(n => !n.read).length;
+            notifyBadge.innerText = unreadCount;
+            notifyBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+        }
+
+        function addSmartNotification(message) {
+            notificationsList.unshift({
+                id: Date.now(),
+                text: message,
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                read: false
+            });
+            localStorage.setItem('fx_notifications', JSON.stringify(notificationsList));
+            updateNotificationBadge();
+        }
+
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 205;
+        canvas.height = 205;
+        const characters = '01FLUX109876543210FX';
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        let matrixInterval = null;
+
+        function startMatrixRain() {
+            if (matrixInterval) return;
+            matrixInterval = setInterval(() => {
+                ctx.fillStyle = 'rgba(8, 2, 17, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffd700';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }, 50);
+        }
+
+        function stopMatrixRain() {
+            clearInterval(matrixInterval);
+            matrixInterval = null;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        /* Support Button Opens Full-Screen Section */
+        document.getElementById('supportBtn').addEventListener('click', () => {
+            supportFullOverlay.style.display = "flex";
+        });
+
+        /* Back Button Closes Full-Screen Support Section */
+        supportBackBtn.addEventListener('click', () => {
+            supportFullOverlay.style.display = "none";
+        });
+
+        document.getElementById('notifyBtn').addEventListener('click', () => {
+            modalTitle.innerText = "Notifications Center";
+            
+            if (notificationsList.length === 0) {
+                modalBody.innerHTML = `<p style="font-size:0.9rem; color:#aaa; padding:15px;">No new notifications right now.</p>`;
+            } else {
+                let listHtml = notificationsList.map(n => `
+                    <div class="notification-item ${!n.read ? 'unread' : ''}">
+                        <strong style="color: var(--gold-primary); font-size:0.85rem;">Mining Update • ${n.time}</strong>
+                        <p style="font-size: 0.85rem; margin-top: 4px;">${n.text}</p>
+                    </div>
+                `).join('');
+                modalBody.innerHTML = `<div style="max-height:280px; overflow-y:auto;">${listHtml}</div>`;
+                
+                notificationsList.forEach(n => n.read = true);
+                localStorage.setItem('fx_notifications', JSON.stringify(notificationsList));
+                updateNotificationBadge();
+            }
+
+            modalOverlay.style.display = "flex";
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            modalOverlay.style.display = "none";
+        });
+
+        const slides = document.querySelectorAll('.slide-img');
+        let slideIndex = 0;
+
+        setInterval(() => {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }, 3000);
+
+        updateNotificationBadge();
+    </script>
+</body>
+</html>
