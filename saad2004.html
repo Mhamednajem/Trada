@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processing Status - Investment Section</title>
+  <style>
+    :root {
+      --bg-color: #0b0612;
+      --card-bg: rgba(22, 10, 36, 0.90);
+      --purple-primary: #8a2be2;
+      --purple-glow: #a855f7;
+      --gold-primary: #ffd700;
+      --gold-glow: #ffae00;
+      --text-color: #f3e8ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1e0933 0%, var(--bg-color) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-color);
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      border-radius: 20px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 0 35px rgba(138, 43, 226, 0.4), 0 0 20px rgba(255, 215, 0, 0.15);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      position: relative;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-primary);
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+    }
+
+    .header-text {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #ffffff;
+      margin-bottom: 22px;
+      text-transform: uppercase;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 100%;
+      height: 45px;
+      background: rgba(12, 4, 20, 0.9);
+      border-radius: 25px;
+      border: 2px solid var(--purple-primary);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple-primary) 0%, var(--gold-primary) 100%);
+      border-radius: 20px;
+      box-shadow: 0 0 15px var(--gold-glow);
+      transition: width 0.4s ease;
+    }
+
+    .progress-info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+    }
+
+    .percentage {
+      color: var(--gold-primary);
+    }
+
+    .timer {
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+
+    .status-message {
+      font-size: 1rem;
+      color: var(--purple-glow);
+      margin-bottom: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      min-height: 24px;
+    }
+
+    .slider-box {
+      width: 100%;
+      aspect-ratio: 1050 / 530;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      background: #000000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(138, 43, 226, 0.3);
+      position: relative;
+    }
+
+    .slider-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .slider-box img.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="section-badge">INVESTMENT SECTION - COMING SOON</div>
+    <div class="header-text">PROCESSING... OPENING SOON</div>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+      <div class="progress-info">
+        <span class="timer" id="timer">30:00</span>
+        <span class="percentage" id="percentage">0%</span>
+      </div>
+    </div>
+
+    <div class="status-message" id="statusMessage">Processing data...</div>
+
+    <div class="slider-box">
+      <img src="mha1.png" class="slide active" alt="Investment Showcase 1">
+      <img src="mha2.png" class="slide" alt="Investment Showcase 2">
+      <img src="mha3.png" class="slide" alt="Investment Showcase 3">
+      <img src="mha4.png" class="slide" alt="Investment Showcase 4">
+      <img src="mha5.png" class="slide" alt="Investment Showcase 5">
+      <img src="mha6.png" class="slide" alt="Investment Showcase 6">
+    </div>
+  </div>
+
+  <script>
+    const START_DATE = "2026-10-23";
+    const START_TIME = "19:27:00";
+
+    const DURATION_MINUTES = 30;
+    const TOTAL_DURATION_MS = DURATION_MINUTES * 60 * 1000;
+
+    const startTime = new Date(`${START_DATE}T${START_TIME}`).getTime();
+
+    const progressBar = document.getElementById('progressBar');
+    const percentageText = document.getElementById('percentage');
+    const timerText = document.getElementById('timer');
+    const statusMessage = document.getElementById('statusMessage');
+
+    function updateProgress() {
+      const now = Date.now();
+      const elapsedTime = now - startTime;
+      let progressPercent = (elapsedTime / TOTAL_DURATION_MS) * 100;
+
+      if (progressPercent < 0) progressPercent = 0;
+
+      if (progressPercent >= 100) {
+        progressBar.style.width = '100%';
+        percentageText.innerText = '100%';
+        timerText.innerText = 'DONE';
+        statusMessage.innerText = 'CONNECTING...';
+        statusMessage.style.color = '#ffd700';
+        return;
+      }
+
+      const remainingTimeMs = TOTAL_DURATION_MS - elapsedTime;
+      const totalSecondsLeft = Math.floor(remainingTimeMs / 1000);
+      const minutes = Math.floor(totalSecondsLeft / 60);
+      const seconds = totalSecondsLeft % 60;
+
+      const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const currentPercent = Math.min(Math.floor(progressPercent), 99);
+
+      progressBar.style.width = `${progressPercent}%`;
+      percentageText.innerText = `${currentPercent}%`;
+      timerText.innerText = formattedTime;
+
+      requestAnimationFrame(updateProgress);
+    }
+
+    updateProgress();
+
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+
+    setInterval(nextSlide, 3000);
+  </script>
+</body>
+</html>
