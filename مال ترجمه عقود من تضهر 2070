@@ -1,0 +1,78 @@
+<script>
+    async function translateText(text, targetLang, sourceLang = "auto") {
+        if (!text || targetLang === "en") return { translatedText: text };
+        const matches = [];
+        let cleanText = text.replace(/PeetX/gi, (m) => {
+            matches.push(m);
+            return `___PEETX_${matches.length - 1}___`;
+        });
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(cleanText)}`);
+            const data = await res.json();
+            let translated = data[0].map(item => item[0]).join('');
+            matches.forEach((m, idx) => {
+                translated = translated.replace(new RegExp(`___PEETX_${idx}___`, 'g'), m);
+            });
+            return { translatedText: translated };
+        } catch (e) {
+            return { translatedText: text };
+        }
+    }
+
+    async function applyUserIpLocalizationAndContractsFix() {
+        let targetLang = "en";
+        try {
+            const res = await fetch('https://ipwho.is/');
+            const data = await res.json();
+            if (data && data.success) {
+                const countryCode = (data.country_code || "US").toUpperCase();
+                const map = {"AF":"ps","AL":"sq","DZ":"ar","AR":"es","BH":"ar","BR":"pt","CL":"es","CN":"zh-CN","CO":"es","EG":"ar","FR":"fr","DE":"de","IN":"hi","IQ":"ar","IT":"it","JP":"ja","JO":"ar","KR":"ko","KW":"ar","LB":"ar","MX":"es","MA":"ar","OM":"ar","QA":"ar","SA":"ar","ES":"es","SD":"ar","SY":"ar","TN":"ar","TR":"tr","AE":"ar","GB":"en","US":"en","YE":"ar"};
+                if (map[countryCode]) {
+                    targetLang = map[countryCode];
+                } else if (data.languages) {
+                    targetLang = data.languages.split(',')[0].split('-')[0].toLowerCase();
+                }
+            }
+        } catch (e) {}
+
+        if (['ar', 'he', 'fa', 'ur', 'ps'].includes(targetLang)) {
+            document.documentElement.setAttribute('dir', 'rtl');
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+        }
+
+        window.globalUserLang = targetLang;
+
+        if (typeof window.renderActiveOrders === 'function') {
+            const oldRender = window.renderActiveOrders;
+            window.renderActiveOrders = async function() {
+                await oldRender();
+                const container = document.getElementById('activeOrdersContainer');
+                if (!container || window.globalUserLang === 'en') return;
+
+                const labels = container.querySelectorAll('.order-plain-label, .btn-early-plain, .btn-claim-dynamic');
+                for (let el of labels) {
+                    let originalText = el.getAttribute('data-original') || el.innerText;
+                    if (!el.getAttribute('data-original')) {
+                        el.setAttribute('data-original', originalText);
+                    }
+                    if (originalText.trim() && !originalText.includes('USDT') && !originalText.includes('00d')) {
+                        const tr = await translateText(originalText, window.globalUserLang);
+                        if (tr && tr.translatedText) {
+                            el.innerText = tr.translatedText;
+                        }
+                    }
+                }
+            };
+            if (typeof window.renderOrdersView === 'function') {
+                window.renderOrdersView = window.renderActiveOrders;
+            }
+        }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        applyUserIpLocalizationAndContractsFix();
+    } else {
+        window.addEventListener('DOMContentLoaded', applyUserIpLocalizationAndContractsFix);
+    }
+</script>
