@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PeetX Referrals - Smart Contract Hub</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #090314;
+            --bg-card: rgba(22, 11, 40, 0.95);
+            --purple-primary: #7b2cbf;
+            --purple-glow: rgba(157, 78, 221, 0.4);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #aa8c2c;
+            --text-main: #f8f9fa;
+            --text-muted: #b8b2cb;
+            --danger: #ff3333;
+            --border-glow: rgba(212, 175, 55, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1c0b36 0%, var(--bg-deep) 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: none;
+            border-radius: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 750px;
+                min-height: auto;
+                border-radius: 24px;
+                border: 1px solid var(--border-glow);
+                margin: auto;
+                padding: 25px;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .contract-box {
+            background: linear-gradient(145deg, rgba(15, 7, 28, 0.9), rgba(26, 14, 46, 0.9));
+            border: 1px solid rgba(123, 44, 191, 0.6);
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .contract-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gold-light);
+        }
+
+        .bscscan-link {
+            color: var(--gold-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: 0.3s;
+        }
+
+        .bscscan-link:hover {
+            background: var(--gold-primary);
+            color: #0f071c;
+        }
+
+        .contract-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: rgba(10, 4, 20, 0.95);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .contract-address {
+            font-family: monospace;
+            color: var(--gold-light);
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 70%;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            border: none;
+            color: #0f071c;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        .status-alert {
+            background: rgba(255, 51, 51, 0.12);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            display: none;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Hub Banner Image Styling (1050x500 Aspect Ratio Container) */
+        .hub-banner-container {
+            width: 100%;
+            aspect-ratio: 1050 / 500;
+            margin-bottom: 15px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(123, 44, 191, 0.5);
+            background: rgba(15, 7, 28, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hub-banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .option-card {
+            background: linear-gradient(145deg, rgba(15, 7, 28, 0.7), rgba(26, 14, 46, 0.8));
+            border: 2px solid rgba(123, 44, 191, 0.4);
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .option-card:hover, .option-card.active {
+            border-color: var(--gold-primary);
+            background: linear-gradient(145deg, rgba(123, 44, 191, 0.2), rgba(212, 175, 55, 0.1));
+        }
+
+        .option-card input[type="radio"] {
+            display: none;
+        }
+
+        .option-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--gold-light);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Financial Sharing System Preview Box */
+        .financial-preview-box {
+            background: rgba(15, 7, 28, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .financial-preview-title {
+            font-size: 12px;
+            color: var(--gold-light);
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .accordion-toggle-btn {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--gold-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .accordion-toggle-btn:hover {
+            background: var(--gold-primary);
+            color: #0f071c;
+        }
+
+        .preview-nodes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow-y: auto;
+            transition: max-height 0.5s ease-out;
+            background: rgba(10, 4, 20, 0.95);
+            padding: 0 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accordion-content.open {
+            max-height: 450px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(123, 44, 191, 0.4);
+        }
+
+        .gen-list-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            margin: 8px 0 4px 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 3px;
+            text-align: left;
+        }
+
+        .gen-level-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: rgba(26, 14, 46, 0.7);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(123, 44, 191, 0.3);
+        }
+
+        .node-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .node-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold-light), var(--purple-primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f071c;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .node-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 10px;
+            text-align: left;
+        }
+
+        .node-wallet {
+            font-family: monospace;
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .node-bsc-btn {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--gold-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* Purchase Box */
+        .purchase-box {
+            background: linear-gradient(145deg, rgba(15, 7, 28, 0.95), rgba(26, 14, 46, 0.95));
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        .input-with-token {
+            display: flex;
+            align-items: center;
+            background: rgba(10, 4, 20, 0.95);
+            border: 1px solid rgba(123, 44, 191, 0.8);
+            border-radius: 10px;
+            padding: 6px 12px;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .token-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: max-content;
+        }
+
+        .token-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .token-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .input-with-token input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            text-align: right;
+        }
+
+        .total-price {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: rgba(123, 44, 191, 0.15);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(123, 44, 191, 0.3);
+        }
+
+        .total-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .total-price span {
+            color: var(--gold-light);
+            font-weight: 700;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            border: none;
+            color: #0f071c;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            transition: 0.3s;
+        }
+
+        .buy-btn:hover {
+            opacity: 0.95;
+        }
+
+        /* Claim Balance Box Style */
+        .claim-box {
+            background: linear-gradient(145deg, rgba(15, 7, 28, 0.95), rgba(26, 14, 46, 0.95));
+            border: 1px solid rgba(123, 44, 191, 0.6);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .balance-display {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 4, 20, 0.8);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .balance-amount {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+
+        .claim-alert {
+            background: rgba(255, 51, 51, 0.12);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 10px;
+            display: none;
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        .claim-btn {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .claim-btn:hover {
+            background: var(--gold-primary);
+            color: #0f071c;
+        }
+
+        .faq-section {
+            border-top: 1px solid rgba(123, 44, 191, 0.4);
+            padding-top: 15px;
+            width: 100%;
+        }
+
+        .faq-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .faq-item {
+            background: rgba(15, 7, 28, 0.6);
+            border: 1px solid rgba(123, 44, 191, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            font-size: 11px;
+        }
+
+        .faq-question {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" style="padding: 0 !important;">
+        <header style="padding: 15px 15px 0 15px;">
+            <h1>PeetX Referrals Hub</h1>
+            <div class="contract-box">
+                <div class="contract-top">
+                    <span>PeetX Referrals Contract</span>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="bscscan-link">
+                        BscScan Tracker <i class="fa-solid fa-cube"></i>
+                    </a>
+                </div>
+                <div class="contract-row">
+                    <span class="contract-address" id="contractAddr">0xCb47...97d2c</span>
+                    <button class="copy-btn" onclick="copyContract()">Copy</button>
+                </div>
+            </div>
+        </header>
+
+        <div style="padding: 0 15px;">
+            <div class="status-alert" id="statusAlert">
+                Referral registration capacity has reached 25,000 users threshold! Smart contract registration is currently closed; however, unlimited referral packages remain active via new referral links.
+            </div>
+
+            <!-- Hub Banner Image (1050x500 aspect ratio container) -->
+            <div class="hub-banner-container">
+                <img src="gghhjjkkll.png" alt="PeetX Banner" class="hub-banner-img" onerror="this.style.display='none'">
+            </div>
+
+            <div class="options-grid">
+                <label class="option-card active" onclick="selectOption(1)">
+                    <div class="option-title">
+                        <span>Financial Sharing System (25k Pool)</span>
+                        <input type="radio" name="refType" value="sharing" checked>
+                        <i class="fa-solid fa-circle-check" style="color: var(--gold-primary);"></i>
+                    </div>
+                    <div class="option-desc">
+                        USDT Min $10 per referral. Permanent earnings via smart contract sharing pool (30 Above & 30 Below). Capped at 25,000 active users.
+                    </div>
+                </label>
+
+                <label class="option-card" onclick="selectOption(2)">
+                    <div class="option-title">
+                        <span>Open & Unlock Referrals (Unlimited)</span>
+                        <input type="radio" name="refType" value="unlimited">
+                        <i class="fa-solid fa-circle" style="color: var(--text-muted);" id="icon2"></i>
+                    </div>
+                    <div class="option-desc">
+                        $1 for every 10 referrals ($1 = 10 Referrals). Supports wallet referrals of all types through the system with withdrawable earnings.
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Financial Sharing System Preview & Accordion -->
+        <div class="financial-preview-box" style="border-radius: 0; border-left: none; border-right: none; margin-bottom: 15px;">
+            <div class="financial-preview-title" style="padding: 0 15px;">
+                <span><i class="fa-solid fa-network-wired"></i> Financial Sharing Network Structure</span>
+                <button class="accordion-toggle-btn" onclick="toggleAccordion()">
+                    <span id="toggleText">View All</span> <i class="fa-solid fa-chevron-down" id="arrowIcon"></i>
+                </button>
+            </div>
+
+            <!-- Upper Generations Accordion -->
+            <div class="accordion-content" id="accordionContent" style="padding: 0 15px;">
+                <div class="gen-list-title">Upper Generations (+30 Wallets Above)</div>
+                <div id="upperWalletsContainer"></div>
+            </div>
+
+            <!-- Default Visible View: One Upper, Center You, One Lower -->
+            <div class="preview-nodes-container" id="defaultPreviewNodes" style="padding: 0 15px;">
+                <div class="gen-level-group">
+                    <div class="node-info">
+                        <div class="node-avatar"><i class="fa-solid fa-arrow-up"></i></div>
+                        <div>
+                            <div class="node-name">Upper Node (+1 Above)</div>
+                            <div class="node-wallet">0xCb47...01 | Balance: 0.00 USDT</div>
+                        </div>
+                    </div>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="node-bsc-btn"><i class="fa-solid fa-cube"></i> BscScan</a>
+                </div>
+
+                <div class="gen-level-group" style="background: linear-gradient(135deg, rgba(123, 44, 191, 0.4), rgba(212, 175, 55, 0.3)); border-color: var(--gold-primary);">
+                    <div class="node-info">
+                        <div class="node-avatar" style="background: var(--gold-primary); color: #000;"><i class="fa-solid fa-user-shield"></i></div>
+                        <div>
+                            <div class="node-name" style="color: var(--gold-light);">Central Hub (You - Leader Node)</div>
+                            <div class="node-wallet">PeetX Referrals Smart Contract Node</div>
+                        </div>
+                    </div>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="node-bsc-btn" style="background: var(--gold-primary); color: #000;"><i class="fa-solid fa-cube"></i> BscScan</a>
+                </div>
+
+                <div class="gen-level-group">
+                    <div class="node-info">
+                        <div class="node-avatar"><i class="fa-solid fa-arrow-down"></i></div>
+                        <div>
+                            <div class="node-name">Lower Node (-1 Below)</div>
+                            <div class="node-wallet">0xCb47...01 | Balance: 0.00 USDT</div>
+                        </div>
+                    </div>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="node-bsc-btn"><i class="fa-solid fa-cube"></i> BscScan</a>
+                </div>
+            </div>
+
+            <!-- Lower Generations Accordion -->
+            <div class="accordion-content" id="lowerAccordionContent" style="padding: 0 15px; max-height: 0; overflow-y: auto; transition: max-height 0.5s ease-out;">
+                <div class="gen-list-title">Lower Generations (-30 Wallets Below)</div>
+                <div id="lowerWalletsContainer"></div>
+            </div>
+        </div>
+
+        <div style="padding: 0 15px;">
+            <!-- Purchase Box -->
+            <div class="purchase-box">
+                <div class="input-group">
+                    <label id="inputLabel">USDT Min $10 per referral:</label>
+                    <div class="input-with-token">
+                        <div class="token-info">
+                            <img src="usdt.png" alt="USDT" class="token-logo" onerror="this.src='https://cryptologos.cc/logos/tether-usdt-logo.svg?v=035'">
+                            <span class="token-name">USDT</span>
+                        </div>
+                        <input type="number" id="refCount" min="1" placeholder="Enter amount..." oninput="calculateTotal()">
+                    </div>
+                </div>
+
+                <div class="total-price">
+                    <div class="total-price-row">
+                        <span>Referrals You Get:</span>
+                        <span id="totalReferralsCount">0 Referrals</span>
+                    </div>
+                    <div class="total-price-row">
+                        <span>Estimated Cost & Status:</span>
+                        <span id="totalCost">0.00 USDT (Instant)</span>
+                    </div>
+                </div>
+
+                <button class="buy-btn" onclick="executePurchase()">Purchase Referrals</button>
+            </div>
+
+            <!-- Claim Balance Box -->
+            <div class="claim-box">
+                <div class="balance-display">
+                    <span>Available Referral Earnings:</span>
+                    <span class="balance-amount">0.00 USDT</span>
+                </div>
+                <button class="claim-btn" onclick="claimEarnings()">Claim Referral Earnings</button>
+                <div class="claim-alert" id="claimAlert">
+                    No available balance to withdraw at the current time.
+                </div>
+            </div>
+
+            <!-- Frequently Asked Questions Section -->
+            <div class="faq-section">
+                <div class="faq-title">
+                    <i class="fa-solid fa-circle-question"></i> Frequently Asked Questions & Financial Sharing Rules
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How does financial sharing through referrals work?</div>
+                    <div class="faq-answer">Profits depend on mutual financial sharing via smart contract (USDT min $10 per referral). Upon a successful transaction, profits are distributed automatically: 30 generations above and 30 generations below you, providing permanent referral links secured by the smart contract.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What happens when the contract reaches 25,000 users?</div>
+                    <div class="faq-answer">Once the contract reaches 25,000 users, standard registration closes. However, this unlocks a special feature allowing you to purchase referrals where $1 gives you 10 referrals ($1 for every 10 referrals). Every new user joining through your link grants you generation profits (from 1st to 5th generation) which are automatically credited to your team section with identical profit rates and wallet-supported mechanisms.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What is the 30 Generations Above & Below System?</div>
+                    <div class="faq-answer">It features 30 generations above and 30 generations below your node, ensuring fully interconnected and mutually distributed profits among active participants.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Do profits depend on investment volume size?</div>
+                    <div class="faq-answer">No! Sharing profits do not depend on the investment volume size, guaranteeing absolute equity and fairness for everyone in the network.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Is the system sustainable for the long term?</div>
+                    <div class="faq-answer">Yes! It features a sustainable, infinite, and permanent system designed to operate forever through the smart contract.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 1;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const upperContainer = document.getElementById('upperWalletsContainer');
+            const lowerContainer = document.getElementById('lowerWalletsContainer');
+            
+            let upperHTML = '';
+            for(let i = 1; i <= 30; i++) {
+                upperHTML += `
+                <div class="gen-level-group">
+                    <div class="node-info">
+                        <div class="node-avatar"><i class="fa-solid fa-arrow-up"></i></div>
+                        <div>
+                            <div class="node-name">Upper Node (+${i})</div>
+                            <div class="node-wallet">0xCb47...00${i} | Balance: 0.00 USDT</div>
+                        </div>
+                    </div>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="node-bsc-btn"><i class="fa-solid fa-cube"></i> BscScan</a>
+                </div>`;
+            }
+            upperContainer.innerHTML = upperHTML;
+
+            let lowerHTML = '';
+            for(let i = 1; i <= 30; i++) {
+                lowerHTML += `
+                <div class="gen-level-group">
+                    <div class="node-info">
+                        <div class="node-avatar"><i class="fa-solid fa-arrow-down"></i></div>
+                        <div>
+                            <div class="node-name">Lower Node (-${i})</div>
+                            <div class="node-wallet">0xCb47...00${i} | Balance: 0.00 USDT</div>
+                        </div>
+                    </div>
+                    <a href="https://bscscan.com/address/0xCb477A46E463c47e8597a1d377dF0EA090897d2c" target="_blank" class="node-bsc-btn"><i class="fa-solid fa-cube"></i> BscScan</a>
+                </div>`;
+            }
+            lowerContainer.innerHTML = lowerHTML;
+        });
+
+        function toggleAccordion() {
+            const content = document.getElementById('accordionContent');
+            const lowerContent = document.getElementById('lowerAccordionContent');
+            const arrow = document.getElementById('arrowIcon');
+            const toggleText = document.getElementById('toggleText');
+            
+            content.classList.toggle('open');
+            lowerContent.classList.toggle('open');
+            
+            if(content.classList.contains('open')) {
+                arrow.className = "fa-solid fa-chevron-up";
+                toggleText.innerText = "Hide All";
+                lowerContent.style.maxHeight = '450px';
+                lowerContent.style.marginTop = '10px';
+                lowerContent.style.border = '1px solid rgba(123, 44, 191, 0.4)';
+            } else {
+                arrow.className = "fa-solid fa-chevron-down";
+                toggleText.innerText = "View All";
+                lowerContent.style.maxHeight = '0';
+                lowerContent.style.marginTop = '0';
+                lowerContent.style.border = 'none';
+            }
+        }
+
+        function selectOption(mode) {
+            currentMode = mode;
+            const cards = document.querySelectorAll('.option-card');
+            cards.forEach((card, index) => {
+                const radio = card.querySelector('input');
+                const icon = card.querySelector('.fa-solid.fa-circle-check, .fa-solid.fa-circle');
+                if((index + 1) === mode) {
+                    card.classList.add('active');
+                    radio.checked = true;
+                    if(icon) {
+                        icon.className = "fa-solid fa-circle-check";
+                        icon.style.color = "var(--gold-primary)";
+                    }
+                } else {
+                    card.classList.remove('active');
+                    radio.checked = false;
+                    if(icon) {
+                        icon.className = "fa-solid fa-circle";
+                        icon.style.color = "var(--text-muted)";
+                    }
+                }
+            });
+
+            const label = document.getElementById('inputLabel');
+            const inputField = document.getElementById('refCount');
+            if(mode === 1) {
+                label.innerText = "USDT Min $10 per referral:";
+                inputField.min = "1";
+                inputField.placeholder = "Enter number of referrals...";
+            } else {
+                label.innerText = "$1 for every 10 referrals ($1 = 10 Referrals):";
+                inputField.min = "1";
+                inputField.placeholder = "Enter USDT amount (e.g. 1, 5, 10)...";
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const val = parseFloat(document.getElementById('refCount').value) || 0;
+            const totalReferralsEl = document.getElementById('totalReferralsCount');
+            const totalCostEl = document.getElementById('totalCost');
+            
+            if(currentMode === 1) {
+                let cost = val * 10;
+                totalReferralsEl.innerText = `${val} Referrals`;
+                totalCostEl.innerText = `${cost.toFixed(2)} USDT (Instant)`;
+            } else {
+                let calculatedReferrals = Math.floor(val * 10); 
+                let cost = val;
+                totalReferralsEl.innerText = `${calculatedReferrals} Referrals`;
+                totalCostEl.innerText = `${cost.toFixed(2)} USDT (Wallet Unlock)`;
+            }
+        }
+
+        function copyContract() {
+            const addr = "0xCb477A46E463c47e8597a1d377dF0EA090897d2c";
+            navigator.clipboard.writeText(addr);
+        }
+
+        function executePurchase() {
+            const alertBox = document.getElementById('statusAlert');
+            alertBox.style.display = "block";
+            alertBox.style.opacity = "1";
+            alertBox.scrollIntoView({ behavior: 'smooth' });
+
+            setTimeout(() => {
+                alertBox.style.opacity = "0";
+                setTimeout(() => {
+                    alertBox.style.display = "none";
+                }, 800);
+            }, 7000);
+        }
+
+        function claimEarnings() {
+            const claimAlert = document.getElementById('claimAlert');
+            claimAlert.style.display = "block";
+            claimAlert.style.opacity = "1";
+
+            setTimeout(() => {
+                claimAlert.style.opacity = "0";
+                setTimeout(() => {
+                    claimAlert.style.display = "none";
+                }, 800);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
